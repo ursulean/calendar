@@ -246,10 +246,15 @@ class ContactController extends Controller {
 	 */
 	private function getPhotoUri(string $raw):?string {
 		$uriPrefix = 'VALUE=uri:';
-		if (substr($raw, 0, strlen($uriPrefix)) === $uriPrefix) {
+		$base64Prefix = 'data:image';
+		if (strpos($raw, $uriPrefix) === 0) {
 			return substr($raw, strpos($raw, 'http'));
 		}
 
-		return null;
+		if (strpos($raw, $base64Prefix) === 0) {
+			return $raw;
+		}
+
+		return $raw;
 	}
 }

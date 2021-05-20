@@ -255,6 +255,6 @@ class ContactController extends Controller {
 			return $raw;
 		}
 
-		return $raw;
+		return null;
 	}
 }

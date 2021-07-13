@@ -24,7 +24,7 @@
 		<TimezonePicker
 			:additional-timezones="additionalTimezones"
 			:value="timezone"
-			@change="setTimezoneValue" />
+			@input="setTimezoneValue" />
 	</li>
 </template>
 

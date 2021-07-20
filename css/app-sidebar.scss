@@ -405,7 +405,7 @@
 		}
 	}
 
-	.resource-search,
+	.resource-search__multiselect,
 	.invitees-search {
 		width: 100%;
 
@@ -456,6 +456,17 @@
 		}
 	}
 
+	.resource-search {
+		&__filter {
+			display: flex;
+			align-items: center;
+
+			&__actions {
+				margin-left: 5px;
+			}
+		}
+	}
+
 	.avatar-participation-status {
 		position: relative;
 		height: 38px;
@@ -494,7 +505,8 @@
 	.property-select,
 	.property-color,
 	.property-select-multiple,
-	.property-title {
+	.property-title,
+	.resource-capacity {
 		display: flex;
 		width: 100%;
 		align-items: flex-start;

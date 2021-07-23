@@ -20,6 +20,7 @@ import { getDurationValueFromFullCalendarDuration } from '../duration'
 import getTimezoneManager from '../../services/timezoneDataProviderService'
 import logger from '../../utils/logger.js'
 import { getObjectAtRecurrenceId } from '../../utils/calendarObject.js'
+import { mapEventComponentToEventObject } from '../../models/event'
 
 /**
  * Returns a function to drop an event at a different position
@@ -77,20 +78,50 @@ export default function(store, fcAPI) {
 			return
 		}
 
-		if (eventComponent.canCreateRecurrenceExceptions()) {
-			eventComponent.createRecurrenceException()
-		}
+		// Show a modal to let the user decide whether to update this or all future instances.
+		// Non-recurring events or recurrence exceptions can just be dropped and don't require
+		// extra user interaction.
+		if (eventComponent.isPartOfRecurrenceSet() && eventComponent.canCreateRecurrenceExceptions()) {
+			store.commit('setCalendarObjectInstanceForExistingEvent', {
+				calendarObject,
+				calendarObjectInstance: mapEventComponentToEventObject(eventComponent),
+				objectId,
+				recurrenceId,
+			})
 
-		try {
-			await store.dispatch('updateCalendarObject', {
-				calendarObject,
-			})
-		} catch (error) {
-			store.commit('resetCalendarObjectToDav', {
-				calendarObject,
-			})
-			console.debug(error)
-			revert()
+			try {
+				const thisAndAllFuture = await store.dispatch('showDragRecurrenceModal')
+				await store.dispatch('saveCalendarObjectInstance', {
+					thisAndAllFuture,
+					calendarId: calendarObject.calendarId,
+				})
+			} catch (error) {
+				store.commit('resetCalendarObjectToDav', {
+					calendarObject,
+				})
+				if (error !== 'closedByUser') {
+					logger.error('Could not drop event', { error })
+				}
+				revert()
+			}
+
+			store.commit('resetCalendarObjectInstanceObjectIdAndRecurrenceId')
+		} else {
+			if (eventComponent.canCreateRecurrenceExceptions()) {
+				eventComponent.createRecurrenceException()
+			}
+
+			try {
+				await store.dispatch('updateCalendarObject', {
+					calendarObject,
+				})
+			} catch (error) {
+				store.commit('resetCalendarObjectToDav', {
+					calendarObject,
+				})
+				logger.error('Could not drop event', { error })
+				revert()
+			}
 		}
 	}
 }

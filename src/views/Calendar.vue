@@ -48,6 +48,7 @@
 				v-if="!showEmptyCalendarScreen"
 				:is-authenticated-user="isAuthenticatedUser" />
 			<EmptyCalendar v-else />
+			<DragRecurrenceModal />
 		</AppContent>
 		<!-- Edit modal -->
 		<router-view />
@@ -67,6 +68,7 @@ import CalendarListNew from '../components/AppNavigation/CalendarList/CalendarLi
 import EmbedTopNavigation from '../components/AppNavigation/EmbedTopNavigation.vue'
 import EmptyCalendar from '../components/EmptyCalendar.vue'
 import CalendarGrid from '../components/CalendarGrid.vue'
+import DragRecurrenceModal from '../components/DragRecurrenceModal'
 
 // Import CalDAV related methods
 import {
@@ -110,6 +112,7 @@ export default {
 		AppNavigationSpacer,
 		CalendarListNew,
 		Trashbin,
+		DragRecurrenceModal,
 	},
 	data() {
 		return {

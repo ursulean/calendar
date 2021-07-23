@@ -23,6 +23,8 @@
  * This mostly enforces the policy that all events of a recurrence-set
  * must be of the same date-type
  *
+ * Forbids to move elements of a recurrence set
+ *
  * @param {object} dropInfo Info about location where event will be dropped
  * @param {EventApi} draggedEvent The fullcalendar event object
  * @return {boolean}

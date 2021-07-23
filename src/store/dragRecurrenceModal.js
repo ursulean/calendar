@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2021 Richard Steinmetz <richard@steinmetz.cloud>
  * @author Richard Steinmetz <richard@steinmetz.cloud>
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -24,12 +24,25 @@ const state = {
 }
 
 const mutations = {
+	/**
+	 * Show the drag recurrence modal and save the promise callbacks for the modal
+	 *
+	 * @param {object} state The Vuex state
+	 * @param {object} data The destructuring object
+	 * @param {function(boolean): void} data.resolve Call to save the current drag process. Specify thisAndAllFuture via the first argument.
+	 * @param {function(any=): void} data.reject Call to cancel the current drag process. Optionally pass an error.
+	 */
 	showDragRecurrenceModal(state, { resolve, reject }) {
 		state.show = true
 		state.resolve = resolve
 		state.reject = reject
 	},
 
+	/**
+	 * Hide the drag recurrence modal but leave the promise callbacks intact to prevent a deadlock
+	 *
+	 * @param {object} state The Vuex state
+	 */
 	hideDragRecurrenceModal(state) {
 		state.show = false
 	},
@@ -38,6 +51,15 @@ const mutations = {
 const getters = {}
 
 const actions = {
+	/**
+	 * Show the drag recurrence modal and save the promise callbacks for the modal
+	 *
+	 * Automatically hides it after the promise is resolved or rejected (finally)
+	 *
+	 * @param {object} data The destructuring object for Vuex
+	 * @param {Function} data.commit The Vuex commit function
+	 * @return {Promise<boolean>} Will resolve with thisAndAllFuture
+	 */
 	async showDragRecurrenceModal({ commit }) {
 		try {
 			return await new Promise((resolve, reject) => {

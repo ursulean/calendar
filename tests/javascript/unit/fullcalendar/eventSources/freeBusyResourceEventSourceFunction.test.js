@@ -219,7 +219,7 @@ describe('fullcalendar/freeBusyResourceEventSourceFunction test suite', () => {
 					davUrl: 'url1',
 					objectType: 'VEVENT',
 					percent: null,
-				},
+				}
 			},
 			{
 				id: '1###1-2',
@@ -239,7 +239,7 @@ describe('fullcalendar/freeBusyResourceEventSourceFunction test suite', () => {
 					davUrl: 'url1',
 					objectType: 'VEVENT',
 					percent: null,
-				},
+				}
 			},
 			{
 				id: '1###1-3',
@@ -259,7 +259,7 @@ describe('fullcalendar/freeBusyResourceEventSourceFunction test suite', () => {
 					davUrl: 'url1',
 					objectType: 'VEVENT',
 					percent: null,
-				},
+				}
 			},
 			{
 				id: '2###2-1',
@@ -279,7 +279,7 @@ describe('fullcalendar/freeBusyResourceEventSourceFunction test suite', () => {
 					davUrl: 'url2',
 					objectType: 'VEVENT',
 					percent: null,
-				},
+				}
 			},
 			{
 				id: '4###3-1',

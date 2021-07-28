@@ -140,7 +140,6 @@ export function eventSourceFunction(calendarObjects, calendar, start, end, timez
 					davUrl: calendarObject.dav.url,
 					location: object.location,
 					description: object.description,
-					isPartOfRecurrenceSet: object.isPartOfRecurrenceSet(),
 				},
 			}
 

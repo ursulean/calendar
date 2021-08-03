@@ -245,9 +245,9 @@ export default {
 			next()
 		})
 
-	  // Trigger the select event programmatically on initial page load to show the new event
-	  // in the grid. Wait for the next tick because the ref isn't available right away.
-	  await this.$nextTick()
+		// Trigger the select event programmatically on initial page load to show the new event
+		// in the grid. Wait for the next tick because the ref isn't available right away.
+		await this.$nextTick()
 		if (['NewPopoverView', 'NewSidebarView'].includes(this.$route.name)) {
 			const start = new Date(parseInt(this.$route.params.dtstart) * 1000)
 			const end = new Date(parseInt(this.$route.params.dtend) * 1000)

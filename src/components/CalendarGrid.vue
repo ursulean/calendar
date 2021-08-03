@@ -203,7 +203,7 @@ export default {
 			resizeObserver.observe(this.$refs.fullCalendar.$el)
 		}
 	},
-	created() {
+	async created() {
 		this.updateTodayJob = setInterval(() => {
 			const newDate = getYYYYMMDDFromFirstdayParam('now')
 
@@ -219,19 +219,6 @@ export default {
 				calendarApi.render()
 			}
 		}, 1000)
-
-		// Trigger the select event programmatically on initial page load to show the new event
-		// in the grid.
-		this.$nextTick(() => {
-			if (['NewPopoverView', 'NewSidebarView'].includes(this.$route.name)) {
-				const calendarApi = this.$refs.fullCalendar.getApi()
-				calendarApi.select({
-					start: new Date(parseInt(this.$route.params.dtstart) * 1000),
-					end: new Date(parseInt(this.$route.params.dtend) * 1000),
-					allDay: this.$route.params.allDay === '1',
-				})
-			}
-		})
 
 		/**
 		 * This view is not used as a router view,
@@ -257,6 +244,22 @@ export default {
 
 			next()
 		})
+
+	  // Trigger the select event programmatically on initial page load to show the new event
+	  // in the grid. Wait for the next tick because the ref isn't available right away.
+	  await this.$nextTick()
+		if (['NewPopoverView', 'NewSidebarView'].includes(this.$route.name)) {
+			const start = new Date(parseInt(this.$route.params.dtstart) * 1000)
+			const end = new Date(parseInt(this.$route.params.dtend) * 1000)
+			if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+				const calendarApi = this.$refs.fullCalendar.getApi()
+				calendarApi.select({
+					start,
+					end,
+					allDay: this.$route.params.allDay === '1',
+				})
+			}
+		}
 	},
 	methods: {
 		/**

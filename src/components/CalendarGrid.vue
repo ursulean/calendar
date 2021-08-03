@@ -142,7 +142,7 @@ export default {
 				lazyFetching: false,
 				nowIndicator: true,
 				progressiveEventRendering: true,
-				unselectAuto: true,
+				unselectAuto: false,
 				// Timezones:
 				timeZone: this.timezoneId,
 			}
@@ -219,6 +219,19 @@ export default {
 				calendarApi.render()
 			}
 		}, 1000)
+
+		// Trigger the select event programmatically on initial page load to show the new event
+		// in the grid.
+		this.$nextTick(() => {
+			if (['NewPopoverView', 'NewSidebarView'].includes(this.$route.name)) {
+				const calendarApi = this.$refs.fullCalendar.getApi()
+				calendarApi.select({
+					start: new Date(parseInt(this.$route.params.dtstart) * 1000),
+					end: new Date(parseInt(this.$route.params.dtend) * 1000),
+					allDay: this.$route.params.allDay === '1',
+				})
+			}
+		})
 
 		/**
 		 * This view is not used as a router view,

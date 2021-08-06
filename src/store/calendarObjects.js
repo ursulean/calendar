@@ -31,11 +31,7 @@ import {
 	getTimezoneManager,
 } from 'calendar-js'
 
-import CalendarComponent from 'calendar-js/src/components/calendarComponent.js'
-import ToDoComponent from 'calendar-js/src/components/root/toDoComponent.js'
-import { dateFactory } from 'calendar-js/src/factories/dateFactory.js'
-import { v4 as uuid } from 'uuid'
-import RecurrenceManager from 'calendar-js/src/recurrence/recurrenceManager.js'
+import createTask from '../utils/tasks'
 
 const state = {
 	calendarObjects: {},
@@ -143,26 +139,6 @@ const getters = {
 	 * @returns {function({String}): CalendarObject}
 	 */
 	getCalendarObjectById: (state) => (id) => state.calendarObjects[id],
-	getNewTask: (state) => (date) => {
-		const calendar = CalendarComponent.fromEmpty()
-		const todoComponent = new ToDoComponent('VTODO')
-
-
-		todoComponent.updatePropertyWithValue('CREATED', DateTimeValue.fromJSDate(dateFactory(), true))
-		todoComponent.updatePropertyWithValue('DTSTAMP', DateTimeValue.fromJSDate(dateFactory(), true))
-		todoComponent.updatePropertyWithValue('LAST-MODIFIED', DateTimeValue.fromJSDate(dateFactory(), true))
-		todoComponent.updatePropertyWithValue('SEQUENCE', 0)
-		todoComponent.updatePropertyWithValue('UID', uuid())
-		todoComponent.updatePropertyWithValue('DTSTART', date)
-		todoComponent.updatePropertyWithValue('DUE', date)
-	
-		calendar.addComponent(todoComponent)
-		todoComponent.recurrenceManager = new RecurrenceManager(todoComponent)
-
-		console.log(calendar)
-
-		return calendar
-	},
 }
 
 const actions = {
@@ -357,12 +333,13 @@ const actions = {
 			endDateTime.isDate = true
 		}
 
-		const calendar = isAllDay ? context.getters.getNewTask(startDateTime) : createEvent(startDateTime, endDateTime)
+		const calendar = isAllDay ? createTask(startDateTime) : createEvent(startDateTime, endDateTime)
 		for (const vObject of calendar.getVObjectIterator()) {
 			vObject.undirtify()
 		}
 
 		const firstCalendar = context.getters.sortedCalendars[0].id
+		console.log(mapCalendarJsToCalendarObject(calendar, firstCalendar))
 		return Promise.resolve(mapCalendarJsToCalendarObject(calendar, firstCalendar))
 	},
 

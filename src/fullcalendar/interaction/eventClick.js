@@ -95,6 +95,10 @@ function handleEventClick(event, store, router, route, window) {
  * @param {Window} window The window object
  */
 function handleToDoClick(event, store, route, window) {
+	// event.setExtendedProp('percent', 100)
+	console.log(event)
+	// console.log(store.getters.getCalendarObjectById(event.extendedProps.objectId))
+	return
 
 	if (isPublicOrEmbeddedRoute(route.name)) {
 		return

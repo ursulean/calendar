@@ -25,24 +25,15 @@
 		<div
 			v-if="hasAdvancedFilters"
 			class="resource-search__filter">
-			<ResourceSeatingCapacity
-				:value="capacity"
-				@update:value="updateCapacity" />
-
+			<ResourceSeatingCapacity :value.sync="capacity" />
 			<Actions class="resource-search__filter__actions">
-				<ActionCheckbox
-					:checked="hasProjector"
-					@update:checked="updateHasProjector">
+				<ActionCheckbox :checked.sync="hasProjector">
 					{{ $t('calendar', 'Projector') }}
 				</ActionCheckbox>
-				<ActionCheckbox
-					:checked="hasWhiteboard"
-					@update:checked="updateHasWhiteboard">
+				<ActionCheckbox :checked.sync="hasWhiteboard">
 					{{ $t('calendar', 'Whiteboard') }}
 				</ActionCheckbox>
-				<ActionCheckbox
-					:checked="isAccessible"
-					@update:checked="updateIsAccessible">
+				<ActionCheckbox :checked.sync="isAccessible">
 					{{ $t('calendar', 'Wheelchair accessible') }}
 				</ActionCheckbox>
 			</Actions>
@@ -198,18 +189,6 @@ export default {
 						displayName: principal.displayname ?? principal.email,
 					}
 				})
-		},
-		updateCapacity(value) {
-			this.capacity = value
-		},
-		updateIsAccessible(value) {
-			this.isAccessible = value
-		},
-		updateHasProjector(value) {
-			this.hasProjector = value
-		},
-		updateHasWhiteboard(value) {
-			this.hasWhiteboard = value
 		},
 	},
 }

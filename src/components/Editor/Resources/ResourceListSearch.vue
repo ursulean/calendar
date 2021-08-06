@@ -22,7 +22,9 @@
 
 <template>
 	<div class="resource-search">
-		<div class="resource-search__filter">
+		<div
+			v-if="hasAdvancedFilters"
+			class="resource-search__filter">
 			<ResourceSeatingCapacity
 				:value="capacity"
 				@update:value="updateCapacity" />
@@ -86,6 +88,7 @@ import { principalPropertySearchByDisplaynameAndCapacityAndFeatures } from '../.
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import ResourceSeatingCapacity from './ResourceSeatingCapacity'
+import semver from 'semver'
 
 export default {
 	name: 'ResourceListSearch',
@@ -120,6 +123,9 @@ export default {
 		noResult() {
 			return this.$t('calendar', 'No match found')
 		},
+		hasAdvancedFilters() {
+			return semver.gte(semver.coerce(OC.config.version), '23.0.0')
+		},
 		features() {
 			const features = []
 			if (this.isAccessible) {
@@ -153,14 +159,15 @@ export default {
 		addResource(selectedValue) {
 			this.$emit('addResource', selectedValue)
 		},
-		async findResourcesFromDAV(query) {
+		async findResourcesFromDAV(input) {
 			let results
 			try {
-				results = await principalPropertySearchByDisplaynameAndCapacityAndFeatures({
-					displayName: query,
-					capacity: this.capacity,
-					features: this.features,
-				})
+				const query = { displayName: input }
+				if (this.hasAdvancedFilters) {
+					query.capacity = this.capacity
+					query.features = this.features
+				}
+				results = await principalPropertySearchByDisplaynameAndCapacityAndFeatures(query)
 			} catch (error) {
 				logger.debug('Could not find resources', { error })
 				return []

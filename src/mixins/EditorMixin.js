@@ -136,6 +136,22 @@ export default {
 			return this.calendarObjectInstance?.isAllDay ?? false
 		},
 		/**
+		 * Returns whether or not the current calendar object is a task or an event
+		 *
+		 * @returns {boolean}
+		 */
+		isTask() {
+			return this.calendarObject?.isTodo ?? true
+		},
+		/**
+		 * Returns whether the current calendar object is a new or existing object
+		 *
+		 * @returns {boolean}
+		 */
+		isNewEntry() {
+			return !(this.calendarObject?.existsOnServer ?? false)
+		},
+		/**
 		 * Returns whether or not the user is allowed to modify the all-day setting
 		 *
 		 * @returns {boolean}
@@ -551,6 +567,15 @@ export default {
 		 */
 		toggleAllDay() {
 			this.$store.dispatch('toggleAllDay', {
+				calendarObjectInstance: this.calendarObjectInstance,
+			})
+		},
+		/**
+		 * Toggles the calendar object between task and event
+		 */
+		toggleTask() {
+			this.$store.dispatch('toggleTask', {
+				calendarObject: this.calendarObject,
 				calendarObjectInstance: this.calendarObjectInstance,
 			})
 		},

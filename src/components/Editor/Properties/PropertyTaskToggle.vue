@@ -1,12 +1,12 @@
 <template>
 	<div class="property-title-time-picker">
-		<div v-if="!isReadOnly && isNewEntry" class="property-title-time-picker__task">
+		<div v-if="!isReadOnly" class="property-title-time-picker__task">
 			<input
 				id="task"
 				:checked="isTask"
 				type="checkbox"
 				class="checkbox"
-				:disabled="isReadOnly"
+				:disabled="!isNewEntry"
 				@change="toggleTask">
 			<label
 				for="task">

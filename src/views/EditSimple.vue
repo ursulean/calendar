@@ -100,6 +100,12 @@
 				@updateEndTimezone="updateEndTimezone"
 				@toggleAllDay="toggleAllDay" />
 
+			<PropertyTaskToggle
+				:is-read-only="isReadOnly"
+				:is-task="isTask"
+				:is-new-entry="isNewEntry"
+				@toggleTask="toggleTask" />
+
 			<PropertyText
 				v-if="hasLocation"
 				:is-read-only="isReadOnly"
@@ -135,6 +141,7 @@ import EditorMixin from '../mixins/EditorMixin'
 import IllustrationHeader from '../components/Editor/IllustrationHeader.vue'
 import PropertyTitle from '../components/Editor/Properties/PropertyTitle.vue'
 import PropertyTitleTimePicker from '../components/Editor/Properties/PropertyTitleTimePicker.vue'
+import PropertyTaskToggle from '../components/Editor/Properties/PropertyTaskToggle.vue'
 import PropertyCalendarPicker from '../components/Editor/Properties/PropertyCalendarPicker.vue'
 import PropertyText from '../components/Editor/Properties/PropertyText.vue'
 import SaveButtons from '../components/Editor/SaveButtons.vue'
@@ -149,6 +156,7 @@ export default {
 		PropertyText,
 		PropertyCalendarPicker,
 		PropertyTitleTimePicker,
+		PropertyTaskToggle,
 		PropertyTitle,
 		IllustrationHeader,
 		Popover,

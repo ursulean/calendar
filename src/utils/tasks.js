@@ -45,10 +45,6 @@ class ToDoComponentPlus extends ToDoComponent {
 	}
 }
 
-// export function setComplete(calendarObjectInstance) {
-
-// }
-
 export default function(date) {
     const calendar = CalendarComponent.fromEmpty()
     const todoComponent = new ToDoComponentPlus('VTODO')

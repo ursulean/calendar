@@ -27,6 +27,8 @@ import { generateUrl } from '@nextcloud/router'
 import { translate as t } from '@nextcloud/l10n'
 import { showInfo } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
+import { getObjectAtRecurrenceId } from '../../utils/calendarObject.js'
+import DateTimeValue from 'calendar-js/src/values/dateTimeValue.js'
 
 /**
  * Returns a function for click action on event. This will open the editor.
@@ -95,25 +97,53 @@ function handleEventClick(event, store, router, route, window) {
  * @param {Window} window The window object
  */
 function handleToDoClick(event, store, route, window) {
-	// event.setExtendedProp('percent', 100)
-	console.log(event)
-	// console.log(store.getters.getCalendarObjectById(event.extendedProps.objectId))
-	return
+	getComponent(event, store).then(({calendarObject, todo}) => {
+		toggleCompleted(todo)
 
-	if (isPublicOrEmbeddedRoute(route.name)) {
+		store.dispatch('updateCalendarObject', {
+			calendarObject,
+		}).catch(e => { console.debug(e) })
+
+	}).catch(e => { console.debug(e) })
+}
+
+async function getComponent(event, store) {
+	const objectId = event.extendedProps.objectId
+	const recurrenceId = event.extendedProps.recurrenceId
+	const recurrenceIdDate = new Date(recurrenceId * 1000)
+
+	let calendarObject
+	try {
+		calendarObject = await store.dispatch('getEventByObjectId', { objectId })
+	} catch (error) {
+		console.debug(error)
 		return
 	}
+	// calendarObject = store.state.calendarObjects.calendarObjects[event.extendedProps.objectId]
 
-	const davUrlParts = event.extendedProps.davUrl.split('/')
-	const taskId = davUrlParts.pop()
-	const calendarId = davUrlParts.pop()
-
-	emit('calendar:handle-todo-click', { calendarId, taskId })
-
-	if (!store.state.settings.tasksEnabled) {
-		showInfo(t('calendar', 'Please ask your administrator to enable the Tasks App.'))
+	const calendarComponent = getObjectAtRecurrenceId(calendarObject, recurrenceIdDate)
+	if (!calendarComponent) {
+		console.debug('Recurrence-id not found')
 		return
 	}
-	const url = `apps/tasks/#/calendars/${calendarId}/tasks/${taskId}`
-	window.location = window.location.protocol + '//' + window.location.host + generateUrl(url)
+	return Promise.resolve({
+		calendarObject: calendarObject,
+		todo: calendarComponent,
+	})
+}
+
+function toggleCompleted(todo) {
+	todo.percent == 100 ? uncheck(todo) : check(todo)
+}
+
+function check(todo) {
+	todo.percent = 100
+	todo.status = "COMPLETED"
+	todo.completedTime = DateTimeValue.fromJSDate(new Date())
+}
+
+function uncheck(todo) {
+	todo.percent = null
+	todo.status = null
+	todo.completedTime = null
 }

@@ -1896,10 +1896,6 @@ const actions = {
 			commit('changeTimeToDefaultForTimedEvents', { calendarObjectInstance })
 		}
 	},
-	toggleTask({ commit, state, dispatch }, { calendarObject, calendarObjectInstance }) {
-		alert("FOO")
-	},
-
 }
 
 export default { state, mutations, getters, actions }

@@ -376,15 +376,18 @@ export default {
 		 * Closes the editor and returns to normal calendar-view
 		 */
 		closeEditor() {
+			this.softCloseEditor()
+			this.$store.commit('resetCalendarObjectInstanceObjectIdAndRecurrenceId')
+		},
+		softCloseEditor(){
 			const params = Object.assign({}, this.$store.state.route.params)
 			delete params.object
 			delete params.recurrenceId
-
+	
 			this.$router.push({
 				name: getPrefixedRoute(this.$store.state.route.name, 'CalendarView'),
 				params,
 			})
-			this.$store.commit('resetCalendarObjectInstanceObjectIdAndRecurrenceId')
 		},
 		/**
 		 * Resets the calendar-object back to it's original state and closes the editor
@@ -573,11 +576,13 @@ export default {
 		/**
 		 * Toggles the calendar object between task and event
 		 */
-		toggleTask() {
-			this.$store.dispatch('toggleTask', {
-				calendarObject: this.calendarObject,
-				calendarObjectInstance: this.calendarObjectInstance,
-			})
+		async toggleTask() {
+			const isTask = this.isTask
+			const calendarObject = this.calendarObjectInstance
+			// Maybe use isTask as a flag and make desired behavior in save()
+			await this.deleteAndLeave()
+			console.log(calendarObject)
+			console.log(this.calendarObject)
 		},
 		/**
 		 * Resets the internal state after changing the viewed calendar-object
@@ -627,10 +632,11 @@ export default {
 				const start = parseInt(to.params.dtstart, 10)
 				const end = parseInt(to.params.dtend, 10)
 				const timezoneId = vm.$store.getters.getResolvedTimezone
+				const isTask = vm.calendarObject?.isTodo ?? true
 
 				try {
 					await vm.loadingCalendars()
-					await vm.$store.dispatch('getCalendarObjectInstanceForNewEvent', { isAllDay, start, end, timezoneId })
+					await vm.$store.dispatch('getCalendarObjectInstanceForNewEvent', { isAllDay, start, end, timezoneId, isTask })
 					vm.calendarId = vm.calendarObject.calendarId
 				} catch (error) {
 					console.debug(error)

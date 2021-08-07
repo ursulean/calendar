@@ -339,7 +339,6 @@ const actions = {
 		}
 
 		const firstCalendar = context.getters.sortedCalendars[0].id
-		console.log(mapCalendarJsToCalendarObject(calendar, firstCalendar))
 		return Promise.resolve(mapCalendarJsToCalendarObject(calendar, firstCalendar))
 	},
 

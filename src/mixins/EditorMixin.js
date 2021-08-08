@@ -67,6 +67,7 @@ export default {
 			initialCalendarsLoaded: (state) => state.calendars.initialCalendarsLoaded,
 			calendarObject: (state) => state.calendarObjectInstance.calendarObject,
 			calendarObjectInstance: (state) => state.calendarObjectInstance.calendarObjectInstance,
+			isTask: (state) => state.calendarObjectInstance.isTask,
 		}),
 		eventComponent() {
 			return this.calendarObjectInstance?.eventComponent
@@ -134,14 +135,6 @@ export default {
 		 */
 		isAllDay() {
 			return this.calendarObjectInstance?.isAllDay ?? false
-		},
-		/**
-		 * Returns whether or not the current calendar object is a task or an event
-		 *
-		 * @returns {boolean}
-		 */
-		isTask() {
-			return this.calendarObject?.isTodo ?? true
 		},
 		/**
 		 * Returns whether the current calendar object is a new or existing object
@@ -577,12 +570,11 @@ export default {
 		 * Toggles the calendar object between task and event
 		 */
 		async toggleTask() {
-			const isTask = this.isTask
-			const calendarObject = this.calendarObjectInstance
-			// Maybe use isTask as a flag and make desired behavior in save()
-			await this.deleteAndLeave()
-			console.log(calendarObject)
-			console.log(this.calendarObject)
+			this.$store.commit('toggleTask', {
+				calendarObjectInstance: this.calendarObjectInstance,
+			})
+			// // Maybe use isTask as a flag and make desired behavior in save()
+			// await this.deleteAndLeave()
 		},
 		/**
 		 * Resets the internal state after changing the viewed calendar-object

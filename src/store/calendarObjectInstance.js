@@ -50,6 +50,7 @@ import settings from './settings.js'
 
 const state = {
 	isNew: null,
+	isTask: true,
 	calendarObject: null,
 	calendarObjectInstance: null,
 	existingEvent: {
@@ -271,6 +272,16 @@ const mutations = {
 		} else {
 			calendarObjectInstance.eventComponent.endDate.addDuration(DurationValue.fromSeconds(60 * 60 * 24))
 		}
+	},
+	/**
+	 * Switch from a task to an event and vice versa
+	 *
+	 * @param {Object} state The Vuex state
+	 * @param {Object} data The destructuring object
+	 * @param {Object} data.calendarObjectInstance The calendarObjectInstance object
+	 */
+	toggleTask(state, { calendarObjectInstance }) {
+		state.isTask = !state.isTask
 	},
 
 	/**

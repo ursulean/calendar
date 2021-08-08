@@ -94,6 +94,12 @@
 				@updateEndDate="updateEndDate"
 				@updateEndTimezone="updateEndTimezone"
 				@toggleAllDay="toggleAllDay" />
+
+			<PropertyTaskToggle
+				:is-read-only="isReadOnly"
+				:is-task="isTask"
+				:is-new-entry="isNewEntry"
+				@toggleTask="toggleTask" />
 		</template>
 
 		<AppSidebarTab
@@ -243,6 +249,7 @@ import PropertyCalendarPicker from '../components/Editor/Properties/PropertyCale
 import PropertySelect from '../components/Editor/Properties/PropertySelect'
 import PropertyText from '../components/Editor/Properties/PropertyText'
 import PropertyTitleTimePicker from '../components/Editor/Properties/PropertyTitleTimePicker'
+import PropertyTaskToggle from '../components/Editor/Properties/PropertyTaskToggle.vue'
 import Repeat from '../components/Editor/Repeat/Repeat.vue'
 
 import EditorMixin from '../mixins/EditorMixin'
@@ -270,6 +277,7 @@ export default {
 		PropertySelect,
 		PropertyText,
 		PropertyTitleTimePicker,
+		PropertyTaskToggle,
 		Repeat,
 	},
 	mixins: [

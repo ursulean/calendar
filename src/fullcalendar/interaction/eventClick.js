@@ -41,14 +41,14 @@ import DateTimeValue from 'calendar-js/src/values/dateTimeValue.js'
  * @returns {Function}
  */
 export default function(store, router, route, window) {
-	return function({ event }) {
+	return function({ event, jsEvent }) {
 		switch (event.extendedProps.objectType) {
 		case 'VEVENT':
 			handleEventClick(event, store, router, route, window)
 			break
 
 		case 'VTODO':
-			handleToDoClick(event, store, route, window)
+			handleToDoClick(event, store, router, route, window, jsEvent)
 			break
 		}
 	}
@@ -96,9 +96,18 @@ function handleEventClick(event, store, router, route, window) {
  * @param {Object} route The current Vue route
  * @param {Window} window The window object
  */
-function handleToDoClick(event, store, route, window) {
+function handleToDoClick(event, store, router, route, window, jsEvent) {
+	isCheckboxClick(jsEvent) ? toggleCompleted(event, store) : handleEventClick(event, store, router, route, window)
+}
+
+function isCheckboxClick(jsEvent){
+	return jsEvent.path[0].className.indexOf('checkbox') != -1
+}
+
+function toggleCompleted(event, store) {
 	getComponent(event, store).then(({calendarObject, todo}) => {
-		toggleCompleted(todo)
+		
+		todo.percent == 100 ? uncheck(todo) : check(todo)
 
 		store.dispatch('updateCalendarObject', {
 			calendarObject,
@@ -130,10 +139,6 @@ async function getComponent(event, store) {
 		calendarObject: calendarObject,
 		todo: calendarComponent,
 	})
-}
-
-function toggleCompleted(todo) {
-	todo.percent == 100 ? uncheck(todo) : check(todo)
 }
 
 function check(todo) {

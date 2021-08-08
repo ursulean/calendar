@@ -92,14 +92,11 @@ function convert(calendarComponent, newclass, newname, propMap){
 	const components = Array.from(calendarComponent.getVObjectIterator())
 
 	for (const comp of components) {
-		console.log(comp)
 		if (!newclass.prototype.isPrototypeOf(comp)) {
 			calendarComponent.deleteComponent(comp)
 			const converted = convertVObject(comp, newclass, newname, propMap)
 			calendarComponent.addComponent(converted)
-			console.log(converted)
 		}
-		console.log(' ')
 	}
 }
 

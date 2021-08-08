@@ -31,7 +31,9 @@ import {
 	getTimezoneManager,
 } from 'calendar-js'
 
-import createTask from '../utils/tasks'
+import { createTask } from '../utils/tasks'
+import { convertToToDoPlus, isToDoComponent } from '../utils/tasks'
+
 
 const state = {
 	calendarObjects: {},
@@ -104,6 +106,7 @@ const mutations = {
 
 		const itemIterator = parser.getItemIterator()
 		const firstVCalendar = itemIterator.next().value
+		if (isToDoComponent(firstVCalendar)) { convertToToDoPlus(firstVCalendar) }
 		if (firstVCalendar) {
 			calendarObject.calendarComponent = firstVCalendar
 		}
@@ -314,7 +317,7 @@ const actions = {
 	 * @param {Boolean} data.isAllDay foo
 	 * @returns {Promise<CalendarObject>}
 	 */
-	createNewEvent(context, { start, end, timezoneId, isAllDay }) {
+	createNewEvent(context, { start, end, timezoneId, isAllDay, isTask }) {
 		const timezoneManager = getTimezoneManager()
 		const timezone = timezoneManager.getTimezoneForId(timezoneId)
 
@@ -333,7 +336,7 @@ const actions = {
 			endDateTime.isDate = true
 		}
 
-		const calendar = isAllDay ? createTask(startDateTime) : createEvent(startDateTime, endDateTime)
+		const calendar = isTask ? createTask(startDateTime) : createEvent(startDateTime, endDateTime)
 		for (const vObject of calendar.getVObjectIterator()) {
 			vObject.undirtify()
 		}

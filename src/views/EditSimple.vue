@@ -174,6 +174,7 @@ export default {
 			hasLocation: false,
 			hasDescription: false,
 			boundaryElement: document.querySelector('#app-content > .fc'),
+			lastHighlightedElement: null,
 		}
 	},
 	watch: {
@@ -232,11 +233,17 @@ export default {
 			let matchingDomObject
 
 			if (isNew) {
-				matchingDomObject = document.querySelector('.fc-highlight')
+				matchingDomObject = document.querySelector('.fc-highlight')?.parentElement?.parentElement?.parentElement
 				this.placement = 'auto'
 
 				if (!matchingDomObject) {
-					matchingDomObject = document.querySelector(`.fc-event[data-is-new="yes"]`)
+					matchingDomObject = document.querySelector(`.fc-event[data-is-new="yes"]`)?.parentElement
+				}
+
+				if (!matchingDomObject) {
+					matchingDomObject = this.lastHighlightedElement
+				} else {
+					this.lastHighlightedElement = matchingDomObject
 				}
 			} else {
 				const objectId = route.params.object

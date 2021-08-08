@@ -61,13 +61,13 @@ export default {
 	},
 	computed: {
 		...mapGetters({
+			isTask: 'isTask',
 			currentUserTimezone: 'getResolvedTimezone',
 		}),
 		...mapState({
 			initialCalendarsLoaded: (state) => state.calendars.initialCalendarsLoaded,
 			calendarObject: (state) => state.calendarObjectInstance.calendarObject,
 			calendarObjectInstance: (state) => state.calendarObjectInstance.calendarObjectInstance,
-			isTask: (state) => state.calendarObjectInstance.isTask,
 		}),
 		eventComponent() {
 			return this.calendarObjectInstance?.eventComponent
@@ -570,8 +570,8 @@ export default {
 		 * Toggles the calendar object between task and event
 		 */
 		async toggleTask() {
-			this.$store.commit('toggleTask', {
-				calendarObjectInstance: this.calendarObjectInstance,
+			this.$store.dispatch('toggleTask', {
+				calendarObject: this.calendarObject,
 			})
 			// // Maybe use isTask as a flag and make desired behavior in save()
 			// await this.deleteAndLeave()
@@ -624,11 +624,10 @@ export default {
 				const start = parseInt(to.params.dtstart, 10)
 				const end = parseInt(to.params.dtend, 10)
 				const timezoneId = vm.$store.getters.getResolvedTimezone
-				const isTask = vm.calendarObject?.isTodo ?? true
 
 				try {
 					await vm.loadingCalendars()
-					await vm.$store.dispatch('getCalendarObjectInstanceForNewEvent', { isAllDay, start, end, timezoneId, isTask })
+					await vm.$store.dispatch('getCalendarObjectInstanceForNewEvent', { isAllDay, start, end, timezoneId })
 					vm.calendarId = vm.calendarObject.calendarId
 				} catch (error) {
 					console.debug(error)

@@ -48,9 +48,12 @@ import { getObjectAtRecurrenceId } from '../utils/calendarObject.js'
 import logger from '../utils/logger.js'
 import settings from './settings.js'
 
+import { convertToToDoPlus, convertToEvent } from '../utils/tasks'
+import { mapCalendarJsToCalendarObject } from '../models/calendarObject'
+
 const state = {
 	isNew: null,
-	isTask: true,
+	isTaskDefault: true,
 	calendarObject: null,
 	calendarObjectInstance: null,
 	existingEvent: {
@@ -280,8 +283,8 @@ const mutations = {
 	 * @param {Object} data The destructuring object
 	 * @param {Object} data.calendarObjectInstance The calendarObjectInstance object
 	 */
-	toggleTask(state, { calendarObjectInstance }) {
-		state.isTask = !state.isTask
+	toggleTask(state) {
+		state.isTaskDefault = !state.isTaskDefault
 	},
 
 	/**
@@ -1338,7 +1341,15 @@ const mutations = {
 	},
 }
 
-const getters = {}
+const getters = {
+	/**
+	 * Gets the current object's isTask, with isTaskDefault as fallback
+	 *
+	 * @param {Object} state The store data
+	 * @returns {Boolean}
+	 */
+	 isTask: state => state.calendarObject?.isTodo ?? state.isTaskDefault,
+}
 
 const actions = {
 
@@ -1438,7 +1449,7 @@ const actions = {
 			})
 		}
 
-		const calendarObject = await dispatch('createNewEvent', { start, end, isAllDay, timezoneId })
+		const calendarObject = await dispatch('createNewEvent', { start, end, isAllDay, timezoneId, isTask: state.isTaskDefault })
 		const startDate = new Date(start * 1000)
 		const eventComponent = getObjectAtRecurrenceId(calendarObject, startDate)
 		const calendarObjectInstance = mapEventComponentToEventObject(eventComponent)
@@ -1906,6 +1917,19 @@ const actions = {
 
 			commit('changeTimeToDefaultForTimedEvents', { calendarObjectInstance })
 		}
+	},
+	toggleTask({ state, commit, getters }, { calendarObject }) {
+		const calendarComponent = calendarObject.calendarComponent
+		
+		state.isTaskDefault ? convertToEvent(calendarComponent) : convertToToDoPlus(calendarComponent)
+		const eventComponent = calendarComponent.getVObjectIterator().next().value
+
+		commit('setCalendarObjectInstanceForNewEvent', {
+			calendarObject: mapCalendarJsToCalendarObject(calendarComponent, calendarObject.calendarId),
+			calendarObjectInstance: mapEventComponentToEventObject(eventComponent)
+		})
+
+		commit('toggleTask')
 	},
 }
 

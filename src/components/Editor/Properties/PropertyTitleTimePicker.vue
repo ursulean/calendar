@@ -38,6 +38,7 @@
 				@changeTimezone="changeStartTimezone" />
 
 			<DatePicker
+				v-show="!isTask"
 				:date="endDate"
 				:has-timezone="true"
 				:timezone-id="endTimezone"
@@ -139,6 +140,13 @@ export default {
 		 * Whether or not the event is all-day
 		 */
 		isAllDay: {
+			type: Boolean,
+			required: true,
+		},
+		/**
+		 * Whether or not it is a task or an event
+		 */
+		isTask: {
 			type: Boolean,
 			required: true,
 		},

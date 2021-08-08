@@ -85,6 +85,7 @@
 				:end-date="endDate"
 				:end-timezone="endTimezone"
 				:is-all-day="isAllDay"
+				:is-task="isTask"
 				:is-read-only="isReadOnly"
 				:can-modify-all-day="canModifyAllDay"
 				:user-timezone="currentUserTimezone"

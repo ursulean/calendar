@@ -60,7 +60,9 @@
 						{{ $t('calendar', 'Show more details') }}
 					</ActionButton>
 				</Actions>
-				<Actions>
+				<Actions
+					v-shortkey="['esc']"
+					@shortkey.native="cancel">
 					<ActionButton
 						icon="icon-close"
 						@click="cancel">
@@ -235,7 +237,6 @@ export default {
 			if (isNew) {
 				matchingDomObject = document.querySelector('.fc-highlight')//?.parentElement?.parentElement?.parentElement
 				this.placement = 'auto'
-				console.log(matchingDomObject)
 
 				if (!matchingDomObject) {
 					matchingDomObject = document.querySelector('.fc-event[data-is-new="yes"]')//?.parentElement
@@ -268,7 +269,6 @@ export default {
 		},
 	},
 	beforeRouteUpdate(to, from, next) {
-		console.log('route_update')
 		const isNew = to.name === 'NewPopoverView'
 		this.$refs.popover
 			.$children[0]

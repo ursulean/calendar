@@ -237,7 +237,7 @@ export default {
 				this.placement = 'auto'
 
 				if (!matchingDomObject) {
-					matchingDomObject = document.querySelector(`.fc-event[data-is-new="yes"]`)?.parentElement
+					matchingDomObject = document.querySelector('.fc-event[data-is-new="yes"]')?.parentElement
 				}
 
 				if (!matchingDomObject) {
@@ -249,7 +249,7 @@ export default {
 				const objectId = route.params.object
 				const recurrenceId = route.params.recurrenceId
 
-				matchingDomObject = document.querySelector(`.fc-event[data-object-id="${objectId}"][data-recurrence-id="${recurrenceId}"]`)
+				matchingDomObject = document.querySelector('.fc-event[data-object-id="${objectId}"][data-recurrence-id="${recurrenceId}"]')
 				this.placement = 'auto'
 			}
 

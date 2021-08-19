@@ -142,7 +142,7 @@ export default {
 				lazyFetching: false,
 				nowIndicator: true,
 				progressiveEventRendering: true,
-				unselectAuto: true,
+				unselectAuto: false,
 				// Timezones:
 				timeZone: this.timezoneId,
 			}

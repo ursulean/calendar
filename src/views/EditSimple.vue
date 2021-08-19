@@ -233,18 +233,19 @@ export default {
 			let matchingDomObject
 
 			if (isNew) {
-				matchingDomObject = document.querySelector('.fc-highlight')?.parentElement?.parentElement?.parentElement
+				matchingDomObject = document.querySelector('.fc-highlight')//?.parentElement?.parentElement?.parentElement
 				this.placement = 'auto'
+				console.log(matchingDomObject)
 
 				if (!matchingDomObject) {
-					matchingDomObject = document.querySelector('.fc-event[data-is-new="yes"]')?.parentElement
+					matchingDomObject = document.querySelector('.fc-event[data-is-new="yes"]')//?.parentElement
 				}
 
-				if (!matchingDomObject) {
-					matchingDomObject = this.lastHighlightedElement
-				} else {
-					this.lastHighlightedElement = matchingDomObject
-				}
+				// if (!matchingDomObject) {
+				// 	matchingDomObject = this.lastHighlightedElement
+				// } else {
+				// 	this.lastHighlightedElement = matchingDomObject
+				// }
 			} else {
 				const objectId = route.params.object
 				const recurrenceId = route.params.recurrenceId
@@ -267,6 +268,7 @@ export default {
 		},
 	},
 	beforeRouteUpdate(to, from, next) {
+		console.log('route_update')
 		const isNew = to.name === 'NewPopoverView'
 		this.$refs.popover
 			.$children[0]

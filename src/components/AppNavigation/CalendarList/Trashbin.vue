@@ -29,55 +29,72 @@
 				@close="showModal = false">
 				<div class="modal__content">
 					<h2>{{ t('calendar', 'Trash bin') }}</h2>
-					<span v-if="!items.length">{{ t('calendar', 'You do not have any deleted calendars or events') }}</span>
-					<table v-else>
-						<tr>
-							<th class="name">
-								{{ t('calendar', 'Name') }}
-							</th>
-							<th class="deletedAt">
-								{{ t('calendar', 'Deleted') }}
-							</th>
-							<th>&nbsp;</th>
-						</tr>
-						<tr v-for="item in items" :key="item.url">
-							<td>
-								<div class="item">
-									<div>
-										<div
-											class="color-dot"
-											:style="{ 'background-color': item.color }" />
-									</div>
+					<EmptyContent
+						v-if="loading"
+						icon="icon-loading"
+						class="modal__content__loading">
+						<template #desc>
+							{{ t('calendar', 'Loading deleted elements.') }}
+						</template>
+					</EmptyContent>
+					<EmptyContent
+						v-else-if="!items.length"
+						class="modal__content__empty"
+						icon="icon-delete">
+						<template #desc>
+							{{ t('calendar', 'You do not have any deleted elements.') }}
+						</template>
+					</EmptyContent>
+					<template v-else>
+						<table>
+							<tr>
+								<th class="name">
+									{{ t('calendar', 'Name') }}
+								</th>
+								<th class="deletedAt">
+									{{ t('calendar', 'Deleted') }}
+								</th>
+								<th>&nbsp;</th>
+							</tr>
+							<tr v-for="item in items" :key="item.url">
+								<td>
+									<div class="item">
+										<div>
+											<div
+												class="color-dot"
+												:style="{ 'background-color': item.color }" />
+										</div>
 
-									<div>
-										<div>{{ item.name }}</div>
-										<div v-if="item.subline" class="item-subline">
-											{{ item.subline }}
+										<div>
+											<div>{{ item.name }}</div>
+											<div v-if="item.subline" class="item-subline">
+												{{ item.subline }}
+											</div>
 										</div>
 									</div>
-								</div>
-							</td>
-							<td class="deletedAt">
-								<Moment class="timestamp" :timestamp="item.deletedAt" />
-							</td>
-							<td>
-								<button @click="restore(item)">
-									{{ t('calendar','Restore') }}
-								</button>
+								</td>
+								<td class="deletedAt">
+									<Moment class="timestamp" :timestamp="item.deletedAt" />
+								</td>
+								<td>
+									<button @click="restore(item)">
+										{{ t('calendar','Restore') }}
+									</button>
 
-								<Actions :force-menu="true">
-									<ActionButton
-										icon="icon-delete"
-										@click="onDeletePermanently(item)">
-										{{ t('calendar','Delete permanently') }}
-									</ActionButton>
-								</Actions>
-							</td>
-						</tr>
-					</table>
-					<p v-if="retentionDuration" class="footer">
-						{{ n('calendar', 'Elements in the trash bin are deleted after {numDays} day', 'Elements in the trash bin are deleted after {numDays} days', retentionDuration, { numDays: retentionDuration }) }}
-					</p>
+									<Actions :force-menu="true">
+										<ActionButton
+											icon="icon-delete"
+											@click="onDeletePermanently(item)">
+											{{ t('calendar','Delete permanently') }}
+										</ActionButton>
+									</Actions>
+								</td>
+							</tr>
+						</table>
+						<p v-if="retentionDuration" class="footer">
+							{{ n('calendar', 'Elements in the trash bin are deleted after {numDays} day', 'Elements in the trash bin are deleted after {numDays} days', retentionDuration, { numDays: retentionDuration }) }}
+						</p>
+					</template>
 				</div>
 			</Modal>
 		</template>
@@ -89,6 +106,7 @@ import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
+import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import moment from '@nextcloud/moment'
 import logger from '../../../utils/logger'
 import { showError } from '@nextcloud/dialogs'
@@ -100,6 +118,7 @@ export default {
 	name: 'Trashbin',
 	components: {
 		AppNavigationItem,
+		EmptyContent,
 		Modal,
 		Moment,
 		Actions,
@@ -108,6 +127,7 @@ export default {
 	data() {
 		return {
 			showModal: false,
+			loading: true,
 		}
 	},
 	computed: {
@@ -131,10 +151,9 @@ export default {
 				color: calendar.color ?? uidToHexColor(calendar.displayname),
 			}))
 			const formattedCalendarObjects = this.objects.map(vobject => {
-				let eventSummary = t('calendar', 'Untitled event')
+				let eventSummary = t('calendar', 'Untitled element')
 				try {
-					// TODO: there _has to be_ a less error prone way …
-					eventSummary = vobject.calendarComponent?._components?.get('VEVENT')[0]?._properties?.get('SUMMARY')[0]?.value
+					eventSummary = vobject?.calendarComponent.getComponentIterator().next().value?.title
 				} catch (e) {
 					// ignore
 				}
@@ -162,7 +181,7 @@ export default {
 				}
 			})
 
-			return formattedCalendars.concat(formattedCalendarObjects)
+			return formattedCalendars.concat(formattedCalendarObjects).sort((item1, item2) => item2.deletedAt - item1.deletedAt)
 		},
 		retentionDuration() {
 			return Math.ceil(
@@ -174,6 +193,7 @@ export default {
 		async onShow() {
 			this.showModal = true
 
+			this.loading = true
 			try {
 				await Promise.all([
 					this.$store.dispatch('loadDeletedCalendars'),
@@ -191,6 +211,7 @@ export default {
 
 				showError(t('calendar', 'Could not load deleted calendars and objects'))
 			}
+			this.loading = false
 		},
 		async onDeletePermanently(item) {
 			logger.debug('deleting ' + item.url + ' permanently', item)
@@ -235,6 +256,15 @@ export default {
 .modal__content {
 	max-width: 40vw;
 	margin: 2vw;
+
+	&__loading,
+	&__empty {
+		margin-top: 25px !important;
+	}
+}
+::v-deep .modal-wrapper .modal-container {
+	overflow-y: auto;
+	overflow-x: auto;
 }
 table {
 	width: 100%;

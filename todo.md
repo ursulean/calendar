@@ -1,21 +1,22 @@
 ## Requirements
 
-* ✔️ Create new todo from calendar
-  * ✔️ Checkbox in edit to make event vs todo
-* ✔️ Mark off todo from calendar
-* ✔️ Automatic alarm (already implemented by NC)
-* ✔️ ToDoComponent compatibility
-* Recurrence for ToDos
-* Task rollover
-  * Easy fix: Push due date to sunday on week rollover
-  * Harder: Reset due date, implement place to drag and drop unplanned todos
+- [x] Create new todo from calendar
+  - [x] Checkbox in edit to make event vs todo
+- [x] Mark off todo from calendar
+- [x] Automatic alarm (already implemented by NC)
+- [x] ToDoComponent compatibility
+- [ ] Recurrence for ToDos
+- [ ] Task rollover
+  - [ ] Easy fix: Push due date to sunday on week rollover
+  - [ ] Harder: Reset due date, implement place to drag and drop unplanned todos
 
 ### Low priority
 
-* Press enter to submit form
-* Automatically highlight textbox in editor
-* Change 'enter event', 'enter task' placeholder per checkbox
-* Make bridging object between Event and Todo, convert in mapCDavObjectToCalendarObject
+- [x] Press enter to submit form
+- [x] Automatically highlight textbox in editor
+- [x] Esc to escape event
+- [x] Change 'enter event', 'enter task' placeholder per checkbox
+- [ ] Make bridging object between Event and Todo, convert in mapCDavObjectToCalendarObject
 
 
 ### Notes

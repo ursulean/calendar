@@ -340,6 +340,10 @@ export default {
 
 			return false
 		},
+		titlePlaceholder() {
+			const placeholderText = this.isTask ? 'Task title' : 'Event title'
+			return this.$t('calendar', placeholderText)
+		},
 	},
 	methods: {
 		/**
@@ -680,6 +684,7 @@ export default {
 	 */
 	async beforeRouteUpdate(to, from, next) {
 		// If we are in the New Event dialog, we want to update the selected time
+		console.log('beforeRouteUpdateMixing')
 		if (to.name === 'NewSidebarView' || to.name === 'NewPopoverView') {
 			// If allDay, dtstart and dtend are the same there is no need to update.
 			// This is usally the case when navigating through the calendar while the editor is open

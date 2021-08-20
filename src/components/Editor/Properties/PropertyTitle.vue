@@ -29,7 +29,7 @@
 				v-if="!isReadOnly"
 				type="text"
 				ref="eventTitleTextBox"
-				:placeholder="$t('calendar', 'Event title')"
+				:placeholder="placeholder"
 				:value="value"
 				@input.prevent.stop="changeValue"
 				@keyup.enter.stop="emitEnter"
@@ -46,6 +46,10 @@ export default {
 	props: {
 		isReadOnly: {
 			type: Boolean,
+			required: true,
+		},
+		placeholder: {
+			type: String,
 			required: true,
 		},
 		value: {

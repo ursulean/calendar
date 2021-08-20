@@ -84,6 +84,7 @@
 			<PropertyTitle
 				:value="title"
 				:is-read-only="isReadOnly"
+				:placeholder="titlePlaceholder"
 				@update:value="updateTitle" 
 				@enterKeyPress="saveAndLeave(false)"
 				@escKeyPress="cancel"/>

@@ -68,6 +68,12 @@
 						@click="cancel">
 						{{ $t('calendar', 'Close') }}
 					</ActionButton>
+					<ActionButton
+						v-if="!isNew"
+						icon="icon-delete"
+						@click="deleteAndLeave(false)">
+						{{ $t('calendar', 'Delete') }}
+					</ActionButton>
 				</Actions>
 			</div>
 
@@ -184,6 +190,8 @@ export default {
 	watch: {
 		eventComponent() {
 			const isNew = this.$route.name === 'NewPopoverView'
+			console.log('watch eventComponent')
+
 			this.$refs.popover
 				.$children[0]
 				.$refs.trigger = this.getDomElementForPopover(isNew, this.$route)
@@ -212,6 +220,8 @@ export default {
 			// V3 of V-Tooltip will have a prop to define the reference element for popper.js
 			// For now we have to stick to this ugly hack
 			// https://github.com/Akryum/v-tooltip/issues/60
+			console.log('mounted')
+
 			this.$refs.popover
 				.$children[0]
 				.$refs.trigger = this.getDomElementForPopover(isNew, this.$route)
@@ -271,6 +281,7 @@ export default {
 		},
 	},
 	beforeRouteUpdate(to, from, next) {
+		console.log('beforeRouteUpdate')
 		const isNew = to.name === 'NewPopoverView'
 		this.$refs.popover
 			.$children[0]

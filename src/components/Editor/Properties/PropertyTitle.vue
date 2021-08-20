@@ -30,7 +30,9 @@
 				type="text"
 				:placeholder="$t('calendar', 'Event title')"
 				:value="value"
-				@input.prevent.stop="changeValue">
+				@input.prevent.stop="changeValue"
+				@keyup.enter.stop="emitEnter"
+				@keyup.esc.stop="emitEsc">
 			<!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
 			<div v-else>{{ value }}</div>
 		</div>
@@ -53,6 +55,12 @@ export default {
 	methods: {
 		changeValue(event) {
 			this.$emit('update:value', event.target.value)
+		},
+		emitEnter(event) {
+			this.$emit('enterKeyPress')
+		},
+		emitEsc(event) {
+			this.$emit('escKeyPress')
 		},
 	},
 }

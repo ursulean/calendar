@@ -78,7 +78,9 @@
 			<PropertyTitle
 				:value="title"
 				:is-read-only="isReadOnly"
-				@update:value="updateTitle" />
+				@update:value="updateTitle" 
+				@enterKeyPress="saveAndLeave(false)"
+				@escKeyPress="cancel"/>
 
 			<PropertyCalendarPicker
 				v-if="showCalendarPicker"

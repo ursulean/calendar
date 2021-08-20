@@ -107,6 +107,7 @@ const mapEventComponentToEventObject = (eventComponent) => {
 		isMasterItem: eventComponent.isMasterItem(),
 		isRecurrenceException: eventComponent.isRecurrenceException(),
 		canCreateRecurrenceException: eventComponent.canCreateRecurrenceExceptions(),
+		isScheduled: eventComponent.endDate !== null,
 	})
 
 	/**
@@ -116,17 +117,19 @@ const mapEventComponentToEventObject = (eventComponent) => {
 	 * That's why, when an event is all-day from 2019-10-03 to 2019-10-04,
 	 * it will be displayed as 2019-10-03 to 2019-10-03 in the editor.
 	 */
-	eventObject.startDate = getDateFromDateTimeValue(eventComponent.startDate)
-	eventObject.startTimezoneId = eventComponent.startDate.timezoneId
+	if (eventObject.isScheduled){
+		eventObject.startDate = getDateFromDateTimeValue(eventComponent.startDate)
+		eventObject.startTimezoneId = eventComponent.startDate.timezoneId
 
-	if (eventComponent.isAllDay()) {
-		const endDate = eventComponent.endDate.clone()
-		endDate.addDuration(DurationValue.fromSeconds(-1 * 60 * 60 * 24))
-		eventObject.endDate = getDateFromDateTimeValue(endDate)
-	} else {
-		eventObject.endDate = getDateFromDateTimeValue(eventComponent.endDate)
+		if (eventComponent.isAllDay()) {
+			const endDate = eventComponent.endDate.clone()
+			endDate.addDuration(DurationValue.fromSeconds(-1 * 60 * 60 * 24))
+			eventObject.endDate = getDateFromDateTimeValue(endDate)
+		} else {
+			eventObject.endDate = getDateFromDateTimeValue(eventComponent.endDate)
+		}
+		eventObject.endTimezoneId = eventComponent.endDate.timezoneId
 	}
-	eventObject.endTimezoneId = eventComponent.endDate.timezoneId
 
 	/**
 	 * Extract organizer if there is any

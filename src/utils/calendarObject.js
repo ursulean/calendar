@@ -30,6 +30,9 @@ import DateTimeValue from 'calendar-js/src/values/dateTimeValue.js'
  * @returns {Array}
  */
 const getAllObjectsInTimeRange = (calendarObject, start, end) => {
+	if (!calendarObject.isScheduled) {
+		return []
+	}
 	const iterator = calendarObject.calendarComponent.getVObjectIterator()
 	const firstVObject = iterator.next().value
 	if (!firstVObject) {
@@ -54,6 +57,8 @@ const getObjectAtRecurrenceId = (calendarObject, recurrenceId) => {
 	if (!firstVObject) {
 		return null
 	}
+
+	if (!recurrenceId || isNaN(recurrenceId.valueOf())){ return firstVObject.recurrenceManager.masterItem }
 
 	const d = DateTimeValue.fromJSDate(recurrenceId, true)
 	return firstVObject.recurrenceManager.getOccurrenceAtExactly(d)

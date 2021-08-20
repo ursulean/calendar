@@ -58,7 +58,6 @@ export default function(store, router, route, window) {
 			return
 		}
 
-		console.log('mounted_pre')
 		router.push({ name, params })
 	}
 }

@@ -43,6 +43,8 @@ const getDefaultCalendarObjectObject = (props = {}) => Object.assign({}, {
 	dav: null,
 	// The parsed calendar-js object
 	calendarComponent: null,
+	// Calendar Object Title
+	title: null,
 	// The uid of the calendar-object
 	uid: null,
 	// The uri of the calendar-object
@@ -57,6 +59,8 @@ const getDefaultCalendarObjectObject = (props = {}) => Object.assign({}, {
 	isTodo: false,
 	// Whether or not the calendar-object exists on the server
 	existsOnServer: false,
+	// Whether the task is scheduled. Default true for events
+	isScheduled: false,
 }, props)
 
 /**
@@ -99,6 +103,8 @@ const mapCDavObjectToCalendarObject = (dav, calendarId) => {
 		isJournal: firstVObject.name === COMPONENT_NAME_JOURNAL,
 		isTodo: firstVObject.name === COMPONENT_NAME_VTODO,
 		existsOnServer: true,
+		isScheduled: firstVObject?.isScheduled ?? true,
+		title:firstVObject.title,
 	})
 }
 
@@ -124,6 +130,8 @@ const mapCalendarJsToCalendarObject = (calendarComponent, calendarId = null) => 
 		isEvent: firstVObject.name === COMPONENT_NAME_EVENT,
 		isJournal: firstVObject.name === COMPONENT_NAME_JOURNAL,
 		isTodo: firstVObject.name === COMPONENT_NAME_VTODO,
+		isScheduled: firstVObject?.isScheduled ?? true,
+		title:firstVObject.title,
 	})
 }
 

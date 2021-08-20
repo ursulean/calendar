@@ -19,14 +19,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-import {
-	getPrefixedRoute,
-	isPublicOrEmbeddedRoute,
-} from '../../utils/router'
-import { generateUrl } from '@nextcloud/router'
-import { translate as t } from '@nextcloud/l10n'
-import { showInfo } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
+import { getPrefixedRoute } from '../../utils/router'
 import { getObjectAtRecurrenceId } from '../../utils/calendarObject.js'
 import DateTimeValue from 'calendar-js/src/values/dateTimeValue.js'
 
@@ -48,7 +41,7 @@ export default function(store, router, route, window) {
 			break
 
 		case 'VTODO':
-			handleToDoClick(event, store, router, route, window, jsEvent)
+			isCheckboxClick(jsEvent) ? toggleCompleted(event, store) : handleEventClick(event, store, router, route, window)
 			break
 		}
 	}
@@ -88,18 +81,6 @@ function handleEventClick(event, store, router, route, window) {
 	router.push({ name, params })
 }
 
-/**
- * Handle eventClick for VTODO
- *
- * @param {EventDef} event FullCalendar event
- * @param {Object} store The Vuex store
- * @param {Object} route The current Vue route
- * @param {Window} window The window object
- */
-function handleToDoClick(event, store, router, route, window, jsEvent) {
-	isCheckboxClick(jsEvent) ? toggleCompleted(event, store) : handleEventClick(event, store, router, route, window)
-}
-
 function isCheckboxClick(jsEvent){
 	return jsEvent.path[0].className.indexOf('checkbox') != -1
 }
@@ -118,9 +99,6 @@ function toggleCompleted(event, store) {
 
 async function getComponent(event, store) {
 	const objectId = event.extendedProps.objectId
-	const recurrenceId = event.extendedProps.recurrenceId
-	const recurrenceIdDate = new Date(recurrenceId * 1000)
-
 	let calendarObject
 	try {
 		calendarObject = await store.dispatch('getEventByObjectId', { objectId })
@@ -128,6 +106,11 @@ async function getComponent(event, store) {
 		console.debug(error)
 		return
 	}
+	
+	const recurrenceId = event.extendedProps.recurrenceId
+	const recurrenceIdDate = recurrenceId ? new Date(recurrenceId * 1000) : null
+	// console.log(event, recurrenceId, recurrenceIdDate)
+
 	// calendarObject = store.state.calendarObjects.calendarObjects[event.extendedProps.objectId]
 
 	const calendarComponent = getObjectAtRecurrenceId(calendarObject, recurrenceIdDate)

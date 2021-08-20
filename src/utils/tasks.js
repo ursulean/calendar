@@ -9,6 +9,28 @@ import DateTimeValue from 'calendar-js/src/values/dateTimeValue'
 
 class ToDoComponentPlus extends ToDoComponent {
 	/**
+	 * Gets the start date of the event
+	 *
+	 * @returns {DateTimeValue}
+	 */
+	get startDate() {
+		return this.isScheduled ? (this.getFirstPropertyFirstValue('dtstart') ?? this.endDate) : null
+	}
+
+	/**
+	 * Sets the start date of the event
+	 *
+	 * @param {DateTimeValue} start The new start-date to set
+	 */
+	set startDate(start) {
+		const oldStartDate = this.startDate
+		this.updatePropertyWithValue('dtstart', start)
+
+		if (this.isMasterItem()) {
+			this._recurrenceManager.updateStartDateOfMasterItem(start, oldStartDate)
+		}
+	}
+	/**
 	 * Gets the calculated end-date of the task
 	 *
 	 * If there is a due-date, we will just return that.
@@ -21,17 +43,7 @@ class ToDoComponentPlus extends ToDoComponent {
 	 * @returns {DateTimeValue|null}
 	 */
     get endDate() {
-		if (this.hasProperty('due')) {
-			return this.getFirstPropertyFirstValue('due')
-		}
-
-		if (!this.hasProperty('dtstart') || !this.hasProperty('duration')) {
-			return null
-		}
-
-		const endDate = this.startDate.clone()
-		endDate.addDuration(this.getFirstPropertyFirstValue('duration'))
-		return endDate
+		return this.getFirstPropertyFirstValue('due')
 	}
 
 	/**
@@ -41,8 +53,11 @@ class ToDoComponentPlus extends ToDoComponent {
 	 */
     set endDate(end) {
 		this.deleteAllProperties('duration')
-        if (end.isDate)
 		this.updatePropertyWithValue('due', end)
+	}
+
+	get isScheduled() {
+		return this.endDate !== null
 	}
 }
 const event2todo = new Map([

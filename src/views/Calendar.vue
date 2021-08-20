@@ -34,6 +34,9 @@
 					v-if="!loadingCalendars && isAuthenticatedUser"
 					:disabled="loadingCalendars" />
 				<Trashbin v-if="hasTrashBin" />
+				<!-- Unscheduled tasks column -->
+				<UnscheduledColumn
+					:loading-calendars="loadingCalendars"/>
 			</template>
 			<!-- Settings and import -->
 			<template #footer>
@@ -65,6 +68,7 @@ import CalendarList from '../components/AppNavigation/CalendarList.vue'
 import Settings from '../components/AppNavigation/Settings.vue'
 import CalendarListNew from '../components/AppNavigation/CalendarList/CalendarListNew.vue'
 import EmbedTopNavigation from '../components/AppNavigation/EmbedTopNavigation.vue'
+import UnscheduledColumn from '../components/AppNavigation/UnscheduledColumn.vue'
 import EmptyCalendar from '../components/EmptyCalendar.vue'
 import CalendarGrid from '../components/CalendarGrid.vue'
 
@@ -110,6 +114,7 @@ export default {
 		AppNavigationSpacer,
 		CalendarListNew,
 		Trashbin,
+		UnscheduledColumn,
 	},
 	data() {
 		return {

@@ -1,14 +1,20 @@
 ## Requirements
 
-- [x] Create new todo from calendar
-  - [x] Checkbox in edit to make event vs todo
-- [x] Mark off todo from calendar
+- [x] Create new task from calendar
+  - [x] Checkbox in edit to make event vs task
+- [x] Mark off task from calendar
 - [x] Automatic alarm (already implemented by NC)
 - [x] ToDoComponent compatibility
-- [ ] Recurrence for ToDos
 - [ ] Task rollover
-  - [ ] Easy fix: Push due date to sunday on week rollover
-  - [ ] Harder: Reset due date, implement place to drag and drop unplanned todos
+  - [ ] Easy fix: Push due date to sunday on week change
+  - [ ] Harder: Reset due date, implement place to drag and drop unplanned tasks
+    - [x] Fetching unscheduled tasks
+    - [ ] Figure out whether it matters if unscheduled tasks are completed
+    - [ ] Additional component in sidebar to render them in
+    - [ ] Drag and drop into calendar
+    - [ ] Drag from calendar into unscheduled, or make button to do it
+- [ ] Recurrence for tasks
+- [ ] Fix popover anchoring
 
 ### Low priority
 
@@ -25,3 +31,4 @@
 * Clicking another date while editor open: EditorMixin.beforeRouteUpdate
 * On both: setCalendarObjectInstanceForNewEvent
 * Popover is not attaching properly because FC event is being created twice
+* Event sources: calendarObject.js getAllObjectsInTimeRange -> calendars.js getEventsFromCalendarInTimeRange

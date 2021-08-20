@@ -28,6 +28,7 @@
 			<input
 				v-if="!isReadOnly"
 				type="text"
+				ref="eventTitleTextBox"
 				:placeholder="$t('calendar', 'Event title')"
 				:value="value"
 				@input.prevent.stop="changeValue"
@@ -51,6 +52,13 @@ export default {
 			type: String,
 			default: '',
 		},
+	},
+	mounted() {
+		this.$nextTick(function () {
+			const titleBox = this.$refs.eventTitleTextBox
+			// Ugly workaround due to v-if delaying input field render
+			setTimeout(function() { titleBox.focus() }, 100);
+		})
 	},
 	methods: {
 		changeValue(event) {

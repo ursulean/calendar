@@ -137,17 +137,24 @@ function convertToEvent(calendarComponent) {
 	convert(calendarComponent, EventComponent, "VEVENT", todo2event)
 }
 
-function createTask(date) {
+function createTask(date, title=null) {
     const calendar = CalendarComponent.fromEmpty()
     const todoComponent = new ToDoComponentPlus('VTODO')
-    
+
     todoComponent.updatePropertyWithValue('CREATED', DateTimeValue.fromJSDate(dateFactory(), true))
     todoComponent.updatePropertyWithValue('DTSTAMP', DateTimeValue.fromJSDate(dateFactory(), true))
     todoComponent.updatePropertyWithValue('LAST-MODIFIED', DateTimeValue.fromJSDate(dateFactory(), true))
     todoComponent.updatePropertyWithValue('SEQUENCE', 0)
     todoComponent.updatePropertyWithValue('UID', uuid())
-    todoComponent.updatePropertyWithValue('DTSTART', date)
-    todoComponent.updatePropertyWithValue('DUE', date)
+
+	if (title){
+		todoComponent.updatePropertyWithValue('SUMMARY', title)
+	}
+    
+	if (date){
+		todoComponent.updatePropertyWithValue('DTSTART', date)
+		todoComponent.updatePropertyWithValue('DUE', date)
+	}
     
     calendar.addComponent(todoComponent)
     todoComponent.recurrenceManager = new RecurrenceManager(todoComponent)

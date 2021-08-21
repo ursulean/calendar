@@ -10,9 +10,11 @@
   - [ ] Harder: Reset due date, implement place to drag and drop unplanned tasks
     - [x] Fetching unscheduled tasks
     - [ ] Figure out whether it matters if unscheduled tasks are completed
-    - [ ] Additional component in sidebar to render them in
-    - [ ] Drag and drop into calendar
+    - [x] Additional component in sidebar to render them in
+    - [x] Drag and drop into calendar
+    - [x] Create new unscheduled tasks in sidebar
     - [ ] Drag from calendar into unscheduled, or make button to do it
+    - [ ] Render sidebar tasks properly
 - [ ] Recurrence for tasks
 - [ ] Fix popover anchoring
 

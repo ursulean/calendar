@@ -15,7 +15,7 @@
         </template>
 
         <AppNavigationNewItem
-            title="New Item"
+            title="New Task"
             icon="icon-add"
             @new-item="addUnscheduledTask" />
 
@@ -32,7 +32,11 @@ import CalendarListItemLoadingPlaceholder from './CalendarList/CalendarListItemL
 import AppNavigationNewItem from '@nextcloud/vue/dist/Components/AppNavigationNewItem'
 import FullCalendar from '@fullcalendar/vue'
 import { Draggable } from '@fullcalendar/interaction'
+import { createTask } from '../../utils/tasks'
+import { mapCalendarJsToCalendarObject } from '../../models/calendarObject'
+import { mapEventComponentToEventObject } from '../../models/event.js'
 import { mapState } from 'vuex'
+
 
 export default {
     name: 'UnscheduledColumn',
@@ -50,6 +54,7 @@ export default {
     },
     computed: {
         ...mapState({
+            calendars: state => state.calendars.calendars,
             calendarObjects: state => state.calendarObjects.calendarObjects,
             initialCalendarsLoaded: state => state.calendars.initialCalendarsLoaded,
         }),
@@ -66,7 +71,22 @@ export default {
     },
     methods: {
         addUnscheduledTask(title) {
-            alert(title)
+            const calendarId = this.calendars[0].id
+            const thisAndAllFuture = false
+
+            const calendarObject = mapCalendarJsToCalendarObject(createTask(null, title), calendarId)
+            const calendarComponent = calendarObject.calendarComponent
+            const eventComponent = calendarComponent.getVObjectIterator().next().value
+		    const calendarObjectInstance = mapEventComponentToEventObject(eventComponent)
+
+			this.$store.commit('setCalendarObjectInstanceForNewEvent', {
+				calendarObject, calendarObjectInstance
+			})
+
+            this.$store.dispatch('saveCalendarObjectInstance', {
+				thisAndAllFuture,
+				calendarId,
+			})
         },
     },
 }

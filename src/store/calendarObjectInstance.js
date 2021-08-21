@@ -49,12 +49,12 @@ import logger from '../utils/logger.js'
 import settings from './settings.js'
 
 import { convertToToDoPlus, convertToEvent } from '../utils/tasks'
-import { mapCalendarJsToCalendarObject } from '../models/calendarObject'
+import { mapCalendarJsToCalendarObject, mapCDavObjectToCalendarObject } from '../models/calendarObject'
+
 
 const state = {
 	isNew: null,
 	isTaskDefault: true,
-	isTaskScheduled: true,
 	calendarObject: null,
 	calendarObjectInstance: null,
 	existingEvent: {
@@ -1931,6 +1931,24 @@ const actions = {
 		})
 
 		commit('toggleTask')
+	},
+	async unschedule({ state, commit, dispatch, getters }, { calendarObject, calendarObjectInstance }) {
+		const eventComponent = calendarObject.calendarComponent.getVObjectIterator().next().value
+		eventComponent.endDate = null
+		eventComponent.startDate = null
+		await dispatch('updateCalendarObject', {
+			calendarObject,
+		})
+
+		const newCalendarObject = mapCDavObjectToCalendarObject(calendarObject.dav, calendarObject.calendarId)
+
+		commit('deleteCalendarObject', {
+			calendarObject,
+		})
+
+		commit('appendCalendarObject', {
+			calendarObject: newCalendarObject,
+		})
 	},
 }
 

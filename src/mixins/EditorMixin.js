@@ -408,6 +408,18 @@ export default {
 			this.closeEditor()
 		},
 		/**
+		 * Removes date from calendar object if it is a task
+		 */
+		async unschedule() {
+			const calendarObject = this.calendarObject
+			const calendarObjectInstance = this.calendarObjectInstance
+			await this.$store.dispatch('unschedule', {
+				calendarObject,
+				calendarObjectInstance,
+			})
+			this.cancel()
+		},
+		/**
 		 * Saves a calendar-object
 		 *
 		 * @param {Boolean} thisAndAllFuture Whether to modify only this or this and all future occurrences
@@ -684,7 +696,6 @@ export default {
 	 */
 	async beforeRouteUpdate(to, from, next) {
 		// If we are in the New Event dialog, we want to update the selected time
-		console.log('beforeRouteUpdateMixing')
 		if (to.name === 'NewSidebarView' || to.name === 'NewPopoverView') {
 			// If allDay, dtstart and dtend are the same there is no need to update.
 			// This is usally the case when navigating through the calendar while the editor is open

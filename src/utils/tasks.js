@@ -38,10 +38,14 @@ class ToDoComponentPlus extends ToDoComponent {
 	 */
 	set startDate(start) {
 		const oldStartDate = this.startDate
-		this.updatePropertyWithValue('dtstart', start)
+		if (!start){ this.deleteAllProperties('dtstart')}
+		else {this.updatePropertyWithValue('dtstart', start)}
 
 		if (this.isMasterItem()) {
-			this._recurrenceManager.updateStartDateOfMasterItem(start, oldStartDate)
+			if (!start){
+				this._recurrenceManager.clearAllRecurrenceRules()
+				this._recurrenceManager.clearAllRecurrenceDates()
+			} else {this._recurrenceManager.updateStartDateOfMasterItem(start, oldStartDate)}
 		}
 	}
 	/**
@@ -67,7 +71,10 @@ class ToDoComponentPlus extends ToDoComponent {
 	 */
     set endDate(end) {
 		this.deleteAllProperties('duration')
-		this.updatePropertyWithValue('due', end)
+		if (!end) {
+			this.deleteAllProperties('due')
+		}
+		else {this.updatePropertyWithValue('due', end)}
 	}
 
 	get isScheduled() {

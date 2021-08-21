@@ -13,7 +13,7 @@
     - [x] Additional component in sidebar to render them in
     - [x] Drag and drop into calendar
     - [x] Create new unscheduled tasks in sidebar
-    - [ ] Drag from calendar into unscheduled, or make button to do it
+    - [x] Drag from calendar into unscheduled, or make button to do it
     - [ ] Render sidebar tasks properly
 - [ ] Recurrence for tasks
 - [ ] Fix popover anchoring

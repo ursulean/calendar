@@ -54,6 +54,7 @@ import { mapCalendarJsToCalendarObject } from '../models/calendarObject'
 const state = {
 	isNew: null,
 	isTaskDefault: true,
+	isTaskScheduled: true,
 	calendarObject: null,
 	calendarObjectInstance: null,
 	existingEvent: {
@@ -196,7 +197,7 @@ const mutations = {
 	changeEndDate(state, { calendarObjectInstance, endDate }) {
 		// If the event is using DURATION, endDate is dynamically generated.
 		// In order to alter it, we need to explicitly set DTEND
-		const endDateObject = calendarObjectInstance.eventComponent.endDate
+		let endDateObject = calendarObjectInstance.eventComponent.endDate ?? DateTimeValue.fromJSDate(endDate)
 		calendarObjectInstance.eventComponent.endDate = endDateObject
 
 		calendarObjectInstance.eventComponent.endDate.year = endDate.getFullYear()

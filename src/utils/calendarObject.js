@@ -58,7 +58,8 @@ const getObjectAtRecurrenceId = (calendarObject, recurrenceId) => {
 		return null
 	}
 
-	if (!recurrenceId || isNaN(recurrenceId.valueOf())){ return firstVObject.recurrenceManager.masterItem }
+	if (!recurrenceId || !recurrenceId.valueOf()){ 
+		return firstVObject.recurrenceManager.masterItem }
 
 	const d = DateTimeValue.fromJSDate(recurrenceId, true)
 	return firstVObject.recurrenceManager.getOccurrenceAtExactly(d)

@@ -4,14 +4,20 @@
         :allowCollapse="true"
         :loading="!initialCalendarsLoaded"
         v-show="!loadingCalendars"
-        :open="true">
+        :open="true"
+        ref="unschedDraggable">
 
         <template>
             <UnscheduledTask
-                v-for="value in calendarObjects"
-                :key="value.id"
-                :title="value.title"/>
+                v-for="calendarObject in calendarObjects"
+                :key="calendarObject.id"
+                :calendarObject="calendarObject"/>
         </template>
+
+        <AppNavigationNewItem
+            title="New Item"
+            icon="icon-add"
+            @new-item="addUnscheduledTask" />
 
         <CalendarListItemLoadingPlaceholder
             v-if="loadingCalendars"
@@ -23,13 +29,10 @@
 import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
 import UnscheduledTask from './UnscheduledColumn/UnscheduledTask.vue'
 import CalendarListItemLoadingPlaceholder from './CalendarList/CalendarListItemLoadingPlaceholder.vue'
-
-import {
-	mapGetters,
-	mapState,
-} from 'vuex'
-
-//
+import AppNavigationNewItem from '@nextcloud/vue/dist/Components/AppNavigationNewItem'
+import FullCalendar from '@fullcalendar/vue'
+import { Draggable } from '@fullcalendar/interaction'
+import { mapState } from 'vuex'
 
 export default {
     name: 'UnscheduledColumn',
@@ -37,6 +40,7 @@ export default {
         UnscheduledTask,
         AppNavigationItem,
         CalendarListItemLoadingPlaceholder,
+        AppNavigationNewItem,
     },
     props: {
 		loadingCalendars: {
@@ -51,9 +55,19 @@ export default {
         }),
     },
     mounted() {
-        console.log("FOO")
-        console.log(this.calendarObjects)
+        new Draggable(this.$refs.unschedDraggable.$el, {
+            itemSelector: '.fc-event',
+            eventData: function(eventEl) {
+                return {
+                    title: eventEl.innerText
+                };
+            }
+        })
     },
-    methods: {},
+    methods: {
+        addUnscheduledTask(title) {
+            alert(title)
+        },
+    },
 }
 </script>

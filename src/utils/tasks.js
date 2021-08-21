@@ -8,13 +8,27 @@ import DateTimeValue from 'calendar-js/src/values/dateTimeValue'
 
 
 class ToDoComponentPlus extends ToDoComponent {
+
+	isAllDay() {
+		return this.getFirstPropertyFirstValue('DUE')?.isDate ?? true
+	}
+
 	/**
 	 * Gets the start date of the event
 	 *
 	 * @returns {DateTimeValue}
 	 */
 	get startDate() {
-		return this.isScheduled ? (this.getFirstPropertyFirstValue('dtstart') ?? this.endDate) : null
+		
+		// this.endDate !== null
+		if (this.isScheduled) {
+
+			if (this.getFirstPropertyFirstValue('dtstart') === null) {
+				this.updatePropertyWithValue('dtstart', this.endDate.clone())
+			}
+			return this.getFirstPropertyFirstValue('dtstart')
+		}
+		return null
 	}
 
 	/**

@@ -45,6 +45,7 @@ import eventResize from '../fullcalendar/interaction/eventResize.js'
 import navLinkDayClick from '../fullcalendar/interaction/navLinkDayClick.js'
 import navLinkWeekClick from '../fullcalendar/interaction/navLinkWeekClick.js'
 import select from '../fullcalendar/interaction/select.js'
+import externalDrop from '../fullcalendar/interaction/externalDrop.js'
 
 // Import localization plugins
 import { getDateFormattingConfig } from '../fullcalendar/localization/dateFormattingConfig.js'
@@ -143,6 +144,8 @@ export default {
 				nowIndicator: true,
 				progressiveEventRendering: true,
 				unselectAuto: false,
+				droppable: true,
+				eventReceive: externalDrop(this.$store),
 				// Timezones:
 				timeZone: this.timezoneId,
 			}

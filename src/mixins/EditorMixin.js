@@ -376,11 +376,11 @@ export default {
 			this.softCloseEditor()
 			this.$store.commit('resetCalendarObjectInstanceObjectIdAndRecurrenceId')
 		},
-		softCloseEditor(){
+		softCloseEditor() {
 			const params = Object.assign({}, this.$store.state.route.params)
 			delete params.object
 			delete params.recurrenceId
-	
+
 			this.$router.push({
 				name: getPrefixedRoute(this.$store.state.route.name, 'CalendarView'),
 				params,

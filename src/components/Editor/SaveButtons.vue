@@ -29,9 +29,9 @@
 		</button>
 		<button
 			v-if="showSaveButton"
+			v-shortkey="['enter']"
 			class="primary"
 			@click="saveThisOnly"
-			v-shortkey="['enter']"
 			@shortkey="saveThisOnly">
 			{{ $t('calendar', 'Save') }}
 		</button>

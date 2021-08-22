@@ -91,9 +91,9 @@
 				:value="title"
 				:is-read-only="isReadOnly"
 				:placeholder="titlePlaceholder"
-				@update:value="updateTitle" 
+				@update:value="updateTitle"
 				@enterKeyPress="saveAndLeave(false)"
-				@escKeyPress="cancel"/>
+				@escKeyPress="cancel" />
 
 			<PropertyCalendarPicker
 				v-if="showCalendarPicker"
@@ -249,23 +249,25 @@ export default {
 			let matchingDomObject
 
 			if (isNew) {
-				matchingDomObject = document.querySelector('.fc-highlight')//?.parentElement?.parentElement?.parentElement
+				matchingDomObject = document.querySelector('.fc-highlight')// ?.parentElement?.parentElement?.parentElement
 				this.placement = 'auto'
 
 				if (!matchingDomObject) {
-					matchingDomObject = document.querySelector('.fc-event[data-is-new="yes"]')//?.parentElement
+					matchingDomObject = document.querySelector(`.fc-event[data-is-new="yes"]`)// ?.parentElement
 				}
 
-				// if (!matchingDomObject) {
-				// 	matchingDomObject = this.lastHighlightedElement
-				// } else {
-				// 	this.lastHighlightedElement = matchingDomObject
-				// }
+				/*
+				if (!matchingDomObject) {
+					matchingDomObject = this.lastHighlightedElement
+				} else {
+					this.lastHighlightedElement = matchingDomObject
+				}
+				*/
 			} else {
 				const objectId = route.params.object
 				const recurrenceId = route.params.recurrenceId
 
-				matchingDomObject = document.querySelector('.fc-event[data-object-id="${objectId}"][data-recurrence-id="${recurrenceId}"]')
+				matchingDomObject = document.querySelector(`.fc-event[data-object-id="${objectId}"][data-recurrence-id="${recurrenceId}"]`)
 				this.placement = 'auto'
 			}
 

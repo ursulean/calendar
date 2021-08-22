@@ -13,13 +13,13 @@
 				Task
 			</label>
 		</div>
-    </div>
+	</div>
 </template>
 
 <script>
 export default {
 	name: 'PropertyTaskToggle',
-    props: {
+	props: {
 		isReadOnly: {
 			type: Boolean,
 			required: true,
@@ -28,14 +28,14 @@ export default {
 			type: Boolean,
 			required: true,
 		},
-        isTask: {
-            type: Boolean,
-            required: true,
-        }
-    },
-    data(){return {}},
-    computed: {},
-    methods: {
+		isTask: {
+			type: Boolean,
+			required: true,
+		},
+	},
+	data() { return {} },
+	computed: {},
+	methods: {
 		/**
 		 * Toggles task vs. event
 		 */
@@ -45,6 +45,6 @@ export default {
 			}
 			this.$emit('toggleTask')
 		},
-    },
+	},
 }
 </script>

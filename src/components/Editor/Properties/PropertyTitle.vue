@@ -27,8 +27,8 @@
 			:class="{ 'property-title__input--readonly': isReadOnly }">
 			<input
 				v-if="!isReadOnly"
-				type="text"
 				ref="eventTitleTextBox"
+				type="text"
 				:placeholder="placeholder"
 				:value="value"
 				@input.prevent.stop="changeValue"
@@ -58,10 +58,10 @@ export default {
 		},
 	},
 	mounted() {
-		this.$nextTick(function () {
+		this.$nextTick(function() {
 			const titleBox = this.$refs.eventTitleTextBox
 			// Ugly workaround due to v-if delaying input field render
-			setTimeout(function() { titleBox.focus() }, 100);
+			setTimeout(function() { titleBox.focus() }, 100)
 		})
 	},
 	methods: {

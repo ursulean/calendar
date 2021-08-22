@@ -36,7 +36,7 @@
 				<Trashbin v-if="hasTrashBin" />
 				<!-- Unscheduled tasks column -->
 				<UnscheduledColumn
-					:loading-calendars="loadingCalendars"/>
+					:loading-calendars="loadingCalendars" />
 			</template>
 			<!-- Settings and import -->
 			<template #footer>

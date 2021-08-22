@@ -104,7 +104,7 @@ const mapCDavObjectToCalendarObject = (dav, calendarId) => {
 		isTodo: firstVObject.name === COMPONENT_NAME_VTODO,
 		existsOnServer: true,
 		isScheduled: firstVObject?.isScheduled ?? true,
-		title:firstVObject.title,
+		title: firstVObject.title,
 	})
 }
 
@@ -131,7 +131,7 @@ const mapCalendarJsToCalendarObject = (calendarComponent, calendarId = null) => 
 		isJournal: firstVObject.name === COMPONENT_NAME_JOURNAL,
 		isTodo: firstVObject.name === COMPONENT_NAME_VTODO,
 		isScheduled: firstVObject?.isScheduled ?? true,
-		title:firstVObject.title,
+		title: firstVObject.title,
 	})
 }
 

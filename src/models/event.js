@@ -117,7 +117,7 @@ const mapEventComponentToEventObject = (eventComponent) => {
 	 * That's why, when an event is all-day from 2019-10-03 to 2019-10-04,
 	 * it will be displayed as 2019-10-03 to 2019-10-03 in the editor.
 	 */
-	if (eventObject.isScheduled){
+	if (eventObject.isScheduled) {
 		eventObject.startDate = getDateFromDateTimeValue(eventComponent.startDate)
 		eventObject.startTimezoneId = eventComponent.startDate.timezoneId
 

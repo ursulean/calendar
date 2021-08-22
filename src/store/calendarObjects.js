@@ -31,9 +31,7 @@ import {
 	getTimezoneManager,
 } from 'calendar-js'
 
-import { createTask } from '../utils/tasks'
-import { convertToToDoPlus, isToDoComponent } from '../utils/tasks'
-
+import { createTask, convertToToDoPlus, isToDoComponent } from '../utils/tasks'
 
 const state = {
 	calendarObjects: {},

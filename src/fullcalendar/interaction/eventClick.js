@@ -81,14 +81,23 @@ function handleEventClick(event, store, router, route, window) {
 	router.push({ name, params })
 }
 
-function isCheckboxClick(jsEvent){
-	return jsEvent.path[0].className.indexOf('checkbox') != -1
+function isCheckboxClick(jsEvent) {
+	if (!jsEvent) {
+		return false
+	}
+
+	const path = jsEvent.path || (jsEvent.composedPath && jsEvent.composedPath())
+	if (!path) {
+		return false
+	}
+
+	return path[0].className.indexOf('checkbox') !== -1
 }
 
 function toggleCompleted(event, store) {
-	getComponent(event, store).then(({calendarObject, todo}) => {
-		
-		todo.percent == 100 ? uncheck(todo) : check(todo)
+	getComponent(event, store).then(({ calendarObject, todo }) => {
+
+		todo.percent === 100 ? uncheck(todo) : check(todo)
 
 		store.dispatch('updateCalendarObject', {
 			calendarObject,
@@ -106,7 +115,7 @@ async function getComponent(event, store) {
 		console.debug(error)
 		return
 	}
-	
+
 	const recurrenceId = event.extendedProps.recurrenceId
 	const recurrenceIdDate = recurrenceId ? new Date(recurrenceId * 1000) : null
 	// console.log(event, recurrenceId, recurrenceIdDate)
@@ -126,7 +135,7 @@ async function getComponent(event, store) {
 
 function check(todo) {
 	todo.percent = 100
-	todo.status = "COMPLETED"
+	todo.status = 'COMPLETED'
 	todo.completedTime = DateTimeValue.fromJSDate(new Date())
 }
 

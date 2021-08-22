@@ -51,7 +51,6 @@ import settings from './settings.js'
 import { convertToToDoPlus, convertToEvent } from '../utils/tasks'
 import { mapCalendarJsToCalendarObject, mapCDavObjectToCalendarObject } from '../models/calendarObject'
 
-
 const state = {
 	isNew: null,
 	isTaskDefault: true,
@@ -197,7 +196,7 @@ const mutations = {
 	changeEndDate(state, { calendarObjectInstance, endDate }) {
 		// If the event is using DURATION, endDate is dynamically generated.
 		// In order to alter it, we need to explicitly set DTEND
-		let endDateObject = calendarObjectInstance.eventComponent.endDate ?? DateTimeValue.fromJSDate(endDate)
+		const endDateObject = calendarObjectInstance.eventComponent.endDate ?? DateTimeValue.fromJSDate(endDate)
 		calendarObjectInstance.eventComponent.endDate = endDateObject
 
 		calendarObjectInstance.eventComponent.endDate.year = endDate.getFullYear()
@@ -1921,13 +1920,13 @@ const actions = {
 	},
 	toggleTask({ state, commit, getters }, { calendarObject }) {
 		const calendarComponent = calendarObject.calendarComponent
-		
+
 		state.isTaskDefault ? convertToEvent(calendarComponent) : convertToToDoPlus(calendarComponent)
 		const eventComponent = calendarComponent.getVObjectIterator().next().value
 
 		commit('setCalendarObjectInstanceForNewEvent', {
 			calendarObject: mapCalendarJsToCalendarObject(calendarComponent, calendarObject.calendarId),
-			calendarObjectInstance: mapEventComponentToEventObject(eventComponent)
+			calendarObjectInstance: mapEventComponentToEventObject(eventComponent),
 		})
 
 		commit('toggleTask')

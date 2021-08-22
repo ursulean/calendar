@@ -5,6 +5,7 @@ import { dateFactory } from 'calendar-js/src/factories/dateFactory.js'
 import { v4 as uuid } from 'uuid'
 import RecurrenceManager from 'calendar-js/src/recurrence/recurrenceManager.js'
 import DateTimeValue from 'calendar-js/src/values/dateTimeValue'
+import { getDateFromDateTimeValue } from './date.js'
 
 
 class ToDoComponentPlus extends ToDoComponent {
@@ -79,6 +80,17 @@ class ToDoComponentPlus extends ToDoComponent {
 
 	get isScheduled() {
 		return this.endDate !== null
+	}
+
+	get isComplete() {
+		return this.percent == 100
+	}
+
+	get isOverdue() {
+		if (!this.isScheduled || this.isComplete) { return false }
+		const dueDate = getDateFromDateTimeValue(this.endDate)
+		const now = new Date()
+		return dueDate < now
 	}
 }
 const event2todo = new Map([

@@ -20,10 +20,13 @@
       - [ ] Task checkbox
     - [ ] 'C' shortkey -> unscheduled task
 
-- [ ] Separate unschedule, delete buttons for EditSimple
+- [x] Separate unschedule, delete buttons for EditSimple
   
 - [x] Task rollover
   - [x] Sidebar additionally shows overdue tasks from past month
+    - [ ] Overdue definition needs to include only starting last week
+    - [ ] Update UnscheduledTasks based on modificationCount
+      - [ ] Also check my other updates, refresh entire calendar
   - [ ] Render them with a special tag/color
 
 - [ ] Recurrence for tasks

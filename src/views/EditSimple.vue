@@ -61,13 +61,8 @@
 					</ActionButton>
 				</Actions>
 				<Actions
-					v-shortkey="['esc']"
-					@shortkey.native="cancel">
-					<ActionButton
-						icon="icon-close"
-						@click="cancel">
-						{{ $t('calendar', 'Close') }}
-					</ActionButton>
+					v-if="!isNew"
+					:forceMenu="true">
 					<ActionButton
 						v-if="isTask"
 						icon="icon-history"
@@ -75,10 +70,18 @@
 						{{ $t('calendar', 'Unschedule') }}
 					</ActionButton>
 					<ActionButton
-						v-if="!isNew"
 						icon="icon-delete"
 						@click="deleteAndLeave(false)">
 						{{ $t('calendar', 'Delete') }}
+					</ActionButton>
+				</Actions>
+				<Actions
+					v-shortkey="['esc']"
+					@shortkey.native="cancel">
+					<ActionButton
+						icon="icon-close"
+						@click="cancel">
+						{{ $t('calendar', 'Close') }}
 					</ActionButton>
 				</Actions>
 			</div>

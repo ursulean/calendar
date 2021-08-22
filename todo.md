@@ -9,7 +9,7 @@
 - [ ] Unscheduled/Overdue sidebar
     - [x] Fetching unscheduled tasks
     - [x] Fetching overdue tasks
-    - [ ] Figure out whether it matters if unscheduled tasks are completed
+    - [x] Figure out whether it matters if unscheduled tasks are completed
     - [x] Additional component in sidebar to render them in
     - [x] Drag and drop into calendar
     - [x] Create new unscheduled tasks in sidebar

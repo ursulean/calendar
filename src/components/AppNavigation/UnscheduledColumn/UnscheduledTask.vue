@@ -1,6 +1,6 @@
 <template>
     <a
-        v-if="!isScheduled || isOverdue" 
+        v-if="!isComplete && (!isScheduled || isOverdue)" 
         class="fc-timegrid-event fc-v-event fc-timegrid-event-short fc-event fc-event-draggable fc-event-nc-task"
         style="border-color: rgb(121, 90, 171); background-color: rgb(121, 90, 171); margin-left:20%; margin-right:5%;"
         :data-object-id="calendarObject.id">
@@ -31,9 +31,14 @@ export default {
         },
         isOverdue() {
             // Null check is done here
-            if (!this.calendarObject.isTodo){ return false }
+            if (!this.calendarObject.isTodo) { return false }
             const todoComponent = this.calendarObject.calendarComponent.getVObjectIterator().next().value
             return todoComponent.isOverdue
+        },
+        isComplete() {
+            if (!this.calendarObject.isTodo) { return false }
+            const todoComponent = this.calendarObject.calendarComponent.getVObjectIterator().next().value
+            return todoComponent.isComplete
         },
     },
     methods: {},

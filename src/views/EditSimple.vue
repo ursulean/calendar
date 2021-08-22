@@ -293,7 +293,7 @@ export default {
 			.$children[0]
 			.$_restartPopper()
 
-		next()
+		// next()
 	},
 }
 </script>

@@ -8,7 +8,7 @@
 		:open="true">
 		<template>
 			<UnscheduledTask
-				v-for="calendarObject in calendarObjects"
+				v-for="calendarObject in overdueCalendarObjects"
 				:key="calendarObject.id"
 				:calendar-object="calendarObject" />
 		</template>
@@ -54,6 +54,8 @@ export default {
 	data() {
 		return {
 			loadedOverdueTasks: false,
+			overdueStart: this.oneMonthAgo(),
+			overdueEnd: this.lastWeekEnd(),
 		}
 	},
 	computed: {
@@ -67,24 +69,16 @@ export default {
 			getTimeRange: 'getTimeRangeForCalendarCoveringRange',
 			timezoneId: 'getResolvedTimezone',
 		}),
-		thisWeekStart() {
-			const now = new Date()
-			now.setDate(now.getDate() - now.getDay())
-			now.setHours(0)
-			now.setMinutes(0)
-			now.setSeconds(0)
-			return now
+		overdueCalendarObjects() {
+			return Object.values(this.calendarObjects).filter(
+				v => !this.isComplete(v) && (!this.isScheduled(v) || this.isOverdue(v))
+			)
 		},
-		lastWeekEnd() {
-			const weekEnd = new Date(this.thisWeekStart)
-			weekEnd.setSeconds(-1)
-			return weekEnd
-		},
-		oneMonthAgo() {
-			const monthAgo = new Date(this.thisWeekStart)
-			monthAgo.setDate(monthAgo.getDate() - 28)
-			return monthAgo
-		},
+		// unscheduledCalendarObjects() {
+		// 	return Object.values(this.calendarObjects).filter(
+		// 		v => !this.isScheduled(v)
+		// 	)
+		// },
 	},
 	watch: {
 		loadingCalendars: function(newValue, oldValue) {
@@ -93,10 +87,10 @@ export default {
 				let calendarsFetched = 0
 				for (const calendar of this.calendars) {
 					this.fetchObjectsInTimeRange(
-						this.oneMonthAgo,
-						this.lastWeekEnd,
+						this.overdueStart,
+						this.overdueEnd,
 						calendar
-					).then(calendarObjects => {
+					).then(timeRangeId => {
 						calendarsFetched++
 						if (calendarsFetched === numCalendars) {
 							this.loadedOverdueTasks = true
@@ -148,13 +142,44 @@ export default {
 						'getEventsFromCalendarInTimeRange',
 						{ calendar, from: start, to: end }
 					)
-					return this.getCalendarObjects(timeRangeId)
+					return timeRangeId// this.getCalendarObjects(timeRangeId)
 
 				} catch (error) { console.debug(error) }
 
 			} else {
 				console.debug('time range already in calendar')
 			}
+		},
+		isOverdue(calendarObject){
+			if (!calendarObject.isTodo) { return false }
+			const todo = calendarObject.calendarComponent.getVObjectIterator().next().value
+			return todo.isOverdue(this.overdueEnd)
+		},
+		isComplete(calendarObject){
+			if (!calendarObject.isTodo) { return false }
+			const todoComponent = calendarObject.calendarComponent.getVObjectIterator().next().value
+			return todoComponent.isComplete
+		},
+		isScheduled(calendarObject){
+			return calendarObject.isScheduled
+		},
+		thisWeekStart() {
+			const now = new Date()
+			now.setDate(now.getDate() - now.getDay())
+			now.setHours(0)
+			now.setMinutes(0)
+			now.setSeconds(0)
+			return now
+		},
+		lastWeekEnd() {
+			const weekEnd = new Date(this.thisWeekStart())
+			weekEnd.setSeconds(-1)
+			return weekEnd
+		},
+		oneMonthAgo() {
+			const monthAgo = new Date(this.thisWeekStart())
+			monthAgo.setDate(monthAgo.getDate() - 28)
+			return monthAgo
 		},
 	},
 }

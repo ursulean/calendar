@@ -83,11 +83,10 @@ class ToDoComponentPlus extends ToDoComponent {
 		return this.percent === 100
 	}
 
-	get isOverdue() {
+	isOverdue(limit) {
 		if (!this.isScheduled || this.isComplete) { return false }
 		const dueDate = getDateFromDateTimeValue(this.endDate)
-		const now = new Date()
-		return dueDate < now
+		return dueDate < (limit ?? new Date())
 	}
 
 }

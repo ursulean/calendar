@@ -287,16 +287,20 @@ export default {
 			return matchingDomObject
 		},
 	},
-	beforeRouteUpdate(to, from, next) {
+	async beforeRouteUpdate(to, from, next) {
+
+		// Wait until route is confirmed and new event rendered on calendar
+		await next()
+
 		const isNew = to.name === 'NewPopoverView'
+		
 		this.$refs.popover
 			.$children[0]
 			.$refs.trigger = this.getDomElementForPopover(isNew, to)
+
 		this.$refs.popover
 			.$children[0]
 			.$_restartPopper()
-
-		// next()
 	},
 }
 </script>

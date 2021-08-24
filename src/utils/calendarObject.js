@@ -30,13 +30,13 @@ import DateTimeValue from 'calendar-js/src/values/dateTimeValue.js'
  * @returns {Array}
  */
 const getAllObjectsInTimeRange = (calendarObject, start, end) => {
-	if (!calendarObject.isScheduled) {
-		return []
-	}
 	const iterator = calendarObject.calendarComponent.getVObjectIterator()
 	const firstVObject = iterator.next().value
 	if (!firstVObject) {
 		return []
+	}
+	if (firstVObject.endDate === null) {
+		return [firstVObject]
 	}
 
 	const s = DateTimeValue.fromJSDate(start, true)

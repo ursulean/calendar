@@ -8,7 +8,7 @@
 		:open="true">
 		<template>
 			<UnscheduledTask
-				v-for="calendarObject in overdueCalendarObjects"
+				v-for="calendarObject in unscheduledObjects"
 				:key="calendarObject.id"
 				:calendar-object="calendarObject" />
 		</template>
@@ -53,6 +53,7 @@ export default {
 	},
 	data() {
 		return {
+			unscheduledObjects: [],
 			loadedOverdueTasks: false,
 			overdueStart: this.oneMonthAgo(),
 			overdueEnd: this.lastWeekEnd(),
@@ -63,42 +64,23 @@ export default {
 			calendars: state => state.calendars.calendars,
 			calendarObjects: state => state.calendarObjects.calendarObjects,
 			initialCalendarsLoaded: state => state.calendars.initialCalendarsLoaded,
+			modificationCount: state => state.calendarObjects.modificationCount,
 		}),
 		...mapGetters({
 			getCalendarObjects: 'getCalendarObjectsByTimeRangeId',
 			getTimeRange: 'getTimeRangeForCalendarCoveringRange',
 			timezoneId: 'getResolvedTimezone',
 		}),
-		overdueCalendarObjects() {
-			return Object.values(this.calendarObjects).filter(
-				v => !this.isComplete(v) && (!this.isScheduled(v) || this.isOverdue(v))
-			)
-		},
-		// unscheduledCalendarObjects() {
-		// 	return Object.values(this.calendarObjects).filter(
-		// 		v => !this.isScheduled(v)
-		// 	)
-		// },
 	},
 	watch: {
 		loadingCalendars: function(newValue, oldValue) {
 			if (!newValue && !this.loadedOverdueTasks) {
-				const numCalendars = this.calendars.length
-				let calendarsFetched = 0
-				for (const calendar of this.calendars) {
-					this.fetchObjectsInTimeRange(
-						this.overdueStart,
-						this.overdueEnd,
-						calendar
-					).then(timeRangeId => {
-						calendarsFetched++
-						if (calendarsFetched === numCalendars) {
-							this.loadedOverdueTasks = true
-						}
-					})
-				}
+				this.fetchOverdue()
 			}
 		},
+		modificationCount(){
+			this.fetchOverdue()
+		}
 	},
 	mounted() {
 		// eslint-disable-next-line no-new
@@ -150,6 +132,19 @@ export default {
 				console.debug('time range already in calendar')
 			}
 		},
+		async fetchOverdue(){
+			for (const calendar of this.calendars) {
+				const timeRangeId = await this.fetchObjectsInTimeRange(
+					this.overdueStart,
+					this.overdueEnd,
+					calendar
+				)
+			}
+			this.loadedOverdueTasks = true
+			this.unscheduledObjects = Object.values(this.calendarObjects).filter(
+				v => !this.isComplete(v) && (!this.isScheduled(v) || this.isOverdue(v))
+			)
+		},
 		isOverdue(calendarObject){
 			if (!calendarObject.isTodo) { return false }
 			const todo = calendarObject.calendarComponent.getVObjectIterator().next().value
@@ -161,7 +156,9 @@ export default {
 			return todoComponent.isComplete
 		},
 		isScheduled(calendarObject){
-			return calendarObject.isScheduled
+			if (!calendarObject.isTodo) { return false }
+			const todo = calendarObject.calendarComponent.getVObjectIterator().next().value
+			return todo.isScheduled
 		},
 		thisWeekStart() {
 			const now = new Date()

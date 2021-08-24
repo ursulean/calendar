@@ -70,8 +70,8 @@ export function eventSourceFunction(calendarObjects, calendar, start, end, timez
 
 			let jsStart, jsEnd
 			if (object.name === 'VEVENT' || object.name === 'VTODO') {
-				jsStart = object.startDate.getInTimezone(timezone).jsDate
-				jsEnd = object.endDate.getInTimezone(timezone).jsDate
+				jsStart = object.startDate?.getInTimezone(timezone)?.jsDate
+				jsEnd = object.endDate?.getInTimezone(timezone)?.jsDate
 			} else {
 				// We do not want to display anything that's neither
 				// an event nor a task
@@ -84,7 +84,7 @@ export function eventSourceFunction(calendarObjects, calendar, start, end, timez
 			// If the event's start is equal to it's end, fullcalendar is giving
 			// the event a default length of one hour. We are preventing that by
 			// adding one second to the end in that case.
-			if (jsStart.getTime() === jsEnd.getTime()) {
+			if ( jsStart && jsStart.getTime() === jsEnd.getTime()) {
 				jsEnd.setSeconds(jsEnd.getSeconds() + 1)
 			}
 
@@ -153,6 +153,5 @@ export function eventSourceFunction(calendarObjects, calendar, start, end, timez
 			fcEvents.push(fcEvent)
 		}
 	}
-
 	return fcEvents
 }

@@ -22,10 +22,8 @@
 
 <template>
 	<button
-		v-shortkey="['c']"
 		class="button primary new-event"
-		@click="newEvent"
-		@shortkey="newEvent">
+		@click="newEvent">
 		{{ $t('calendar', '+ New event') }}
 	</button>
 </template>

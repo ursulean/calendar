@@ -16,6 +16,9 @@
 		<AppNavigationNewItem
 			title="New Task"
 			icon="icon-add"
+			ref="newUnscheduledItem"
+			v-shortkey="['c']"
+			@shortkey.native="focusNewUnscheduledItem"
 			@new-item="addUnscheduledTask" />
 
 		<CalendarListItemLoadingPlaceholder
@@ -111,6 +114,11 @@ export default {
 				thisAndAllFuture,
 				calendarId,
 			})
+		},
+		focusNewUnscheduledItem(){
+			const item = this.$refs.newUnscheduledItem
+			item.newItemValue = ''
+			item.handleNewItem()
 		},
 		async fetchObjectsInTimeRange(start, end, calendar) {
 			const timeRange = this.getTimeRange(

@@ -15,9 +15,8 @@
     - [x] Create new unscheduled tasks in sidebar
     - [x] Drag from calendar into unscheduled, or make button to do it
     - [ ] Render sidebar tasks properly
-      - [ ] Rendering done in eventSourceFunction
-      - [ ] Color by source calendar
-      - [ ] Softer corners
+      - [x] Color by source calendar
+      - [x] Softer corners
       - [ ] Task checkbox
     - [x] 'C' shortkey -> unscheduled task
 
@@ -25,9 +24,9 @@
   
 - [x] Task rollover
   - [x] Sidebar additionally shows overdue tasks from past month
-    - [ ] Overdue definition based on current view
+    - [x] Overdue definition based on current view
     - [x] Update UnscheduledTasks based on modificationCount
-  - [ ] Render them with a special tag/color
+  - [x] Render them with a special tag/color
 
 - [ ] Recurrence for tasks
 - [x] Fix popover anchoring

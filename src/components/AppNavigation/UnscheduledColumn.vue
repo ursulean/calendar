@@ -124,7 +124,6 @@ export default {
 			const item = this.$refs.newUnscheduledItem
 			item.newItemValue = ''
 			item.handleNewItem()
-			console.log(this.$route.params)
 		},
 		async fetchObjectsInTimeRange(start, end, calendar) {
 			const timeRange = this.getTimeRange(

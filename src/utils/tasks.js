@@ -19,16 +19,7 @@ class ToDoComponentPlus extends ToDoComponent {
 	 * @returns {DateTimeValue}
 	 */
 	get startDate() {
-
-		// this.endDate !== null
-		if (this.isScheduled) {
-
-			if (this.getFirstPropertyFirstValue('dtstart') === null) {
-				this.updatePropertyWithValue('dtstart', this.endDate.clone())
-			}
-			return this.getFirstPropertyFirstValue('dtstart')
-		}
-		return null
+		return this.getFirstPropertyFirstValue('dtstart')
 	}
 
 	/**
@@ -76,7 +67,9 @@ class ToDoComponentPlus extends ToDoComponent {
 	}
 
 	get isScheduled() {
-		return this.endDate !== null
+		const [std, end] = [this.startDate !== null, this.endDate !== null]
+		if (!(std === end)) {console.debug("Inconsistent task state")}
+		return std && end
 	}
 
 	get isComplete() {
@@ -153,13 +146,14 @@ function convertToEvent(calendarComponent) {
 	convert(calendarComponent, EventComponent, 'VEVENT', todo2event)
 }
 
-function createTask(date, title = null) {
+function createTask({startDate, endDate, title}) {
 	const calendar = CalendarComponent.fromEmpty()
 	const todoComponent = new ToDoComponentPlus('VTODO')
+	const stamp = DateTimeValue.fromJSDate(dateFactory(), true)
 
-	todoComponent.updatePropertyWithValue('CREATED', DateTimeValue.fromJSDate(dateFactory(), true))
-	todoComponent.updatePropertyWithValue('DTSTAMP', DateTimeValue.fromJSDate(dateFactory(), true))
-	todoComponent.updatePropertyWithValue('LAST-MODIFIED', DateTimeValue.fromJSDate(dateFactory(), true))
+	todoComponent.updatePropertyWithValue('CREATED', stamp.clone())
+	todoComponent.updatePropertyWithValue('DTSTAMP',stamp.clone())
+	todoComponent.updatePropertyWithValue('LAST-MODIFIED',stamp.clone())
 	todoComponent.updatePropertyWithValue('SEQUENCE', 0)
 	todoComponent.updatePropertyWithValue('UID', uuid())
 
@@ -167,9 +161,18 @@ function createTask(date, title = null) {
 		todoComponent.updatePropertyWithValue('SUMMARY', title)
 	}
 
-	if (date) {
-		todoComponent.updatePropertyWithValue('DTSTART', date)
-		todoComponent.updatePropertyWithValue('DUE', date)
+	if (!(!!startDate == !!endDate)) {
+		throw new Error("Must supply either both start and end date, or neither.")
+	}
+
+	if (startDate) {
+		todoComponent.updatePropertyWithValue('DTSTART', startDate)
+	}
+
+	if (endDate) {
+		todoComponent.updatePropertyWithValue('DUE', endDate)
+	} else if (startDate){
+		todoComponent.updatePropertyWithValue('DUE', startDate.clone())
 	}
 
 	calendar.addComponent(todoComponent)

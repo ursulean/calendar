@@ -38,7 +38,6 @@
 				@changeTimezone="changeStartTimezone" />
 
 			<DatePicker
-				v-show="!isTask"
 				:date="endDate"
 				:has-timezone="true"
 				:timezone-id="endTimezone"

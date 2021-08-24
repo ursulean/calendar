@@ -15,6 +15,7 @@
     - [x] Create new unscheduled tasks in sidebar
     - [x] Drag from calendar into unscheduled, or make button to do it
     - [ ] Render sidebar tasks properly
+      - [ ] Rendering done in eventSourceFunction
       - [ ] Color by source calendar
       - [ ] Softer corners
       - [ ] Task checkbox
@@ -42,7 +43,7 @@
 
 ### Bugs
 
-- [ ] When switching from task to event, end date stays at start date
+- [x] When switching from task to event, end date stays at start date
 - [ ] "Will-change memory consumption is too high. Budget limit is the document surface area multiplied by 3 (1216990 px). Occurrences of will-change over the budget will be ignored." on toggleTask
 
 ### Notes

@@ -116,7 +116,7 @@ export default {
 			const calendarId = this.calendars[0].id
 			const thisAndAllFuture = false
 
-			const calendarObject = mapCalendarJsToCalendarObject(createTask(null, title), calendarId)
+			const calendarObject = mapCalendarJsToCalendarObject(createTask({title}), calendarId)
 			const calendarComponent = calendarObject.calendarComponent
 			const eventComponent = calendarComponent.getVObjectIterator().next().value
 		    const calendarObjectInstance = mapEventComponentToEventObject(eventComponent)

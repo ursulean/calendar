@@ -585,7 +585,7 @@ export default {
 		/**
 		 * Toggles the calendar object between task and event
 		 */
-		async toggleTask() {
+		toggleTask() {
 			this.$store.dispatch('toggleTask', {
 				calendarObject: this.calendarObject,
 			})
@@ -706,7 +706,7 @@ export default {
 
 			const isAllDay = (to.params.allDay === '1')
 			const start = to.params.dtstart
-			const end = this.isTask ? start : to.params.dtend
+			const end = to.params.dtend
 			const timezoneId = this.$store.getters.getResolvedTimezone
 
 			await this.loadingCalendars()

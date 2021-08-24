@@ -1,6 +1,5 @@
 <template>
 	<AppNavigationItem
-		v-show="!loadingCalendars"
 		ref="unschedDraggable"
 		title="Unscheduled Tasks"
 		:allow-collapse="true"
@@ -21,9 +20,6 @@
 			@shortkey.native="focusNewUnscheduledItem"
 			@new-item="addUnscheduledTask" />
 
-		<CalendarListItemLoadingPlaceholder
-			v-if="loadingCalendars"
-			#footer />
 	</AppNavigationItem>
 </template>
 
@@ -48,12 +44,6 @@ export default {
 		AppNavigationItem,
 		CalendarListItemLoadingPlaceholder,
 		AppNavigationNewItem,
-	},
-	props: {
-		loadingCalendars: {
-			type: Boolean,
-			default: false,
-		},
 	},
 	data() {
 		return {
@@ -112,30 +102,18 @@ export default {
 			timezoneId: 'getResolvedTimezone',
 		}),
 	},
-	watch: {
-		loadingCalendars: function(newValue, oldValue) {
-			if (!newValue && !this.loadedOverdueTasks) {
-				this.fetchOverdue()
-			}
-		},
-		// modificationCount(){
-		// 	console.log('modification')
-		// 	this.fetchOverdue()
-		// },
-		// view(newValue, oldValue){
-		// 	console.log(newValue, oldValue)
-		// 	console.log(this.overdueStart, this.overdueEnd)
-		// }
-	},
 	mounted() {
-		// eslint-disable-next-line no-new
-		new Draggable(this.$refs.unschedDraggable.$el, {
-			itemSelector: '.fc-event',
-			eventData: function(eventEl) {
-				return {
-					title: eventEl.innerText,
-				}
-			},
+		this.$nextTick(() => {
+			// eslint-disable-next-line no-new
+			new Draggable(this.$refs.unschedDraggable.$el, {
+				itemSelector: '.fc-event',
+				eventData: function(eventEl) {
+					return {
+						title: eventEl.innerText,
+					}
+				},
+			})
+			this.fetchOverdue()
 		})
 	},
 	methods: {
@@ -192,9 +170,6 @@ export default {
 				)
 			}
 			this.loadedOverdueTasks = true
-			// this.unscheduledObjects = Object.values(this.calendarObjects).filter(
-			// 	v => !this.isComplete(v) && (!this.isScheduled(v) || this.isOverdue(v))
-			// )
 		},
 		isOverdue(calendarObject){
 			if (!calendarObject.isTodo) { return false }

@@ -101,4 +101,4 @@ coverage/
 js/public
 css/public
 
-src/utils/tasks_old.js
+archive/*

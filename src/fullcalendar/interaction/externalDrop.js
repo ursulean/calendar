@@ -5,12 +5,22 @@ import { mapCDavObjectToCalendarObject } from '../../models/calendarObject'
 export default function(store) {
 	return async function({ event, revert, draggedEl, view }) {
 		const isAllDay = event.allDay
-		const start = event.start
 		const timezoneId = store.getters.getResolvedTimezone
 		const timezone = getTimezoneManager().getTimezoneForId(timezoneId)
+		
+		const start = event.start
+		const intervalString = store.state.settings.slotDuration
+		const intervalMinutes = Number(intervalString.split(":")[1]) + 60 * Number(intervalString.split(":")[0])
+		let end = event.end
+		if (!end) {
+			end = new Date(start)
+			end.setMinutes(end.getMinutes() + intervalMinutes)
+		}
 
 		const startDate = DateTimeValue.fromJSDate(start)
 		startDate.replaceTimezone(timezone)
+		const endDate = DateTimeValue.fromJSDate(end)
+		endDate.replaceTimezone(timezone)
 		if (isAllDay) { startDate.isDate = true }
 
 		const objectId = draggedEl.getAttribute('data-object-id')
@@ -26,8 +36,9 @@ export default function(store) {
 			const calendarComponent = calendarObject.calendarComponent
 			const eventComponent = calendarComponent.getVObjectIterator().next().value
 
-			eventComponent.endDate = startDate
+
 			eventComponent.startDate = startDate
+			eventComponent.endDate = endDate
 
 			await store.dispatch('updateCalendarObject', {
 				calendarObject,

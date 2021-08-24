@@ -130,3 +130,12 @@ export function modifyDate(date, { day = 0, week = 0, month = 0 }) {
 
 	return date
 }
+
+export function getDayStart(date) {
+	const start = date ? new Date(date) : dateFactory()
+	start.setHours(0)
+	start.setMinutes(0)
+	start.setSeconds(0)
+	start.setMilliseconds(0)
+	return start
+}

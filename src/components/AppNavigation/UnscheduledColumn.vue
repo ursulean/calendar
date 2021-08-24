@@ -35,7 +35,7 @@ import { mapCalendarJsToCalendarObject } from '../../models/calendarObject'
 import { mapEventComponentToEventObject } from '../../models/event.js'
 import { getUnixTimestampFromDate } from '../../utils/date.js'
 import { mapGetters, mapState } from 'vuex'
-import { getDateFromFirstdayParam } from '../../utils/date.js'
+import { getDateFromFirstdayParam, getDayStart } from '../../utils/date.js'
 
 export default {
 	name: 'UnscheduledColumn',
@@ -47,13 +47,8 @@ export default {
 	},
 	data() {
 		return {
-			// unscheduledObjects: [],
 			loadedOverdueTasks: false,
-			// overdueStart: this.oneMonthAgo(),
-			// overdueEnd: this.lastWeekEnd(),
 		}
-	},
-	getters: {
 	},
 	computed: {
 		...mapState({
@@ -64,12 +59,7 @@ export default {
 			view: state => state.route.params.view,
 			firstDay: state => getDateFromFirstdayParam(state.route.params.firstDay),
 			overdueEnd: state => {
-				const end = getDateFromFirstdayParam('now')
-				end.setHours(0)
-				end.setMinutes(0)
-				end.setSeconds(0)
-				end.setMilliseconds(0)
-
+				const end = getDayStart()
 				switch (state.route.params.view) {
 					case 'timeGridDay':
 						break
@@ -83,11 +73,6 @@ export default {
 				}
 				end.setSeconds(-1)
 				return end
-			},
-			overdueStart(state) {
-				const start = new Date(this.overdueEnd)
-				start.setDate(start.getDate() - 28)
-				return start
 			},
 			unscheduledObjects(state) {
 				const modCount = state.calendarObjects.modificationCount
@@ -164,7 +149,7 @@ export default {
 		async fetchOverdue(){
 			for (const calendar of this.calendars) {
 				const timeRangeId = await this.fetchObjectsInTimeRange(
-					this.overdueStart,
+					this.overdueStart(),
 					this.overdueEnd,
 					calendar
 				)
@@ -186,24 +171,11 @@ export default {
 			const todo = calendarObject.calendarComponent.getVObjectIterator().next().value
 			return todo.isScheduled
 		},
-		thisWeekStart() {
-			const now = new Date()
-			now.setDate(now.getDate() - now.getDay())
-			now.setHours(0)
-			now.setMinutes(0)
-			now.setSeconds(0)
-			now.setMilliseconds(0)
-			return now
-		},
-		lastWeekEnd() {
-			const weekEnd = new Date(this.thisWeekStart())
-			weekEnd.setSeconds(-1)
-			return weekEnd
-		},
-		oneMonthAgo() {
-			const monthAgo = new Date(this.thisWeekStart())
-			monthAgo.setDate(monthAgo.getDate() - 28)
-			return monthAgo
+		overdueStart() {
+			const start = getDayStart()
+			start.setDate(1)
+			start.setMonth(start.getMonth() - 1)
+			return start
 		},
 	},
 }

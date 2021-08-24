@@ -39,6 +39,7 @@ import { mapCalendarJsToCalendarObject } from '../../models/calendarObject'
 import { mapEventComponentToEventObject } from '../../models/event.js'
 import { getUnixTimestampFromDate } from '../../utils/date.js'
 import { mapGetters, mapState } from 'vuex'
+import { getDateFromFirstdayParam } from '../../utils/date.js'
 
 export default {
 	name: 'UnscheduledColumn',
@@ -56,11 +57,13 @@ export default {
 	},
 	data() {
 		return {
-			unscheduledObjects: [],
+			// unscheduledObjects: [],
 			loadedOverdueTasks: false,
-			overdueStart: this.oneMonthAgo(),
-			overdueEnd: this.lastWeekEnd(),
+			// overdueStart: this.oneMonthAgo(),
+			// overdueEnd: this.lastWeekEnd(),
 		}
+	},
+	getters: {
 	},
 	computed: {
 		...mapState({
@@ -68,6 +71,40 @@ export default {
 			calendarObjects: state => state.calendarObjects.calendarObjects,
 			initialCalendarsLoaded: state => state.calendars.initialCalendarsLoaded,
 			modificationCount: state => state.calendarObjects.modificationCount,
+			view: state => state.route.params.view,
+			firstDay: state => getDateFromFirstdayParam(state.route.params.firstDay),
+			overdueEnd: state => {
+				const end = getDateFromFirstdayParam('now')
+				end.setHours(0)
+				end.setMinutes(0)
+				end.setSeconds(0)
+				end.setMilliseconds(0)
+
+				switch (state.route.params.view) {
+					case 'timeGridDay':
+						break
+					case 'timeGridWeek':
+						end.setDate(end.getDate() - end.getDay())
+						break
+					case 'dayGridMonth':
+					case 'listMonth':
+						end.setDate(1)
+						break
+				}
+				end.setSeconds(-1)
+				return end
+			},
+			overdueStart(state) {
+				const start = new Date(this.overdueEnd)
+				start.setDate(start.getDate() - 28)
+				return start
+			},
+			unscheduledObjects(state) {
+				const modCount = state.calendarObjects.modificationCount
+				return Object.values(state.calendarObjects.calendarObjects).filter(
+					v => !this.isComplete(v) && (!this.isScheduled(v) || this.isOverdue(v))
+				)
+			}
 		}),
 		...mapGetters({
 			getCalendarObjects: 'getCalendarObjectsByTimeRangeId',
@@ -81,9 +118,14 @@ export default {
 				this.fetchOverdue()
 			}
 		},
-		modificationCount(){
-			this.fetchOverdue()
-		}
+		// modificationCount(){
+		// 	console.log('modification')
+		// 	this.fetchOverdue()
+		// },
+		// view(newValue, oldValue){
+		// 	console.log(newValue, oldValue)
+		// 	console.log(this.overdueStart, this.overdueEnd)
+		// }
 	},
 	mounted() {
 		// eslint-disable-next-line no-new
@@ -119,6 +161,7 @@ export default {
 			const item = this.$refs.newUnscheduledItem
 			item.newItemValue = ''
 			item.handleNewItem()
+			console.log(this.$route.params)
 		},
 		async fetchObjectsInTimeRange(start, end, calendar) {
 			const timeRange = this.getTimeRange(
@@ -149,9 +192,9 @@ export default {
 				)
 			}
 			this.loadedOverdueTasks = true
-			this.unscheduledObjects = Object.values(this.calendarObjects).filter(
-				v => !this.isComplete(v) && (!this.isScheduled(v) || this.isOverdue(v))
-			)
+			// this.unscheduledObjects = Object.values(this.calendarObjects).filter(
+			// 	v => !this.isComplete(v) && (!this.isScheduled(v) || this.isOverdue(v))
+			// )
 		},
 		isOverdue(calendarObject){
 			if (!calendarObject.isTodo) { return false }
@@ -174,6 +217,7 @@ export default {
 			now.setHours(0)
 			now.setMinutes(0)
 			now.setSeconds(0)
+			now.setMilliseconds(0)
 			return now
 		},
 		lastWeekEnd() {

@@ -35,7 +35,7 @@ class ToDoComponentPlus extends ToDoComponent {
 			if (!start) {
 				this._recurrenceManager.clearAllRecurrenceRules()
 				this._recurrenceManager.clearAllRecurrenceDates()
-			} else { this._recurrenceManager.updateStartDateOfMasterItem(start, oldStartDate) }
+			} else if (oldStartDate) { this._recurrenceManager.updateStartDateOfMasterItem(start, oldStartDate) }
 		}
 	}
 	/**

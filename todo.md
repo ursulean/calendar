@@ -6,7 +6,7 @@
 - [x] Automatic alarm (already implemented by NC)
 - [x] ToDoComponent compatibility
 
-- [ ] Unscheduled/Overdue sidebar
+- [x] Unscheduled/Overdue sidebar
     - [x] Fetching unscheduled tasks
     - [x] Fetching overdue tasks
     - [x] Figure out whether it matters if unscheduled tasks are completed
@@ -14,11 +14,12 @@
     - [x] Drag and drop into calendar
     - [x] Create new unscheduled tasks in sidebar
     - [x] Drag from calendar into unscheduled, or make button to do it
-    - [ ] Render sidebar tasks properly
+    - [x] Render sidebar tasks properly
       - [x] Color by source calendar
       - [x] Softer corners
-      - [ ] Task checkbox
+      - [x] Task checkbox
     - [x] 'C' shortkey -> unscheduled task
+    - [ ] Calendar picker button
 
 - [x] Separate unschedule, delete buttons for EditSimple
   

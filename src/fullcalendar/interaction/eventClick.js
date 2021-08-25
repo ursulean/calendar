@@ -81,7 +81,7 @@ function handleEventClick(event, store, router, route, window) {
 	router.push({ name, params })
 }
 
-function isCheckboxClick(jsEvent) {
+export function isCheckboxClick(jsEvent) {
 	if (!jsEvent) {
 		return false
 	}
@@ -94,16 +94,10 @@ function isCheckboxClick(jsEvent) {
 	return path[0].className.indexOf('checkbox') !== -1
 }
 
-function toggleCompleted(event, store) {
-	getComponent(event, store).then(({ calendarObject, todo }) => {
-
-		todo.percent === 100 ? uncheck(todo) : check(todo)
-
-		store.dispatch('updateCalendarObject', {
-			calendarObject,
-		}).catch(e => { console.debug(e) })
-
-	}).catch(e => { console.debug(e) })
+export async function toggleCompleted(event, store) {
+	const { calendarObject, todo } = await getComponent(event, store)
+	todo.percent === 100 ? uncheck(todo) : check(todo)
+	await store.dispatch('updateCalendarObject', { calendarObject })
 }
 
 async function getComponent(event, store) {

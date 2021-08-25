@@ -5,7 +5,8 @@
 			ref="unscheduledEvent"
 			:class="fcEvent.classNames"
 			:data-object-id="calendarObject.id"
-			:style="styleObject">
+			:style="styleObject"
+			@click="completeTask">
 
 			<div
 				class="fc-event-main"
@@ -16,6 +17,13 @@
 					<div
 						class="fc-event-time">
 						{{ dateText }}
+
+						<span
+							v-if="deleteTimeout !== null"
+							style="position: absolute; right: 5%">
+
+							Removing in {{ this.countdown }}
+						</span>
 					</div>
 
 					<div class="fc-event-title-container">
@@ -24,6 +32,7 @@
 							{{ title }}
 						</div>
 					</div>
+
 				</div>
 			</div>
 		</a>
@@ -33,9 +42,11 @@
 <script>
 import eventDidMount from '../../../fullcalendar/rendering/eventDidMount'
 import { vObjectSourceFunction } from '../../../fullcalendar/eventSources/eventSourceFunction'
+import { isCheckboxClick, toggleCompleted } from '../../../fullcalendar/interaction/eventClick'
 import getTimezoneManager from '../../../services/timezoneDataProviderService.js'
 import { generateTextColorForHex, uidToHexColor } from '../../../utils/color.js'
 import { mapGetters, mapState } from 'vuex'
+import { showError } from '@nextcloud/dialogs'
 // import FullCalendar from '@fullcalendar/core'
 // import { StandardEvent } from '@fullcalendar/common'
 export default {
@@ -45,6 +56,13 @@ export default {
 			type: Object,
 			required: true,
 		},
+	},
+	data() {
+		return {
+			deleteInterval: null,
+			deleteTimeout: null,
+			countdown: 5
+		}
 	},
 	computed: {
 		...mapState({
@@ -86,9 +104,67 @@ export default {
 	},
 	mounted() {
 		this.$nextTick(() => {
-			// console.log(this.calendar)
 			eventDidMount({event: this.fcEvent, el: this.$refs.unscheduledEvent})
 		})
 	},
+	methods: {
+		completeTask(jsEvent) {
+			if (isCheckboxClick(jsEvent)){
+				this.toggleFrontEndComplete()
+			}
+		},
+		isCompleteFrontEnd(){
+			return this.$refs.unscheduledEvent.classList.contains('fc-event-nc-task-completed')
+		},
+		frontEndComplete(){
+			if (this.isCompleteFrontEnd()) { return }
+			const fcEl = this.$refs.unscheduledEvent
+			const checkbox = fcEl.querySelector('.fc-event-title-checkbox')
+			checkbox.classList.replace('calendar-grid-checkbox', 'calendar-grid-checkbox-checked')
+			fcEl.classList.add('fc-event-nc-task-completed')
+		},
+		frontEndUncomplete(){
+			if (!this.isCompleteFrontEnd()) { return }
+			const fcEl = this.$refs.unscheduledEvent
+			const checkbox = fcEl.querySelector('.fc-event-title-checkbox')
+			checkbox.classList.replace('calendar-grid-checkbox-checked', 'calendar-grid-checkbox')
+			fcEl.classList.remove('fc-event-nc-task-completed')
+		},
+		toggleFrontEndComplete(){
+			if (!this.isCompleteFrontEnd()) {
+
+				this.frontEndComplete()
+
+				this.deleteInterval = setInterval(() => {
+					this.countdown--
+
+					if (this.countdown < 0) {
+						this.countdown = 0
+					}
+				}, 1000)
+
+				this.deleteTimeout = setTimeout(async() => {
+					try {
+						await toggleCompleted(this.fcEvent, this.$store)
+					} catch (error) {
+						showError(this.$t('calendar', 'An error occurred, complete the task'))
+						console.error(error)
+					} finally {
+						clearInterval(this.deleteInterval)
+						this.deleteTimeout = null
+						this.deleteInterval = null
+						this.countdown = 5
+					}
+				}, 5000)
+			} else {
+				clearTimeout(this.deleteTimeout)
+				clearInterval(this.deleteInterval)
+				this.deleteTimeout = null
+				this.deleteInterval = null
+				this.countdown = 5
+				this.frontEndUncomplete()
+			}
+		},
+	}
 }
 </script>

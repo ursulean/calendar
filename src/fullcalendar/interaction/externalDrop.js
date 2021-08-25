@@ -7,10 +7,10 @@ export default function(store) {
 		const isAllDay = event.allDay
 		const timezoneId = store.getters.getResolvedTimezone
 		const timezone = getTimezoneManager().getTimezoneForId(timezoneId)
-		
+
 		const start = event.start
 		const intervalString = store.state.settings.slotDuration
-		const intervalMinutes = Number(intervalString.split(":")[1]) + 60 * Number(intervalString.split(":")[0])
+		const intervalMinutes = Number(intervalString.split(':')[1]) + 60 * Number(intervalString.split(':')[0])
 		let end = event.end
 		if (!end) {
 			end = new Date(start)
@@ -35,7 +35,6 @@ export default function(store) {
 
 			const calendarComponent = calendarObject.calendarComponent
 			const eventComponent = calendarComponent.getVObjectIterator().next().value
-
 
 			eventComponent.startDate = startDate
 			eventComponent.endDate = endDate

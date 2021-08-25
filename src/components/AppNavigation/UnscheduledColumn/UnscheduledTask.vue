@@ -1,8 +1,8 @@
 <template>
 	<div style="margin-left: 18%; margin-right:7%;">
 		<a
-			class="fc-timegrid-event fc-v-event fc-event fc-event-start fc-event-end"
 			ref="unscheduledEvent"
+			class="fc-timegrid-event fc-v-event fc-event fc-event-start fc-event-end"
 			:class="fcEvent.classNames"
 			:data-object-id="calendarObject.id"
 			:style="styleObject"
@@ -22,7 +22,7 @@
 							v-if="deleteTimeout !== null"
 							style="position: absolute; right: 5%">
 
-							Removing in {{ this.countdown }}
+							Removing in {{ countdown }}
 						</span>
 					</div>
 
@@ -61,12 +61,12 @@ export default {
 		return {
 			deleteInterval: null,
 			deleteTimeout: null,
-			countdown: 5
+			countdown: 5,
 		}
 	},
 	computed: {
 		...mapState({
-			calendarsById: state => state.calendars.calendarsById
+			calendarsById: state => state.calendars.calendarsById,
 		}),
 		...mapGetters({
 			timezoneId: 'getResolvedTimezone',
@@ -92,11 +92,11 @@ export default {
 		},
 		innerStyleObject() {
 			return {
-				color: this.fcEvent?.textColor ?? generateTextColorForHex(this.color)
+				color: this.fcEvent?.textColor ?? generateTextColorForHex(this.color),
 			}
 		},
 		dateText() {
-			return this.fcEvent.start?.toLocaleString() ?? "Unscheduled"
+			return this.fcEvent.start?.toLocaleString() ?? 'Unscheduled'
 		},
 		title() {
 			return this.fcEvent.title
@@ -104,33 +104,33 @@ export default {
 	},
 	mounted() {
 		this.$nextTick(() => {
-			eventDidMount({event: this.fcEvent, el: this.$refs.unscheduledEvent})
+			eventDidMount({ event: this.fcEvent, el: this.$refs.unscheduledEvent })
 		})
 	},
 	methods: {
 		completeTask(jsEvent) {
-			if (isCheckboxClick(jsEvent)){
+			if (isCheckboxClick(jsEvent)) {
 				this.toggleFrontEndComplete()
 			}
 		},
-		isCompleteFrontEnd(){
+		isCompleteFrontEnd() {
 			return this.$refs.unscheduledEvent.classList.contains('fc-event-nc-task-completed')
 		},
-		frontEndComplete(){
+		frontEndComplete() {
 			if (this.isCompleteFrontEnd()) { return }
 			const fcEl = this.$refs.unscheduledEvent
 			const checkbox = fcEl.querySelector('.fc-event-title-checkbox')
 			checkbox.classList.replace('calendar-grid-checkbox', 'calendar-grid-checkbox-checked')
 			fcEl.classList.add('fc-event-nc-task-completed')
 		},
-		frontEndUncomplete(){
+		frontEndUncomplete() {
 			if (!this.isCompleteFrontEnd()) { return }
 			const fcEl = this.$refs.unscheduledEvent
 			const checkbox = fcEl.querySelector('.fc-event-title-checkbox')
 			checkbox.classList.replace('calendar-grid-checkbox-checked', 'calendar-grid-checkbox')
 			fcEl.classList.remove('fc-event-nc-task-completed')
 		},
-		toggleFrontEndComplete(){
+		toggleFrontEndComplete() {
 			if (!this.isCompleteFrontEnd()) {
 
 				this.frontEndComplete()
@@ -165,6 +165,6 @@ export default {
 				this.frontEndUncomplete()
 			}
 		},
-	}
+	},
 }
 </script>

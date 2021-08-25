@@ -62,7 +62,7 @@
 				</Actions>
 				<Actions
 					v-if="!isNew"
-					:forceMenu="true">
+					:force-menu="true">
 					<ActionButton
 						v-if="isTask"
 						icon="icon-history"
@@ -293,7 +293,7 @@ export default {
 		await next()
 
 		const isNew = to.name === 'NewPopoverView'
-		
+
 		this.$refs.popover
 			.$children[0]
 			.$refs.trigger = this.getDomElementForPopover(isNew, to)

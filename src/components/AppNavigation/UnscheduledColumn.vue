@@ -13,36 +13,32 @@
 		</template>
 
 		<AppNavigationNewItem
-			title="New Task"
-			icon="icon-add"
 			ref="newUnscheduledItem"
 			v-shortkey="['c']"
+			title="New Task"
+			icon="icon-add"
 			@shortkey.native="focusNewUnscheduledItem"
 			@new-item="addUnscheduledTask" />
-
 	</AppNavigationItem>
 </template>
 
 <script>
 import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
 import UnscheduledTask from './UnscheduledColumn/UnscheduledTask.vue'
-import CalendarListItemLoadingPlaceholder from './CalendarList/CalendarListItemLoadingPlaceholder.vue'
 import AppNavigationNewItem from '@nextcloud/vue/dist/Components/AppNavigationNewItem'
 import FullCalendar from '@fullcalendar/vue' // eslint-disable-line no-unused-vars
 import { Draggable } from '@fullcalendar/interaction'
 import { createTask } from '../../utils/tasks'
 import { mapCalendarJsToCalendarObject } from '../../models/calendarObject'
 import { mapEventComponentToEventObject } from '../../models/event.js'
-import { getUnixTimestampFromDate } from '../../utils/date.js'
+import { getUnixTimestampFromDate, getDateFromFirstdayParam, getDayStart } from '../../utils/date.js'
 import { mapGetters, mapState } from 'vuex'
-import { getDateFromFirstdayParam, getDayStart } from '../../utils/date.js'
 
 export default {
 	name: 'UnscheduledColumn',
 	components: {
 		UnscheduledTask,
 		AppNavigationItem,
-		CalendarListItemLoadingPlaceholder,
 		AppNavigationNewItem,
 	},
 	data() {
@@ -61,25 +57,25 @@ export default {
 			overdueEnd: state => {
 				const end = getDayStart()
 				switch (state.route.params.view) {
-					case 'timeGridDay':
-						break
-					case 'timeGridWeek':
-						end.setDate(end.getDate() - end.getDay())
-						break
-					case 'dayGridMonth':
-					case 'listMonth':
-						end.setDate(1)
-						break
+				case 'timeGridDay':
+					break
+				case 'timeGridWeek':
+					end.setDate(end.getDate() - end.getDay())
+					break
+				case 'dayGridMonth':
+				case 'listMonth':
+					end.setDate(1)
+					break
 				}
 				end.setSeconds(-1)
 				return end
 			},
 			unscheduledObjects(state) {
-				const modCount = state.calendarObjects.modificationCount
+				const modCount = state.calendarObjects.modificationCount // eslint-disable-line no-unused-vars
 				return Object.values(state.calendarObjects.calendarObjects).filter(
 					v => !this.isComplete(v) && (!this.isScheduled(v) || this.isOverdue(v))
 				)
-			}
+			},
 		}),
 		...mapGetters({
 			getCalendarObjects: 'getCalendarObjectsByTimeRangeId',
@@ -107,7 +103,7 @@ export default {
 			const calendarId = this.sortedCalendars[0].id
 			const thisAndAllFuture = false
 
-			const calendarObject = mapCalendarJsToCalendarObject(createTask({title}), calendarId)
+			const calendarObject = mapCalendarJsToCalendarObject(createTask({ title }), calendarId)
 			const calendarComponent = calendarObject.calendarComponent
 			const eventComponent = calendarComponent.getVObjectIterator().next().value
 		    const calendarObjectInstance = mapEventComponentToEventObject(eventComponent)
@@ -122,7 +118,7 @@ export default {
 			})
 			this.$store.commit('resetCalendarObjectInstanceObjectIdAndRecurrenceId')
 		},
-		focusNewUnscheduledItem(){
+		focusNewUnscheduledItem() {
 			const item = this.$refs.newUnscheduledItem
 			item.newItemValue = ''
 			item.handleNewItem()
@@ -147,9 +143,9 @@ export default {
 				console.debug('time range already in calendar')
 			}
 		},
-		async fetchOverdue(){
+		async fetchOverdue() {
 			for (const calendar of this.calendars) {
-				const timeRangeId = await this.fetchObjectsInTimeRange(
+				await this.fetchObjectsInTimeRange(
 					this.overdueStart(),
 					this.overdueEnd,
 					calendar
@@ -157,17 +153,17 @@ export default {
 			}
 			this.loadedOverdueTasks = true
 		},
-		isOverdue(calendarObject){
+		isOverdue(calendarObject) {
 			if (!calendarObject.isTodo) { return false }
 			const todo = calendarObject.calendarComponent.getVObjectIterator().next().value
 			return todo.isOverdue(this.overdueEnd)
 		},
-		isComplete(calendarObject){
+		isComplete(calendarObject) {
 			if (!calendarObject.isTodo) { return false }
 			const todoComponent = calendarObject.calendarComponent.getVObjectIterator().next().value
 			return todoComponent.isComplete
 		},
-		isScheduled(calendarObject){
+		isScheduled(calendarObject) {
 			if (!calendarObject.isTodo) { return false }
 			const todo = calendarObject.calendarComponent.getVObjectIterator().next().value
 			return todo.isScheduled

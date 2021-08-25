@@ -334,7 +334,7 @@ const actions = {
 			endDateTime.isDate = true
 		}
 
-		const calendar = isTask ? createTask({startDate: startDateTime, endDate: endDateTime}) : createEvent(startDateTime, endDateTime)
+		const calendar = isTask ? createTask({ startDate: startDateTime, endDate: endDateTime }) : createEvent(startDateTime, endDateTime)
 		for (const vObject of calendar.getVObjectIterator()) {
 			vObject.undirtify()
 		}

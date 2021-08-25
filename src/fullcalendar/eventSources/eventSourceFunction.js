@@ -71,10 +71,8 @@ export function vObjectSourceFunction(calendarObject, object, calendar, timezone
 		classNames.push('fc-event-nc-alarms')
 	}
 
-	// // For now, we only display
-	// if (object.name === 'VTODO' && object.endDate === null) {
-	// 	return
-	// }
+	// For now, we only display
+	// if (object.name === 'VTODO' && object.endDate === null) { return }
 
 	let jsStart, jsEnd
 	if (object.name === 'VEVENT' || object.name === 'VTODO') {
@@ -92,7 +90,7 @@ export function vObjectSourceFunction(calendarObject, object, calendar, timezone
 	// If the event's start is equal to it's end, fullcalendar is giving
 	// the event a default length of one hour. We are preventing that by
 	// adding one second to the end in that case.
-	if ( jsStart && jsStart.getTime() === jsEnd.getTime()) {
+	if (jsStart && jsStart.getTime() === jsEnd.getTime()) {
 		jsEnd.setSeconds(jsEnd.getSeconds() + 1)
 	}
 

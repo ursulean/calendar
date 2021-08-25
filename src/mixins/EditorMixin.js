@@ -633,12 +633,12 @@ export default {
 		if (to.name === 'NewSidebarView' || to.name === 'NewPopoverView') {
 			next(async vm => {
 				vm.resetState()
-				
+
 				const isAllDay = (to.params.allDay === '1')
 				const start = parseInt(to.params.dtstart, 10)
 				const end = parseInt(to.params.dtend, 10)
 				const timezoneId = vm.$store.getters.getResolvedTimezone
-				
+
 				try {
 					await vm.loadingCalendars()
 					await vm.$store.dispatch('getCalendarObjectInstanceForNewEvent', { isAllDay, start, end, timezoneId })

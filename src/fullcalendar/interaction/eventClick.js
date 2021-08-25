@@ -112,10 +112,10 @@ async function getComponent(event, store) {
 
 	const recurrenceId = event.extendedProps.recurrenceId
 	const recurrenceIdDate = recurrenceId ? new Date(recurrenceId * 1000) : null
-	
+
 	// calendarObject = store.state.calendarObjects.calendarObjects[event.extendedProps.objectId]
 	const calendarComponent = getObjectAtRecurrenceId(calendarObject, recurrenceIdDate)
-	
+
 	if (!calendarComponent) {
 		console.debug('Recurrence-id not found')
 		return

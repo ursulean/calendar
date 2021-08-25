@@ -68,7 +68,7 @@ class ToDoComponentPlus extends ToDoComponent {
 
 	get isScheduled() {
 		const [std, end] = [this.startDate !== null, this.endDate !== null]
-		if (!(std === end)) {console.debug("Inconsistent task state")}
+		if (!(std === end)) { console.debug('Inconsistent task state') }
 		return std && end
 	}
 
@@ -162,14 +162,14 @@ function convertToEvent(calendarComponent) {
 	convert(calendarComponent, EventComponent, 'VEVENT', todo2event)
 }
 
-function createTask({startDate, endDate, title}) {
+function createTask({ startDate, endDate, title }) {
 	const calendar = CalendarComponent.fromEmpty()
 	const todoComponent = new ToDoComponentPlus('VTODO')
 	const stamp = DateTimeValue.fromJSDate(dateFactory(), true)
 
 	todoComponent.updatePropertyWithValue('CREATED', stamp.clone())
-	todoComponent.updatePropertyWithValue('DTSTAMP',stamp.clone())
-	todoComponent.updatePropertyWithValue('LAST-MODIFIED',stamp.clone())
+	todoComponent.updatePropertyWithValue('DTSTAMP', stamp.clone())
+	todoComponent.updatePropertyWithValue('LAST-MODIFIED', stamp.clone())
 	todoComponent.updatePropertyWithValue('SEQUENCE', 0)
 	todoComponent.updatePropertyWithValue('UID', uuid())
 
@@ -177,8 +177,8 @@ function createTask({startDate, endDate, title}) {
 		todoComponent.updatePropertyWithValue('SUMMARY', title)
 	}
 
-	if (!(!!startDate == !!endDate)) {
-		throw new Error("Must supply either both start and end date, or neither.")
+	if (!(!!startDate === !!endDate)) {
+		throw new Error('Must supply either both start and end date, or neither.')
 	}
 
 	if (startDate) {
@@ -187,7 +187,7 @@ function createTask({startDate, endDate, title}) {
 
 	if (endDate) {
 		todoComponent.updatePropertyWithValue('DUE', endDate)
-	} else if (startDate){
+	} else if (startDate) {
 		todoComponent.updatePropertyWithValue('DUE', startDate.clone())
 	}
 

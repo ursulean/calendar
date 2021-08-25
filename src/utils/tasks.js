@@ -82,6 +82,22 @@ class ToDoComponentPlus extends ToDoComponent {
 		return dueDate < (limit ?? new Date())
 	}
 
+	addDurationToStart(duration) {
+		this.startDate.addDuration(duration)
+	}
+
+	/**
+	 * Adds a duration to the end of the event
+	 *
+	 * @param {DurationValue} duration The duration to add
+	 */
+	addDurationToEnd(duration) {
+		const endDate = this.endDate
+		endDate.addDuration(duration)
+
+		this.endDate = endDate
+	}
+
 }
 const event2todo = new Map([
 	['DTEND', 'DUE'],

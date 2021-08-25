@@ -21,7 +21,11 @@ export default function(store) {
 		startDate.replaceTimezone(timezone)
 		const endDate = DateTimeValue.fromJSDate(end)
 		endDate.replaceTimezone(timezone)
-		if (isAllDay) { startDate.isDate = true }
+		
+		if (isAllDay) {
+			startDate.isDate = true
+			endDate.isDate = true
+		}
 
 		const objectId = draggedEl.getAttribute('data-object-id')
 
@@ -41,16 +45,6 @@ export default function(store) {
 
 			await store.dispatch('updateCalendarObject', {
 				calendarObject,
-			})
-
-			const newCalendarObject = mapCDavObjectToCalendarObject(calendarObject.dav, calendarObject.calendarId)
-
-			store.commit('deleteCalendarObject', {
-				calendarObject,
-			})
-
-			store.commit('appendCalendarObject', {
-				calendarObject: newCalendarObject,
 			})
 
 		} catch (error) {

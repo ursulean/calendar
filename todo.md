@@ -40,11 +40,15 @@
 - [x] Change 'enter event', 'enter task' placeholder per checkbox
 - [ ] Sort out the ...-short display style for half hour tasks/events
 - [ ] Make bridging object between Event and Todo, convert in mapCDavObjectToCalendarObject
+- [ ] Additional activity buttons are offset in firefox for SimpleEditor
+- [ ] Sort sidebar by overdue first
 
 ### Bugs
 
 - [x] When switching from task to event, end date stays at start date
 - [ ] "Will-change memory consumption is too high. Budget limit is the document surface area multiplied by 3 (1216990 px). Occurrences of will-change over the budget will be ignored." on toggleTask
+- [x] Unscheduled -> Allday fails
+  - [ ] Inconsistency between Unscheduled -> Allday and Scheduled -> Allday
 
 ### Notes
 

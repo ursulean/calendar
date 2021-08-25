@@ -103,3 +103,4 @@ css/public
 
 archive/*
 upload_to_prod.sh
+upload_to_prod_remote.sh

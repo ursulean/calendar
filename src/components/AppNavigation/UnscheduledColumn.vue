@@ -85,6 +85,7 @@ export default {
 			getCalendarObjects: 'getCalendarObjectsByTimeRangeId',
 			getTimeRange: 'getTimeRangeForCalendarCoveringRange',
 			timezoneId: 'getResolvedTimezone',
+			sortedCalendars: 'sortedCalendars',
 		}),
 	},
 	mounted() {
@@ -102,8 +103,8 @@ export default {
 		})
 	},
 	methods: {
-		addUnscheduledTask(title) {
-			const calendarId = this.calendars[0].id
+		async addUnscheduledTask(title) {
+			const calendarId = this.sortedCalendars[0].id
 			const thisAndAllFuture = false
 
 			const calendarObject = mapCalendarJsToCalendarObject(createTask({title}), calendarId)
@@ -115,10 +116,11 @@ export default {
 				calendarObject, calendarObjectInstance,
 			})
 
-			this.$store.dispatch('saveCalendarObjectInstance', {
+			await this.$store.dispatch('saveCalendarObjectInstance', {
 				thisAndAllFuture,
 				calendarId,
 			})
+			this.$store.commit('resetCalendarObjectInstanceObjectIdAndRecurrenceId')
 		},
 		focusNewUnscheduledItem(){
 			const item = this.$refs.newUnscheduledItem

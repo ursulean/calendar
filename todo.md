@@ -38,6 +38,7 @@
 - [x] Automatically highlight textbox in editor
 - [x] Esc to escape event
 - [x] Change 'enter event', 'enter task' placeholder per checkbox
+- [ ] Sort out the ...-short display style for half hour tasks/events
 - [ ] Make bridging object between Event and Todo, convert in mapCDavObjectToCalendarObject
 
 ### Bugs

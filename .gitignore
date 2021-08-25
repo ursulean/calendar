@@ -102,3 +102,4 @@ js/public
 css/public
 
 archive/*
+upload_to_prod.sh

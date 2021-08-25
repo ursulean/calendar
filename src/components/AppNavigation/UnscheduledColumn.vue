@@ -73,7 +73,7 @@ export default {
 			unscheduledObjects(state) {
 				const modCount = state.calendarObjects.modificationCount // eslint-disable-line no-unused-vars
 				return Object.values(state.calendarObjects.calendarObjects).filter(
-					v => !this.isComplete(v) && (!this.isScheduled(v) || this.isOverdue(v))
+					v => v.isTodo && !this.isComplete(v) && (!this.isScheduled(v) || this.isOverdue(v))
 				)
 			},
 		}),

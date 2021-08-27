@@ -48,7 +48,7 @@ import { getObjectAtRecurrenceId } from '../utils/calendarObject.js'
 import logger from '../utils/logger.js'
 import settings from './settings.js'
 
-import { convertToToDoPlus, convertToEvent } from '../utils/tasks'
+import { convertToToDoPlus, convertToEventPlus } from '../utils/tasks'
 import { mapCalendarJsToCalendarObject, mapCDavObjectToCalendarObject } from '../models/calendarObject'
 
 const state = {
@@ -1921,7 +1921,7 @@ const actions = {
 	toggleTask({ state, commit, getters }, { calendarObject }) {
 		const calendarComponent = calendarObject.calendarComponent
 
-		state.isTaskDefault ? convertToEvent(calendarComponent) : convertToToDoPlus(calendarComponent)
+		state.isTaskDefault ? convertToEventPlus(calendarComponent) : convertToToDoPlus(calendarComponent)
 		const eventComponent = calendarComponent.getVObjectIterator().next().value
 
 		commit('setCalendarObjectInstanceForNewEvent', {

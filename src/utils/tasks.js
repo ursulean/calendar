@@ -6,6 +6,7 @@ import { v4 as uuid } from 'uuid'
 import RecurrenceManager from 'calendar-js/src/recurrence/recurrenceManager.js'
 import DateTimeValue from 'calendar-js/src/values/dateTimeValue'
 import { getDateFromDateTimeValue } from './date.js'
+import getTimezoneManager from '../services/timezoneDataProviderService'
 
 class ToDoComponentPlus extends ToDoComponent {
 
@@ -98,7 +99,36 @@ class ToDoComponentPlus extends ToDoComponent {
 		this.endDate = endDate
 	}
 
+	shiftByDuration(delta, allDay, defaultTimezone, defaultAllDayDuration, defaultTimedDuration) {
+		const currentAllDay = this.isAllDay()
+		super.shiftByDuration(delta, allDay, defaultTimezone, defaultAllDayDuration, defaultTimedDuration)
+		
+		if (!currentAllDay && allDay) {
+			const floating = getTimezoneManager().getTimezoneForId("floating")
+			if (this.hasProperty('dtstart')) {
+				this.startDate.replaceTimezone(floating)
+			}
+	
+			if (this.hasProperty('due')) {
+				this.endDate.replaceTimezone(floating)
+			}
+		}
+	}
 }
+
+class EventComponentPlus extends EventComponent {
+	shiftByDuration(delta, allDay, defaultTimezone, defaultAllDayDuration, defaultTimedDuration) {
+		const currentAllDay = this.isAllDay()
+		super.shiftByDuration(delta, allDay, defaultTimezone, defaultAllDayDuration, defaultTimedDuration)
+		
+		if (!currentAllDay && allDay) {
+			const floating = getTimezoneManager().getTimezoneForId("floating")
+			this.startDate.replaceTimezone(floating)
+			this.endDate.replaceTimezone(floating)
+		}
+	}
+}
+
 const event2todo = new Map([
 	['DTEND', 'DUE'],
 ])
@@ -158,11 +188,11 @@ function convertToToDoPlus(calendarComponent) {
 	convert(calendarComponent, ToDoComponentPlus, 'VTODO', event2todo)
 }
 
-function convertToEvent(calendarComponent) {
-	convert(calendarComponent, EventComponent, 'VEVENT', todo2event)
+function convertToEventPlus(calendarComponent) {
+	convert(calendarComponent, EventComponentPlus, 'VEVENT', todo2event)
 }
 
-function createTask({ startDate, endDate, title }) {
+function createTaskPlus({ startDate, endDate, title }) {
 	const calendar = CalendarComponent.fromEmpty()
 	const todoComponent = new ToDoComponentPlus('VTODO')
 	const stamp = DateTimeValue.fromJSDate(dateFactory(), true)
@@ -198,9 +228,9 @@ function createTask({ startDate, endDate, title }) {
 }
 
 export {
-	createTask,
+	createTaskPlus,
 	convertToToDoPlus,
 	isToDoComponent,
-	convertToEvent,
+	convertToEventPlus,
 	isEventComponent,
 }

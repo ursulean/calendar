@@ -82,7 +82,11 @@ function handleEventClick(event, store, router, route, window) {
 }
 
 export function isCheckboxClick(jsEvent) {
-	if (!jsEvent) {
+	return isElementClick(jsEvent, 'fc-event-title-checkbox')
+}
+
+function isElementClick(jsEvent, className) {
+	if (!jsEvent || !className) {
 		return false
 	}
 
@@ -90,13 +94,12 @@ export function isCheckboxClick(jsEvent) {
 	if (!path) {
 		return false
 	}
-
-	return path[0].className.indexOf('checkbox') !== -1
+	return path[0].classList.contains(className)
 }
 
 export async function toggleCompleted(event, store) {
-	const { calendarObject, todo } = await getComponent(event, store)
-	todo.percent === 100 ? uncheck(todo) : check(todo)
+	const { calendarObject, todoComponent } = await getComponent(event, store)
+	todoComponent.percent === 100 ? uncheck(todoComponent) : check(todoComponent)
 	await store.dispatch('updateCalendarObject', { calendarObject })
 }
 
@@ -122,18 +125,18 @@ async function getComponent(event, store) {
 	}
 	return Promise.resolve({
 		calendarObject: calendarObject,
-		todo: calendarComponent,
+		todoComponent: calendarComponent,
 	})
 }
 
-function check(todo) {
-	todo.percent = 100
-	todo.status = 'COMPLETED'
-	todo.completedTime = DateTimeValue.fromJSDate(new Date())
+function check(todoComponent) {
+	todoComponent.percent = 100
+	todoComponent.status = 'COMPLETED'
+	todoComponent.completedTime = DateTimeValue.fromJSDate(new Date())
 }
 
-function uncheck(todo) {
-	todo.percent = null
-	todo.status = null
-	todo.completedTime = null
+function uncheck(todoComponent) {
+	todoComponent.percent = null
+	todoComponent.status = null
+	todoComponent.completedTime = null
 }

@@ -6,7 +6,9 @@ export default function(store) {
 	return async function({ event, revert, draggedEl, view }) {
 		const isAllDay = event.allDay
 		const timezoneId = store.getters.getResolvedTimezone
-		const timezone = getTimezoneManager().getTimezoneForId(timezoneId)
+		const timezone = getTimezoneManager().getTimezoneForId(
+			isAllDay ? "floating" : timezoneId
+		)
 
 		const start = event.start
 		const intervalString = store.state.settings.slotDuration

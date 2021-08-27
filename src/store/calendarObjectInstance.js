@@ -1449,6 +1449,17 @@ const actions = {
 			})
 		}
 
+		if (isAllDay) {
+			const timezone = getTimezoneManager().getTimezoneForId(timezoneId)
+			const floating = getTimezoneManager().getTimezoneForId("floating")
+			start = DateTimeValue.fromJSDate(new Date(start * 1000), true).getInTimezone(timezone)
+			start.replaceTimezone(floating)
+			start = start.unixTime
+			end = DateTimeValue.fromJSDate(new Date(end * 1000), true).getInTimezone(timezone)
+			end.replaceTimezone(floating)
+			end = end.unixTime
+		}
+
 		const calendarObject = await dispatch('createNewEvent', { start, end, isAllDay, timezoneId, isTask: state.isTaskDefault })
 		const startDate = new Date(start * 1000)
 		const eventComponent = getObjectAtRecurrenceId(calendarObject, startDate)

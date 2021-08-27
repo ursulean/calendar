@@ -64,15 +64,15 @@
 					v-if="!isNew"
 					:force-menu="true">
 					<ActionButton
+						icon="icon-delete"
+						@click="deleteAndLeave(false)">
+						{{ $t('calendar', 'Delete') }}
+					</ActionButton>
+					<ActionButton
 						v-if="isTask"
 						icon="icon-history"
 						@click="unschedule">
 						{{ $t('calendar', 'Unschedule') }}
-					</ActionButton>
-					<ActionButton
-						icon="icon-delete"
-						@click="deleteAndLeave(false)">
-						{{ $t('calendar', 'Delete') }}
 					</ActionButton>
 				</Actions>
 				<Actions

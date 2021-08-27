@@ -207,7 +207,7 @@ function createTaskPlus({ startDate, endDate, title }) {
 		todoComponent.updatePropertyWithValue('SUMMARY', title)
 	}
 
-	if (!(!!startDate === !!endDate)) {
+	if (!!startDate !== !!endDate) {
 		throw new Error('Must supply either both start and end date, or neither.')
 	}
 

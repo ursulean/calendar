@@ -329,12 +329,15 @@ const actions = {
 		const startDate = new Date(start * 1000)
 		const endDate = new Date(end * 1000)
 
-		const startDateTime = DateTimeValue
+		let startDateTime = DateTimeValue
 			.fromJSDate(startDate, true)
-			.getInTimezone(timezone)
-		const endDateTime = DateTimeValue
+		let endDateTime = DateTimeValue
 			.fromJSDate(endDate, true)
-			.getInTimezone(timezone)
+			
+		if (!isAllDay) {
+			startDateTime = startDateTime.getInTimezone(timezone)
+			endDateTime = endDateTime.getInTimezone(timezone)
+		}
 
 		if (isAllDay) {
 			startDateTime.isDate = true

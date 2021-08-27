@@ -5,6 +5,7 @@ import { dateFactory } from 'calendar-js/src/factories/dateFactory.js'
 import { v4 as uuid } from 'uuid'
 import RecurrenceManager from 'calendar-js/src/recurrence/recurrenceManager.js'
 import DateTimeValue from 'calendar-js/src/values/dateTimeValue'
+import DurationValue from 'calendar-js/src/values/durationValue'
 import { getDateFromDateTimeValue } from './date.js'
 import getTimezoneManager from '../services/timezoneDataProviderService'
 
@@ -157,6 +158,14 @@ function convertVObject(vobj, ConvertedClass, newname, propMap) {
 	return component
 }
 
+function isAllDayComponent(component) {
+	if (component.name === 'VCALENDAR') {
+		component = component.getVObjectIterator().next().value
+	}
+	console.log(component)
+	return component.isAllDay()
+}
+
 function isToDoComponent(component) {
 	if (component.name === 'VCALENDAR') {
 		component = component.getVObjectIterator().next().value
@@ -185,17 +194,36 @@ function convert(calendarComponent, newclass, newname, propMap) {
 }
 
 function convertToToDoPlus(calendarComponent) {
+	const isEvent = isEventComponent(calendarComponent)
+	const isAllDay = isAllDayComponent(calendarComponent)
+
 	convert(calendarComponent, ToDoComponentPlus, 'VTODO', event2todo)
+
+	if (isEvent && isAllDay) {
+		const duration = DurationValue.fromData({ days: -1 })
+		const vObject = calendarComponent.getVObjectIterator().next().value
+		vObject.addDurationToEnd(duration)
+	}
 }
 
 function convertToEventPlus(calendarComponent) {
+	const isTodo = isToDoComponent(calendarComponent)
+	const isAllDay = isAllDayComponent(calendarComponent)
+
 	convert(calendarComponent, EventComponentPlus, 'VEVENT', todo2event)
+
+	if (isTodo && isAllDay) {
+		const duration = DurationValue.fromData({ days: 1 })
+		const vObject = calendarComponent.getVObjectIterator().next().value
+		vObject.addDurationToEnd(duration)
+	}
 }
 
 function createTaskPlus({ startDate, endDate, title }) {
 	const calendar = CalendarComponent.fromEmpty()
 	const todoComponent = new ToDoComponentPlus('VTODO')
 	const stamp = DateTimeValue.fromJSDate(dateFactory(), true)
+	const isAllDay = startDate.isDate
 
 	todoComponent.updatePropertyWithValue('CREATED', stamp.clone())
 	todoComponent.updatePropertyWithValue('DTSTAMP', stamp.clone())
@@ -211,14 +239,9 @@ function createTaskPlus({ startDate, endDate, title }) {
 		throw new Error('Must supply either both start and end date, or neither.')
 	}
 
-	if (startDate) {
+	if (startDate && endDate) {
 		todoComponent.updatePropertyWithValue('DTSTART', startDate)
-	}
-
-	if (endDate) {
-		todoComponent.updatePropertyWithValue('DUE', endDate)
-	} else if (startDate) {
-		todoComponent.updatePropertyWithValue('DUE', startDate.clone())
+		todoComponent.updatePropertyWithValue('DUE', isAllDay ? startDate.clone() : endDate)
 	}
 
 	calendar.addComponent(todoComponent)

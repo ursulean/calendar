@@ -225,7 +225,7 @@ function createTaskPlus({ startDate, endDate, title }) {
 	const calendar = CalendarComponent.fromEmpty()
 	const todoComponent = new ToDoComponentPlus('VTODO')
 	const stamp = DateTimeValue.fromJSDate(dateFactory(), true)
-	const isAllDay = startDate.isDate
+	const isAllDay = startDate?.isDate ?? true
 
 	todoComponent.updatePropertyWithValue('CREATED', stamp.clone())
 	todoComponent.updatePropertyWithValue('DTSTAMP', stamp.clone())

@@ -1451,7 +1451,7 @@ const actions = {
 
 		if (isAllDay) {
 			const timezone = getTimezoneManager().getTimezoneForId(timezoneId)
-			const floating = getTimezoneManager().getTimezoneForId("floating")
+			const floating = getTimezoneManager().getTimezoneForId('floating')
 			start = DateTimeValue.fromJSDate(new Date(start * 1000), true).getInTimezone(timezone)
 			start.replaceTimezone(floating)
 			start = start.unixTime

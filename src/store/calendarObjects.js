@@ -36,7 +36,7 @@ import {
 	convertToToDoPlus,
 	isToDoComponent,
 	isEventComponent,
-	convertToEventPlus
+	convertToEventPlus,
 } from '../utils/tasks'
 
 const state = {
@@ -333,7 +333,7 @@ const actions = {
 			.fromJSDate(startDate, true)
 		let endDateTime = DateTimeValue
 			.fromJSDate(endDate, true)
-			
+
 		if (!isAllDay) {
 			startDateTime = startDateTime.getInTimezone(timezone)
 			endDateTime = endDateTime.getInTimezone(timezone)
@@ -345,7 +345,7 @@ const actions = {
 		}
 
 		const calendar = isTask ? createTaskPlus({ startDate: startDateTime, endDate: endDateTime }) : createEvent(startDateTime, endDateTime)
-		if (!isTask) {convertToEventPlus(calendar)}
+		if (!isTask) { convertToEventPlus(calendar) }
 		for (const vObject of calendar.getVObjectIterator()) {
 			vObject.undirtify()
 		}

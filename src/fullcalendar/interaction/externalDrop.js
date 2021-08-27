@@ -1,13 +1,12 @@
 import DateTimeValue from 'calendar-js/src/values/dateTimeValue.js'
 import getTimezoneManager from '../../services/timezoneDataProviderService'
-import { mapCDavObjectToCalendarObject } from '../../models/calendarObject'
 
 export default function(store) {
 	return async function({ event, revert, draggedEl, view }) {
 		const isAllDay = event.allDay
 		const timezoneId = store.getters.getResolvedTimezone
 		const timezone = getTimezoneManager().getTimezoneForId(
-			isAllDay ? "floating" : timezoneId
+			isAllDay ? 'floating' : timezoneId
 		)
 
 		const start = event.start
@@ -23,7 +22,7 @@ export default function(store) {
 		startDate.replaceTimezone(timezone)
 		const endDate = DateTimeValue.fromJSDate(end)
 		endDate.replaceTimezone(timezone)
-		
+
 		if (isAllDay) {
 			startDate.isDate = true
 			endDate.isDate = true

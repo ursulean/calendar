@@ -26,11 +26,11 @@ import {
 	COMPONENT_NAME_VTODO,
 } from './consts.js'
 
-import { 
+import {
 	convertToToDoPlus,
 	isToDoComponent,
 	convertToEventPlus,
-	isEventComponent
+	isEventComponent,
 } from '../utils/tasks'
 
 /**
@@ -93,7 +93,7 @@ const mapCDavObjectToCalendarObject = (dav, calendarId) => {
 
 	if (isToDoComponent(calendarComponent)) { convertToToDoPlus(calendarComponent) }
 	if (isEventComponent(calendarComponent)) { convertToEventPlus(calendarComponent) }
-	
+
 	const vObjectIterator = calendarComponent.getVObjectIterator()
 	const firstVObject = vObjectIterator.next().value
 

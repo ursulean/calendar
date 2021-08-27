@@ -103,31 +103,34 @@ class ToDoComponentPlus extends ToDoComponent {
 	shiftByDuration(delta, allDay, defaultTimezone, defaultAllDayDuration, defaultTimedDuration) {
 		const currentAllDay = this.isAllDay()
 		super.shiftByDuration(delta, allDay, defaultTimezone, defaultAllDayDuration, defaultTimedDuration)
-		
+
 		if (!currentAllDay && allDay) {
-			const floating = getTimezoneManager().getTimezoneForId("floating")
+			const floating = getTimezoneManager().getTimezoneForId('floating')
 			if (this.hasProperty('dtstart')) {
 				this.startDate.replaceTimezone(floating)
 			}
-	
+
 			if (this.hasProperty('due')) {
 				this.endDate.replaceTimezone(floating)
 			}
 		}
 	}
+
 }
 
 class EventComponentPlus extends EventComponent {
+
 	shiftByDuration(delta, allDay, defaultTimezone, defaultAllDayDuration, defaultTimedDuration) {
 		const currentAllDay = this.isAllDay()
 		super.shiftByDuration(delta, allDay, defaultTimezone, defaultAllDayDuration, defaultTimedDuration)
-		
+
 		if (!currentAllDay && allDay) {
-			const floating = getTimezoneManager().getTimezoneForId("floating")
+			const floating = getTimezoneManager().getTimezoneForId('floating')
 			this.startDate.replaceTimezone(floating)
 			this.endDate.replaceTimezone(floating)
 		}
 	}
+
 }
 
 const event2todo = new Map([
@@ -162,7 +165,6 @@ function isAllDayComponent(component) {
 	if (component.name === 'VCALENDAR') {
 		component = component.getVObjectIterator().next().value
 	}
-	console.log(component)
 	return component.isAllDay()
 }
 

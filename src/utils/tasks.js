@@ -40,27 +40,11 @@ class ToDoComponentPlus extends ToDoComponent {
 			} else if (oldStartDate) { this._recurrenceManager.updateStartDateOfMasterItem(start, oldStartDate) }
 		}
 	}
-	/**
-	 * Gets the calculated end-date of the task
-	 *
-	 * If there is a due-date, we will just return that.
-	 * If there is a start-date and a duration, we will
-	 * calculate the end-date based on that.
-	 *
-	 * If there is neither a due-date nor a combination
-	 * of start-date and duration, we just return null
-	 *
-	 * @returns {DateTimeValue|null}
-	 */
+
 	get endDate() {
 		return this.getFirstPropertyFirstValue('due')
 	}
 
-	/**
-	 * Sets the end time of the task
-	 *
-	 * @param {DateTimeValue} end The end of the task
-	 */
 	set endDate(end) {
 		this.deleteAllProperties('duration')
 		if (!end) {
@@ -100,6 +84,46 @@ class ToDoComponentPlus extends ToDoComponent {
 		this.endDate = endDate
 	}
 
+	durationAfterEndDefault() {
+		if (!this.endDate) { return null }
+		return this.isAllDay() ? DurationValue.fromData({ days: 1 }) : DurationValue.fromData({ hours: 1 })
+	}
+
+	// In place of advertiseSingleOccurrenceProperty
+	get durationAfterEnd() {
+		let value = this.getFirstPropertyFirstValue('X-DURATION-AFTER-END')
+
+		if (!value) {
+			value = this.durationAfterEndDefault()
+			if (value) {this.updatePropertyWithValue('X-DURATION-AFTER-END', value)}
+		}
+
+		return value
+	}
+
+	set durationAfterEnd(value) {
+		this._modify()
+
+		if (value === null) {
+			this.deleteAllProperties('X-DURATION-AFTER-END')
+			return
+		}
+
+		this.updatePropertyWithValue('X-DURATION-AFTER-END', value)
+	}
+
+	dueDateDurationEnd() {
+		const dueDate = this.endDate?.clone()
+		if (dueDate) {
+			dueDate.addDuration(this.durationAfterEnd)
+		}
+		return dueDate
+	}
+
+	addDurationToEndDuration(duration) {
+		this.durationAfterEnd.addDuration(duration)
+	}
+
 	shiftByDuration(delta, allDay, defaultTimezone, defaultAllDayDuration, defaultTimedDuration) {
 		const currentAllDay = this.isAllDay()
 		super.shiftByDuration(delta, allDay, defaultTimezone, defaultAllDayDuration, defaultTimedDuration)
@@ -114,8 +138,12 @@ class ToDoComponentPlus extends ToDoComponent {
 				this.endDate.replaceTimezone(floating)
 			}
 		}
-	}
 
+		if (currentAllDay !== allDay) {
+			this.durationAfterEnd = this.durationAfterEndDefault()
+		}
+
+	}
 }
 
 class EventComponentPlus extends EventComponent {
@@ -197,27 +225,35 @@ function convert(calendarComponent, newclass, newname, propMap) {
 
 function convertToToDoPlus(calendarComponent) {
 	const isEvent = isEventComponent(calendarComponent)
-	const isAllDay = isAllDayComponent(calendarComponent)
+	let vObject = calendarComponent.getVObjectIterator().next().value
+
+	let durationAfterEnd
+	if (isEvent) { durationAfterEnd = vObject.endDate.subtractDateWithTimezone(vObject.startDate) }
 
 	convert(calendarComponent, ToDoComponentPlus, 'VTODO', event2todo)
 
-	if (isEvent && isAllDay) {
-		const duration = DurationValue.fromData({ days: -1 })
-		const vObject = calendarComponent.getVObjectIterator().next().value
-		vObject.addDurationToEnd(duration)
+	if (durationAfterEnd) {
+		vObject = calendarComponent.getVObjectIterator().next().value
+		vObject.endDate = vObject.startDate.clone()
+		vObject.durationAfterEnd = durationAfterEnd
 	}
 }
 
 function convertToEventPlus(calendarComponent) {
 	const isTodo = isToDoComponent(calendarComponent)
-	const isAllDay = isAllDayComponent(calendarComponent)
+	let vObject = calendarComponent.getVObjectIterator().next().value
+
+	let durationAfterEnd
+	if (isTodo) {
+		durationAfterEnd = vObject.durationAfterEnd
+		vObject.durationAfterEnd = null
+	}
 
 	convert(calendarComponent, EventComponentPlus, 'VEVENT', todo2event)
 
-	if (isTodo && isAllDay) {
-		const duration = DurationValue.fromData({ days: 1 })
-		const vObject = calendarComponent.getVObjectIterator().next().value
-		vObject.addDurationToEnd(duration)
+	if (durationAfterEnd) {
+		vObject = calendarComponent.getVObjectIterator().next().value
+		vObject.addDurationToEnd(durationAfterEnd)
 	}
 }
 
@@ -243,7 +279,8 @@ function createTaskPlus({ startDate, endDate, title }) {
 
 	if (startDate && endDate) {
 		todoComponent.updatePropertyWithValue('DTSTART', startDate)
-		todoComponent.updatePropertyWithValue('DUE', isAllDay ? startDate.clone() : endDate)
+		todoComponent.updatePropertyWithValue('DUE', startDate.clone())
+		todoComponent.durationAfterEnd = endDate.subtractDateWithTimezone(startDate)
 	}
 
 	calendar.addComponent(todoComponent)

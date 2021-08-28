@@ -75,9 +75,16 @@ export function vObjectSourceFunction(calendarObject, object, calendar, timezone
 	// if (object.name === 'VTODO' && object.endDate === null) { return }
 
 	let jsStart, jsEnd
-	if (object.name === 'VEVENT' || object.name === 'VTODO') {
+	if (object.name === 'VEVENT') {
 		jsStart = object.startDate?.getInTimezone(timezone)?.jsDate
 		jsEnd = object.endDate?.getInTimezone(timezone)?.jsDate
+	} else if (object.name === 'VTODO') {
+		jsStart = object.endDate?.getInTimezone(timezone)?.jsDate
+		jsEnd = object.endDate?.getInTimezone(timezone)?.clone()
+		if (jsEnd) {
+			jsEnd.addDuration(object.durationAfterEnd)
+			jsEnd = jsEnd.jsDate
+		}
 	} else {
 		// We do not want to display anything that's neither
 		// an event nor a task

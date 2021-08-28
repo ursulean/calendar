@@ -1946,18 +1946,9 @@ const actions = {
 		const eventComponent = calendarObject.calendarComponent.getVObjectIterator().next().value
 		eventComponent.endDate = null
 		eventComponent.startDate = null
+		eventComponent.durationAfterEnd = null
 		await dispatch('updateCalendarObject', {
 			calendarObject,
-		})
-
-		const newCalendarObject = mapCDavObjectToCalendarObject(calendarObject.dav, calendarObject.calendarId)
-
-		commit('deleteCalendarObject', {
-			calendarObject,
-		})
-
-		commit('appendCalendarObject', {
-			calendarObject: newCalendarObject,
 		})
 	},
 }

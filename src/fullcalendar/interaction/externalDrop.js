@@ -9,14 +9,9 @@ export default function(store) {
 			isAllDay ? 'floating' : timezoneId
 		)
 
+		
 		const start = event.start
-		const intervalString = store.state.settings.slotDuration
-		const intervalMinutes = Number(intervalString.split(':')[1]) + 60 * Number(intervalString.split(':')[0])
-		let end = event.end
-		if (!end) {
-			end = new Date(start)
-			end.setMinutes(end.getMinutes() + intervalMinutes)
-		}
+		const end = event.end ?? new Date(start)
 
 		const startDate = DateTimeValue.fromJSDate(start)
 		startDate.replaceTimezone(timezone)

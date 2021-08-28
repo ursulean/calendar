@@ -60,9 +60,17 @@ export default function(store) {
 
 		if (startDeltaDuration) {
 			eventComponent.addDurationToStart(startDeltaDuration)
+			if (calendarObject.isTodo) {
+				eventComponent.addDurationToEnd(startDeltaDuration)
+			}
 		}
 		if (endDeltaDuration) {
-			eventComponent.addDurationToEnd(endDeltaDuration)
+			if (calendarObject.isTodo) {
+				eventComponent.addDurationToEndDuration(endDeltaDuration)
+			} else {
+				eventComponent.addDurationToEnd(endDeltaDuration)
+			}
+
 		}
 
 		if (eventComponent.canCreateRecurrenceExceptions()) {

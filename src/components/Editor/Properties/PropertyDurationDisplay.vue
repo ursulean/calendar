@@ -8,8 +8,8 @@
             hide-clear-button
             :placeholder="placeholder"
             :value="durationObject"
-            :minute-interval="minuteInterval"
-            :disabled="disabled"
+            :minute-interval="slotToMinuteInterval(slotDuration)"
+            :disabled="isAllDay"
             @input="inputHandler" />
     </div>
 </template>
@@ -39,44 +39,24 @@ export default {
         },
 	},
     computed: {
-        durationObject() { return this.durationToObject(this.duration) },
-        minuteInterval() {
-            return this.slotToMinuteInterval(this.slotDuration)
-        },
-        isSynced() {
-            return this.objectToDuration(this.durationObject) === this.duration
-        },
-        disabled() {
-            return this.isAllDay || !this.isSynced 
-        },
-        placeholder() {
-            return String(Math.floor(this.duration/(60*60*24))) + ' day(s)'
-        }
+        totalMinutes() { return Math.floor(this.duration/60) },
+        totalHours() { return Math.floor(this.totalMinutes/60) },
+        days() { return Math.floor(this.totalHours/24) },
+        hours() { return this.totalHours - 24 * this.days },
+        minutes() { return this.totalMinutes - 60 * this.totalHours },
+        dStr() { return String(this.days) },
+        hStr() { return this.days > 0 ? '' : String(this.hours) },
+        mmStr() { return this.days > 0 ? '' : (this.minutes < 10 ? '0' : '') + String(this.minutes) },
+        durationObject() { return { D: this.dStr, H: this.hStr, mm: this.mmStr } },
+        placeholder() { return String(this.days) + ' day(s)' },
     },
     methods: {
-        durationToObject(duration) {
-            let minutes = Math.floor(duration/60)
-            let hours = Math.floor(minutes/60)
-            const days = Math.floor(hours/24)
-
-            minutes -= 60 * hours
-            hours -= 24 * days
-
-            return {
-                D: String(days),
-                H: days > 0 ? '' : String(hours),
-                mm: days > 0 ? '' : (minutes < 10 ? '0' : '') + String(minutes),
-            }
-        },
         objectToDuration(object) {
-            return (Number(object.H) * 60 + Number(object.mm)) * 60
+            return ( ( Number(object?.D ?? 0) * 24 + Number(object.H) ) * 60 + Number(object.mm) ) * 60
         },
         slotToMinuteInterval(slotString) {
             const [hours, minutes] = slotString.split(':')
             return Number(hours) * 60 + Number(minutes)
-        },
-        resetValue(){
-            this.durationObject = this.durationToObject(this.duration)
         },
         async inputHandler(event) {
             // this.$emit('change', this.objectToDuration(event))

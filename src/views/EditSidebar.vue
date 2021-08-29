@@ -84,6 +84,7 @@
 				:start-timezone="startTimezone"
 				:end-date="endDate"
 				:end-timezone="endTimezone"
+				:durationAfterEnd="durationAfterEnd"
 				:is-all-day="isAllDay"
 				:is-task="isTask"
 				:is-read-only="isReadOnly"
@@ -93,7 +94,8 @@
 				@updateStartTimezone="updateStartTimezone"
 				@updateEndDate="updateEndDate"
 				@updateEndTimezone="updateEndTimezone"
-				@toggleAllDay="toggleAllDay" />
+				@toggleAllDay="toggleAllDay"
+				@updateDurationAfterEnd="updateDurationAfterEnd" />
 
 			<PropertyTaskToggle
 				:is-read-only="isReadOnly"

@@ -120,7 +120,8 @@
 				@updateStartTimezone="updateStartTimezone"
 				@updateEndDate="updateEndDate"
 				@updateEndTimezone="updateEndTimezone"
-				@toggleAllDay="toggleAllDay" />
+				@toggleAllDay="toggleAllDay"
+				@updateDurationAfterEnd="updateDurationAfterEnd" />
 
 			<PropertyTaskToggle
 				:is-read-only="isReadOnly"

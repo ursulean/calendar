@@ -52,7 +52,8 @@
 				v-else
 				:duration="durationAfterEnd"
 				:slot-duration="slotDuration"
-				:is-all-day="isAllDay" />
+				:is-all-day="isAllDay"
+				@change="changeDurationAfterEnd" />
 		</div>
 		<div
 			v-if="isReadOnly"
@@ -295,6 +296,9 @@ export default {
 			}
 
 			this.$emit('updateEndTimezone', value)
+		},
+		changeDurationAfterEnd(value) {
+			this.$emit('updateDurationAfterEnd', value)
 		},
 		/**
 		 * Toggles the all-day state of an event

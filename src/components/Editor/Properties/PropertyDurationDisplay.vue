@@ -1,16 +1,24 @@
 <template>
     <div class="mx-datepicker">
+
         <vue-timepicker
-            ref="durationPicker"
             lazy
             auto-scroll
-            format="H:mm"
+            format=" H:mm"
+            input-width="100%"
             hide-clear-button
             :placeholder="placeholder"
             :value="durationObject"
             :minute-interval="slotToMinuteInterval(slotDuration)"
             :disabled="isAllDay"
-            @input="inputHandler" />
+            @input="inputHandler" >
+
+            <template v-slot:icon>
+                &#9201;
+            </template>
+
+        </vue-timepicker>
+
     </div>
 </template>
 
@@ -59,21 +67,8 @@ export default {
             return Number(hours) * 60 + Number(minutes)
         },
         async inputHandler(event) {
-            // this.$emit('change', this.objectToDuration(event))
-            try{
-                await this.$store.dispatch('changeDurationAfterEnd', {
-                    calendarObjectInstance: this.$store.state.calendarObjectInstance.calendarObjectInstance,
-                    totalSeconds: this.objectToDuration(event),
-                })
-            } catch(e) {
-                this.resetValue()
-                console.debug(e)
-            }
+            this.$emit('change', this.objectToDuration(event))
         },
     }
 }
 </script>
-
-<style lang="scss">
-
-</style>

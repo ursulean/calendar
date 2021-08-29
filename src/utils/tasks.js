@@ -144,6 +144,10 @@ class ToDoComponentPlus extends ToDoComponent {
 		}
 
 	}
+
+	get isTask() {
+		return true
+	}
 }
 
 class EventComponentPlus extends EventComponent {
@@ -157,6 +161,10 @@ class EventComponentPlus extends EventComponent {
 			this.startDate.replaceTimezone(floating)
 			this.endDate.replaceTimezone(floating)
 		}
+	}
+	
+	get isTask() {
+		return false
 	}
 
 }

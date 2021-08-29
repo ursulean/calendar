@@ -219,7 +219,9 @@ const mutations = {
 			}
 
 			// endDate is inclusive, but DTEND needs to be exclusive, so always add one day
-			calendarObjectInstance.eventComponent.endDate.addDuration(DurationValue.fromSeconds(60 * 60 * 24))
+			if (!calendarObjectInstance.eventComponent.isTask) {
+				calendarObjectInstance.eventComponent.endDate.addDuration(DurationValue.fromSeconds(60 * 60 * 24))
+			}
 		} else {
 			if (endDateObj.compare(startDateObj) === -1) {
 				const timezone = getTimezoneManager().getTimezoneForId(startDateObj.timezoneId)
@@ -265,20 +267,26 @@ const mutations = {
 	 * @param {Object} data.calendarObjectInstance The calendarObjectInstance object
 	 */
 	toggleAllDay(state, { calendarObjectInstance }) {
-		if (!calendarObjectInstance.eventComponent.canModifyAllDay()) {
+		const eventComponent = calendarObjectInstance.eventComponent
+		if (!eventComponent.canModifyAllDay()) {
 			return
 		}
 
-		const isAllDay = calendarObjectInstance.eventComponent.isAllDay()
-		calendarObjectInstance.eventComponent.startDate.isDate = !isAllDay
-		calendarObjectInstance.eventComponent.endDate.isDate = !isAllDay
-		calendarObjectInstance.isAllDay = calendarObjectInstance.eventComponent.isAllDay()
+		const isAllDay = eventComponent.isAllDay()
+		
+		eventComponent.startDate.isDate = !isAllDay
+		eventComponent.endDate.isDate = !isAllDay
+		calendarObjectInstance.isAllDay = eventComponent.isAllDay()
 
-		// isAllDay = old value
-		if (isAllDay) {
-			calendarObjectInstance.eventComponent.endDate.addDuration(DurationValue.fromSeconds(-1 * 60 * 60 * 24))
+		if (eventComponent.isTask) {
+			eventComponent.durationAfterEnd = null
+			calendarObjectInstance.durationAfterEnd = eventComponent.durationAfterEnd.totalSeconds
 		} else {
-			calendarObjectInstance.eventComponent.endDate.addDuration(DurationValue.fromSeconds(60 * 60 * 24))
+			if (isAllDay) { // isAllDay = old value
+				eventComponent.endDate.addDuration(DurationValue.fromSeconds(-1 * 60 * 60 * 24))
+			} else {
+				eventComponent.endDate.addDuration(DurationValue.fromSeconds(60 * 60 * 24))
+			}
 		}
 	},
 	/**
@@ -300,11 +308,12 @@ const mutations = {
 	 * @param {Object} data.calendarObjectInstance The calendarObjectInstance object
 	 */
 	changeTimeToDefaultForTimedEvents(state, { calendarObjectInstance }) {
-		const startDate = calendarObjectInstance.eventComponent.startDate
-		const endDate = calendarObjectInstance.eventComponent.endDate
+		const eventComponent = calendarObjectInstance.eventComponent
+		const startDate = eventComponent.startDate
+		const endDate = eventComponent.endDate
 		if (startDate.hour === 0 && startDate.minute === 0 && endDate.hour === 0 && endDate.minute === 0) {
 			startDate.hour = 10
-			endDate.hour = 11
+			endDate.hour = eventComponent.isTask ? 10 : 11
 
 			calendarObjectInstance.startDate = getDateFromDateTimeValue(startDate)
 			calendarObjectInstance.endDate = getDateFromDateTimeValue(endDate)
@@ -1927,10 +1936,9 @@ const actions = {
 		commit('toggleAllDay', { calendarObjectInstance })
 
 		if (!calendarObjectInstance.isAllDay) {
-			if (calendarObjectInstance.startTimezoneId === 'floating') {
-				const startTimezone = getters.getResolvedTimezone
-				commit('changeStartTimezone', { calendarObjectInstance, startTimezone })
-			}
+			const tz = getters.getResolvedTimezone
+			commit('changeStartTimezone', { calendarObjectInstance, startTimezone: tz })
+			commit('changeEndTimezone', { calendarObjectInstance, endTimezone: tz })
 
 			commit('changeTimeToDefaultForTimedEvents', { calendarObjectInstance })
 		}

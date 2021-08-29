@@ -390,7 +390,7 @@ const actions = {
 			startDate,
 		})
 
-		if (isAllDay) {
+		if (isAllDay && !isTask) {
 			// The full-calendar end date is exclusive, but the end-date
 			// that changeEndDate expects is inclusive, so we have to deduct one day.
 			commit('changeEndDate', {

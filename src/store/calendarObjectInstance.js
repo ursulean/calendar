@@ -251,7 +251,12 @@ const mutations = {
 			calendarObjectInstance.startTimezoneId = endTimezone
 		}
 	},
-
+	changeDurationAfterEnd(state, {calendarObjectInstance, totalSeconds}){
+		const eventComponent = calendarObjectInstance.eventComponent
+		if (eventComponent.name !== "VTODO") {return}
+		eventComponent.durationAfterEnd = DurationValue.fromSeconds(totalSeconds)
+		calendarObjectInstance.durationAfterEnd = totalSeconds
+	},
 	/**
 	 * Switch from a timed event to allday or vice versa
 	 *
@@ -1502,13 +1507,14 @@ const actions = {
 	 * @param {String} data.timezoneId The timezoneId of the new event
 	 * @returns {Promise<{calendarObject: Object, calendarObjectInstance: Object}>}
 	 */
-	async updateCalendarObjectInstanceForNewEvent({ state, dispatch, commit }, { isAllDay, start, end, timezoneId }) {
+	async updateCalendarObjectInstanceForNewEvent({ state, dispatch, commit, getters }, { isAllDay, start, end, timezoneId }) {
 		await dispatch('updateTimeOfNewEvent', {
 			calendarObjectInstance: state.calendarObjectInstance,
 			start,
 			end,
 			isAllDay,
 			timezoneId,
+			isTask: getters.isTask
 		})
 		commit('setCalendarObjectInstanceForNewEvent', {
 			calendarObject: state.calendarObject,
@@ -1951,6 +1957,12 @@ const actions = {
 			calendarObject,
 		})
 	},
+	changeDurationAfterEnd({ commit }, {calendarObjectInstance, totalSeconds}){
+		commit('changeDurationAfterEnd', {
+			calendarObjectInstance,
+			totalSeconds,
+		})
+	}
 }
 
 export default { state, mutations, getters, actions }

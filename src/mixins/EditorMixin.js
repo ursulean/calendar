@@ -128,6 +128,9 @@ export default {
 		endTimezone() {
 			return this.calendarObjectInstance?.endTimezoneId ?? null
 		},
+		durationAfterEnd() {
+			return this.calendarObjectInstance?.durationAfterEnd ?? 0
+		},
 		/**
 		 * Returns whether or not the event is all-day or null if the event is still loading
 		 *

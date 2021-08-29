@@ -49,6 +49,8 @@ const getDefaultEventObject = (props = {}) => Object.assign({}, {
 	endDate: null,
 	// Timezone of the end date
 	endTimezoneId: null,
+	// Only applies to tasks
+	durationAfterEnd: null,
 	// Indicator whether or not event is all-day
 	isAllDay: false,
 	// Whether or not the user is allowed to toggle the all-day checkbox
@@ -129,6 +131,7 @@ const mapEventComponentToEventObject = (eventComponent) => {
 			eventObject.endDate = getDateFromDateTimeValue(eventComponent.endDate)
 		}
 		eventObject.endTimezoneId = eventComponent.endDate.timezoneId
+		if (eventComponent.name === "VTODO") {eventObject.durationAfterEnd = eventComponent.durationAfterEnd.totalSeconds}
 	}
 
 	/**

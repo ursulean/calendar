@@ -38,6 +38,7 @@
 				@changeTimezone="changeStartTimezone" />
 
 			<DatePicker
+				v-if="!isTask"
 				:date="endDate"
 				:has-timezone="true"
 				:timezone-id="endTimezone"
@@ -46,6 +47,12 @@
 				:user-timezone-id="userTimezone"
 				@change="changeEnd"
 				@changeTimezone="changeEndTimezone" />
+
+			<PropertyDurationDisplay
+				v-else
+				:duration="durationAfterEnd"
+				:slot-duration="slotDuration"
+				:is-all-day="isAllDay" />
 		</div>
 		<div
 			v-if="isReadOnly"
@@ -92,12 +99,14 @@
 <script>
 import moment from '@nextcloud/moment'
 import DatePicker from '../../Shared/DatePicker.vue'
+import PropertyDurationDisplay from './PropertyDurationDisplay.vue'
 import { mapState } from 'vuex'
 
 export default {
 	name: 'PropertyTitleTimePicker',
 	components: {
 		DatePicker,
+		PropertyDurationDisplay,
 	},
 	props: {
 		/**
@@ -126,6 +135,10 @@ export default {
 		 */
 		endDate: {
 			type: Date,
+			required: true,
+		},
+		durationAfterEnd: {
+			type: Number,
 			required: true,
 		},
 		/**
@@ -175,6 +188,7 @@ export default {
 	computed: {
 		...mapState({
 			locale: (state) => state.settings.momentLocale,
+			slotDuration: state => state.settings.slotDuration,
 		}),
 		/**
 		 * Tooltip for the All-day checkbox.

@@ -367,7 +367,7 @@ const actions = {
 	 * @param {String} data2.timezoneId asd
 	 * @param {Boolean} data2.isAllDay foo
 	 */
-	updateTimeOfNewEvent({ commit, dispatch }, { calendarObjectInstance, start, end, timezoneId, isAllDay }) {
+	updateTimeOfNewEvent({ commit, dispatch }, { calendarObjectInstance, start, end, timezoneId, isAllDay, isTask }) {
 		const isDirty = calendarObjectInstance.eventComponent.isDirty()
 		const startDate = new Date(start * 1000)
 		const endDate = new Date(end * 1000)
@@ -401,6 +401,13 @@ const actions = {
 			commit('changeEndDate', {
 				calendarObjectInstance,
 				endDate,
+			})
+		}
+
+		if (isTask) {
+			commit('changeDurationAfterEnd', {
+				calendarObjectInstance,
+				totalSeconds: end-start
 			})
 		}
 

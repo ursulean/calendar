@@ -49,7 +49,7 @@ import logger from '../utils/logger.js'
 import settings from './settings.js'
 
 import { convertToToDoPlus, convertToEventPlus } from '../utils/tasks'
-import { mapCalendarJsToCalendarObject, mapCDavObjectToCalendarObject } from '../models/calendarObject'
+import { mapCalendarJsToCalendarObject } from '../models/calendarObject'
 
 const state = {
 	isNew: null,
@@ -253,9 +253,9 @@ const mutations = {
 			calendarObjectInstance.startTimezoneId = endTimezone
 		}
 	},
-	changeDurationAfterEnd(state, {calendarObjectInstance, totalSeconds}){
+	changeDurationAfterEnd(state, { calendarObjectInstance, totalSeconds }) {
 		const eventComponent = calendarObjectInstance.eventComponent
-		if (eventComponent.name !== "VTODO") {return}
+		if (eventComponent.name !== 'VTODO') { return }
 		eventComponent.durationAfterEnd = DurationValue.fromSeconds(totalSeconds)
 		calendarObjectInstance.durationAfterEnd = totalSeconds
 	},
@@ -273,7 +273,7 @@ const mutations = {
 		}
 
 		const isAllDay = eventComponent.isAllDay()
-		
+
 		eventComponent.startDate.isDate = !isAllDay
 		eventComponent.endDate.isDate = !isAllDay
 		calendarObjectInstance.isAllDay = eventComponent.isAllDay()
@@ -1523,7 +1523,7 @@ const actions = {
 			end,
 			isAllDay,
 			timezoneId,
-			isTask: getters.isTask
+			isTask: getters.isTask,
 		})
 		commit('setCalendarObjectInstanceForNewEvent', {
 			calendarObject: state.calendarObject,
@@ -1965,12 +1965,12 @@ const actions = {
 			calendarObject,
 		})
 	},
-	changeDurationAfterEnd({ commit }, {calendarObjectInstance, totalSeconds}){
+	changeDurationAfterEnd({ commit }, { calendarObjectInstance, totalSeconds }) {
 		commit('changeDurationAfterEnd', {
 			calendarObjectInstance,
 			totalSeconds,
 		})
-	}
+	},
 }
 
 export default { state, mutations, getters, actions }

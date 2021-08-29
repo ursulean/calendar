@@ -95,7 +95,7 @@ class ToDoComponentPlus extends ToDoComponent {
 
 		if (!value) {
 			value = this.durationAfterEndDefault()
-			if (value) {this.updatePropertyWithValue('X-DURATION-AFTER-END', value)}
+			if (value) { this.updatePropertyWithValue('X-DURATION-AFTER-END', value) }
 		}
 
 		return value
@@ -148,6 +148,7 @@ class ToDoComponentPlus extends ToDoComponent {
 	get isTask() {
 		return true
 	}
+
 }
 
 class EventComponentPlus extends EventComponent {
@@ -162,7 +163,7 @@ class EventComponentPlus extends EventComponent {
 			this.endDate.replaceTimezone(floating)
 		}
 	}
-	
+
 	get isTask() {
 		return false
 	}
@@ -195,13 +196,6 @@ function convertVObject(vobj, ConvertedClass, newname, propMap) {
 	component.resetDirty()
 	component.recurrenceManager = new RecurrenceManager(component)
 	return component
-}
-
-function isAllDayComponent(component) {
-	if (component.name === 'VCALENDAR') {
-		component = component.getVObjectIterator().next().value
-	}
-	return component.isAllDay()
 }
 
 function isToDoComponent(component) {
@@ -269,7 +263,6 @@ function createTaskPlus({ startDate, endDate, title }) {
 	const calendar = CalendarComponent.fromEmpty()
 	const todoComponent = new ToDoComponentPlus('VTODO')
 	const stamp = DateTimeValue.fromJSDate(dateFactory(), true)
-	const isAllDay = startDate?.isDate ?? true
 
 	todoComponent.updatePropertyWithValue('CREATED', stamp.clone())
 	todoComponent.updatePropertyWithValue('DTSTAMP', stamp.clone())

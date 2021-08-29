@@ -131,7 +131,7 @@ const mapEventComponentToEventObject = (eventComponent) => {
 			eventObject.endDate = getDateFromDateTimeValue(eventComponent.endDate)
 		}
 		eventObject.endTimezoneId = eventComponent.endDate.timezoneId
-		if (eventComponent.name === "VTODO") {eventObject.durationAfterEnd = eventComponent.durationAfterEnd.totalSeconds}
+		if (eventComponent.name === 'VTODO') { eventObject.durationAfterEnd = eventComponent.durationAfterEnd.totalSeconds }
 	}
 
 	/**

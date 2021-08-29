@@ -407,7 +407,7 @@ const actions = {
 		if (isTask) {
 			commit('changeDurationAfterEnd', {
 				calendarObjectInstance,
-				totalSeconds: end-start
+				totalSeconds: end - start,
 			})
 		}
 

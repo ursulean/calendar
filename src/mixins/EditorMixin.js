@@ -563,10 +563,10 @@ export default {
 			})
 		},
 		updateDurationAfterEnd(totalSeconds) {
-            this.$store.dispatch('changeDurationAfterEnd', {
-                calendarObjectInstance: this.calendarObjectInstance,
-                totalSeconds,
-            })
+			this.$store.dispatch('changeDurationAfterEnd', {
+				calendarObjectInstance: this.calendarObjectInstance,
+				totalSeconds,
+			})
 		},
 		/**
 		 * Updates the timezone of this event's end date

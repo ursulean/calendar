@@ -9,7 +9,6 @@ export default function(store) {
 			isAllDay ? 'floating' : timezoneId
 		)
 
-		
 		const start = event.start
 		const end = event.end ?? new Date(start)
 

@@ -110,7 +110,7 @@
 				:start-timezone="startTimezone"
 				:end-date="endDate"
 				:end-timezone="endTimezone"
-				:durationAfterEnd="durationAfterEnd"
+				:duration-after-end="durationAfterEnd"
 				:is-all-day="isAllDay"
 				:is-task="isTask"
 				:is-read-only="isReadOnly"

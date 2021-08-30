@@ -14,9 +14,11 @@
 
 				<div class="fc-event-main-frame">
 
-					<div
-						class="fc-event-time">
-						{{ dateText }}
+					<div class="fc-event-time" :style="dateStyle">
+
+						<span>
+							{{ dateText }}
+						</span>
 
 						<span
 							v-if="deleteTimeout !== null"
@@ -95,8 +97,23 @@ export default {
 				color: this.fcEvent?.textColor ?? generateTextColorForHex(this.color),
 			}
 		},
+		isScheduled() {
+			return this.calendarObject.isScheduled
+		},
+		isAllDay(){
+			return this.vObject.isAllDay()
+		},
 		dateText() {
-			return this.fcEvent.start?.toLocaleString() ?? 'Unscheduled'
+			if (!this.isScheduled) { return 'Unscheduled' }
+			let dateStr = this.fcEvent.start.toLocaleDateString()
+			if (!this.isAllDay) { dateStr += ' ' + this.fcEvent.start.toLocaleTimeString([], { hour: 'numeric' })}
+			return dateStr
+		},
+		dateStyle() {
+			return {
+				backgroundColor: this.isScheduled ? "#ff000080" : "",
+				borderRadius: "3px",
+			}
 		},
 		title() {
 			return this.fcEvent.title

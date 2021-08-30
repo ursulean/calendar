@@ -43,8 +43,9 @@
 - [ ] Additional activity buttons are offset in firefox for SimpleEditor
 - [x] Change sidebar title to suggest it also includes overdue items
 - [x] Sort sidebar by overdue first
-- [ ] Make "overdue", "unscheduled" color tags
-- [ ] Make sidebar items disappear if their calendar is not active
+- [x] Make "overdue", "unscheduled" color tags
+- [x] Make sidebar items disappear if their calendar is not active
+- [ ] Clicking on overdue tasks brings you to that week/day's view
 
 ### Bugs
 

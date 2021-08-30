@@ -74,7 +74,7 @@ export default {
 			unscheduledObjects(state) {
 				const modCount = state.calendarObjects.modificationCount // eslint-disable-line no-unused-vars
 				return Object.values(state.calendarObjects.calendarObjects).filter(
-					v => v.isTodo && !this.isComplete(v) && (!this.isScheduled(v) || this.isOverdue(v))
+					v => v.isTodo && this.isCalendarEnabled(v) && !this.isComplete(v) && (!this.isScheduled(v) || this.isOverdue(v))
 				).sort(this.sortOrder)
 			},
 		}),
@@ -168,6 +168,9 @@ export default {
 			if (!calendarObject.isTodo) { return false }
 			const todo = calendarObject.calendarComponent.getVObjectIterator().next().value
 			return todo.isScheduled
+		},
+		isCalendarEnabled(calendarObject) {
+			return this.calendarsById[calendarObject.calendarId].enabled
 		},
 		overdueStart() {
 			const start = getDayStart()

@@ -178,10 +178,10 @@ export default {
 			start.setMonth(start.getMonth() - 1)
 			return start
 		},
-		calendarIndex(calendarObject){
+		calendarIndex(calendarObject) {
 			return this.calendarsById[calendarObject.calendarId].order
 		},
-		sortOrder(a, b){
+		sortOrder(a, b) {
 			const [aix, bix] = [this.calendarIndex(a), this.calendarIndex(b)]
 			return b.isScheduled - a.isScheduled || aix - bix
 		},

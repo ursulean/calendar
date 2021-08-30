@@ -104,19 +104,19 @@ export default {
 		isScheduled() {
 			return this.vObject.isScheduled
 		},
-		isAllDay(){
+		isAllDay() {
 			return this.vObject.isAllDay()
 		},
 		dateText() {
 			if (!this.isScheduled) { return 'Unscheduled' }
 			let dateStr = this.fcEvent.start.toLocaleDateString()
-			if (!this.isAllDay) { dateStr += ' ' + this.fcEvent.start.toLocaleTimeString([], { hour: 'numeric' })}
+			if (!this.isAllDay) { dateStr += ' ' + this.fcEvent.start.toLocaleTimeString([], { hour: 'numeric' }) }
 			return dateStr
 		},
 		dateStyle() {
 			return {
-				backgroundColor: this.isScheduled ? "#ff000080" : "",
-				borderRadius: "3px",
+				backgroundColor: this.isScheduled ? '#ff000080' : '',
+				borderRadius: '3px',
 			}
 		},
 		title() {

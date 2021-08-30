@@ -56,6 +56,7 @@
   - [x] All cases of allday tasks must have vObject.startDate == vObject.endDate
   - [x] Unscheduled or timed -> allday -> Editor -> Esc -> Move fails
 - [x] Timed tasks will show up on other platforms & timers with endDate
+- [ ] Editor selects sidebar item for overdue tasks
 
 ### Notes
 

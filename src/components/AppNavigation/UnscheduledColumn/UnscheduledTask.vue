@@ -98,7 +98,7 @@ export default {
 			}
 		},
 		isScheduled() {
-			return this.calendarObject.isScheduled
+			return this.vObject.isScheduled
 		},
 		isAllDay(){
 			return this.vObject.isAllDay()

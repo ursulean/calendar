@@ -85,7 +85,7 @@ export function isCheckboxClick(jsEvent) {
 	return isElementClick(jsEvent, 'fc-event-title-checkbox')
 }
 
-function isElementClick(jsEvent, className) {
+export function isElementClick(jsEvent, className) {
 	if (!jsEvent || !className) {
 		return false
 	}

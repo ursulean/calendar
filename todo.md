@@ -45,7 +45,7 @@
 - [x] Sort sidebar by overdue first
 - [x] Make "overdue", "unscheduled" color tags
 - [x] Make sidebar items disappear if their calendar is not active
-- [ ] Clicking on overdue tasks brings you to that week/day's view
+- [x] Clicking on overdue tasks brings you to that week/day's view
 
 ### Bugs
 

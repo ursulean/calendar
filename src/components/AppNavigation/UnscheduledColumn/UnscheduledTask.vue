@@ -6,7 +6,7 @@
 			:class="fcEvent.classNames"
 			:data-object-id="calendarObject.id"
 			:style="styleObject"
-			@click="completeTask">
+			@click="handleClick">
 
 			<div
 				class="fc-event-main"
@@ -16,12 +16,13 @@
 
 					<div class="fc-event-time" :style="dateStyle">
 
-						<span>
+						<span class="fc-event-time-date">
 							{{ dateText }}
 						</span>
 
 						<span
 							v-if="deleteTimeout !== null"
+							class="fc-event-time-countdown"
 							style="position: absolute; right: 5%">
 
 							Removing in {{ countdown }}
@@ -44,9 +45,12 @@
 <script>
 import eventDidMount from '../../../fullcalendar/rendering/eventDidMount'
 import { vObjectSourceFunction } from '../../../fullcalendar/eventSources/eventSourceFunction'
-import { isCheckboxClick, toggleCompleted } from '../../../fullcalendar/interaction/eventClick'
+import { isCheckboxClick, isElementClick, toggleCompleted } from '../../../fullcalendar/interaction/eventClick'
 import getTimezoneManager from '../../../services/timezoneDataProviderService.js'
 import { generateTextColorForHex, uidToHexColor } from '../../../utils/color.js'
+import {
+	getYYYYMMDDFromDate,
+} from '../../../utils/date.js'
 import { mapGetters, mapState } from 'vuex'
 import { showError } from '@nextcloud/dialogs'
 // import FullCalendar from '@fullcalendar/core'
@@ -125,9 +129,11 @@ export default {
 		})
 	},
 	methods: {
-		completeTask(jsEvent) {
+		handleClick(jsEvent) {
 			if (isCheckboxClick(jsEvent)) {
 				this.toggleFrontEndComplete()
+			} else if (isElementClick(jsEvent, 'fc-event-time-date')) {
+				this.navigateToDate()
 			}
 		},
 		isCompleteFrontEnd() {
@@ -164,7 +170,7 @@ export default {
 					try {
 						await toggleCompleted(this.fcEvent, this.$store)
 					} catch (error) {
-						showError(this.$t('calendar', 'An error occurred, complete the task'))
+						showError(this.$t('calendar', 'An error occurred, Unable to complete the task'))
 						console.error(error)
 					} finally {
 						clearInterval(this.deleteInterval)
@@ -181,6 +187,22 @@ export default {
 				this.countdown = 5
 				this.frontEndUncomplete()
 			}
+		},
+		navigateToDate() {
+			const date = this.fcEvent.start
+			if (!date) { return }
+
+			const name = this.$route.name
+			const params = Object.assign({}, this.$route.params, {
+				firstDay: getYYYYMMDDFromDate(date),
+			})
+
+			// Don't push new route when day didn't change
+			if (this.$route.params.firstDay === getYYYYMMDDFromDate(date)) {
+				return
+			}
+
+			this.$router.push({ name, params })
 		},
 	},
 }

@@ -1,7 +1,7 @@
 <template>
 	<AppNavigationItem
 		ref="unschedDraggable"
-		title="Unscheduled Tasks"
+		title="Require action"
 		:allow-collapse="true"
 		:loading="!loadedOverdueTasks"
 		:open="true">
@@ -49,6 +49,7 @@ export default {
 	computed: {
 		...mapState({
 			calendars: state => state.calendars.calendars,
+			calendarsById: state => state.calendars.calendarsById,
 			calendarObjects: state => state.calendarObjects.calendarObjects,
 			initialCalendarsLoaded: state => state.calendars.initialCalendarsLoaded,
 			modificationCount: state => state.calendarObjects.modificationCount,
@@ -74,7 +75,7 @@ export default {
 				const modCount = state.calendarObjects.modificationCount // eslint-disable-line no-unused-vars
 				return Object.values(state.calendarObjects.calendarObjects).filter(
 					v => v.isTodo && !this.isComplete(v) && (!this.isScheduled(v) || this.isOverdue(v))
-				)
+				).sort(this.sortOrder)
 			},
 		}),
 		...mapGetters({
@@ -173,6 +174,13 @@ export default {
 			start.setDate(1)
 			start.setMonth(start.getMonth() - 1)
 			return start
+		},
+		calendarIndex(calendarObject){
+			return this.calendarsById[calendarObject.calendarId].order
+		},
+		sortOrder(a, b){
+			const [aix, bix] = [this.calendarIndex(a), this.calendarIndex(b)]
+			return b.isScheduled - a.isScheduled || aix - bix
 		},
 	},
 }

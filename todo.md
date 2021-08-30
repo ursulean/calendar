@@ -30,7 +30,6 @@
   - [x] Render them with a special tag/color
 
 - [ ] Recurrence for tasks
-- [ ] End date issue for tasks
 - [x] Fix popover anchoring
 
 ### Low priority
@@ -39,10 +38,13 @@
 - [x] Automatically highlight textbox in editor
 - [x] Esc to escape event
 - [x] Change 'enter event', 'enter task' placeholder per checkbox
-- [ ] Sort out the ...-short display style for half hour tasks/events
+- [x] Sort out the ...-short display style for half hour tasks/events
 - [ ] Make bridging object between Event and Todo, convert in mapCDavObjectToCalendarObject
 - [ ] Additional activity buttons are offset in firefox for SimpleEditor
-- [ ] Sort sidebar by overdue first
+- [x] Change sidebar title to suggest it also includes overdue items
+- [x] Sort sidebar by overdue first
+- [ ] Make "overdue", "unscheduled" color tags
+- [ ] Make sidebar items disappear if their calendar is not active
 
 ### Bugs
 
@@ -52,7 +54,7 @@
   - [x] Inconsistency between Unscheduled -> Allday and Scheduled -> Allday
   - [x] All cases of allday tasks must have vObject.startDate == vObject.endDate
   - [x] Unscheduled or timed -> allday -> Editor -> Esc -> Move fails
-- [ ] Timed tasks will show up on other platforms & timers with endDate
+- [x] Timed tasks will show up on other platforms & timers with endDate
 
 ### Notes
 

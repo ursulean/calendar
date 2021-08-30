@@ -422,6 +422,9 @@ export default {
 			})
 			this.cancel()
 		},
+		async printDebug() {
+			console.debug(this.calendarObject?.calendarComponent?.toICS())
+		},
 		/**
 		 * Saves a calendar-object
 		 *

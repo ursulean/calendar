@@ -74,6 +74,12 @@
 						@click="unschedule">
 						{{ $t('calendar', 'Unschedule') }}
 					</ActionButton>
+					<ActionButton
+						icon="icon-category-search"
+						:close-after-click="true"
+						@click="printDebug">
+						{{ $t('calendar', 'Debug') }}
+					</ActionButton>
 				</Actions>
 				<Actions
 					v-shortkey="['esc']"

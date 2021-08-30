@@ -2,9 +2,8 @@
 	<div style="margin-left: 18%; margin-right:7%;">
 		<a
 			ref="unscheduledEvent"
-			class="fc-timegrid-event fc-v-event fc-event fc-event-start fc-event-end"
+			class="fc-timegrid-event fc-v-event fc-event fc-event-start fc-event-end fc-event-external"
 			:class="fcEvent.classNames"
-			:data-object-id="calendarObject.id"
 			:style="styleObject"
 			@click="handleClick">
 
@@ -125,6 +124,7 @@ export default {
 	},
 	mounted() {
 		this.$nextTick(() => {
+			// This gives the data-object-id and data-recurrence-id element props
 			eventDidMount({ event: this.fcEvent, el: this.$refs.unscheduledEvent })
 		})
 	},

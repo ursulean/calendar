@@ -278,7 +278,7 @@ export default {
 				const objectId = route.params.object
 				const recurrenceId = route.params.recurrenceId
 
-				matchingDomObject = document.querySelector(`.fc-event[data-object-id="${objectId}"][data-recurrence-id="${recurrenceId}"]`)
+				matchingDomObject = document.querySelector(`.fc-event[data-object-id="${objectId}"][data-recurrence-id="${recurrenceId}"]:not(.fc-event-external)`)
 				this.placement = 'auto'
 			}
 

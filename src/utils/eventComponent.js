@@ -7,7 +7,7 @@ const EventMixin = {
 
 	props: {
 		isTask: {
-			get: function () {
+			get: function() {
 				return false
 			},
 		},
@@ -15,7 +15,7 @@ const EventMixin = {
 	funcs: {
 		shiftByDuration: function(delta, allDay, defaultTimezone, defaultAllDayDuration, defaultTimedDuration) {
 			const currentAllDay = this.isAllDay()
-	
+
 			originalShiftByDuration.call(
 				this,
 				delta,
@@ -24,21 +24,21 @@ const EventMixin = {
 				defaultAllDayDuration,
 				defaultTimedDuration
 			)
-	
+
 			if (!currentAllDay && allDay) {
 				const floating = getTimezoneManager().getTimezoneForId('floating')
 				this.startDate.replaceTimezone(floating)
 				this.endDate.replaceTimezone(floating)
 			}
 		},
-	}
+	},
 }
 
-for (const [name, func] of Object.entries(EventMixin.props)){
+for (const [name, func] of Object.entries(EventMixin.props)) {
 	Object.defineProperty(EventComponent.prototype, name, func)
 }
 
-for (const [name, func] of Object.entries(EventMixin.funcs)){
+for (const [name, func] of Object.entries(EventMixin.funcs)) {
 	EventComponent.prototype[name] = func
 }
 

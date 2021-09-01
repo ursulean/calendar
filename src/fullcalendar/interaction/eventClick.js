@@ -20,7 +20,6 @@
  *
  */
 import { getPrefixedRoute } from '../../utils/router'
-import { getObjectAtRecurrenceId } from '../../utils/calendarObject.js'
 
 /**
  * Returns a function for click action on event. This will open the editor.
@@ -106,7 +105,6 @@ export async function toggleCompleted(event, store) {
 
 	const eventComponent = calendarObjectInstance.eventComponent
 	eventComponent.percent === 100 ? eventComponent.uncheck() : eventComponent.check()
-
 
 	await store.dispatch('saveCalendarObjectInstance', {
 		thisAndAllFuture: false,

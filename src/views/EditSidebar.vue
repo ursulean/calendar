@@ -24,12 +24,12 @@
 
 <template>
 	<AppSidebar
+		v-shortkey="['esc']"
 		:title="title"
 		:title-editable="!isReadOnly && !isLoading"
 		:title-placeholder="titlePlaceholder"
 		:subtitle="subTitle"
 		:empty="isLoading || isError"
-		v-shortkey="['esc']"
 		@shortkey.native="cancel"
 		@close="cancel"
 		@update:title="updateTitle">

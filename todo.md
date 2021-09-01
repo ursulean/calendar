@@ -37,6 +37,7 @@
 - [x] Press enter to submit form
 - [x] Automatically highlight textbox in editor
 - [x] Esc to escape event
+- [ ] Esc to escape Sidebar Editor
 - [x] Change 'enter event', 'enter task' placeholder per checkbox
 - [x] Sort out the ...-short display style for half hour tasks/events
 - [ ] Make bridging object between Event and Todo, convert in mapCDavObjectToCalendarObject
@@ -56,7 +57,7 @@
   - [x] All cases of allday tasks must have vObject.startDate == vObject.endDate
   - [x] Unscheduled or timed -> allday -> Editor -> Esc -> Move fails
 - [x] Timed tasks will show up on other platforms & timers with endDate
-- [ ] Editor selects sidebar item for overdue tasks
+- [x] Editor selects sidebar item for overdue tasks
 
 ### Notes
 

@@ -149,6 +149,43 @@ class ToDoComponentPlus extends ToDoComponent {
 		return true
 	}
 
+	check() {
+		this.masterItem.percent = 100
+		this.masterItem.status = 'COMPLETED'
+		this.masterItem.completedTime = this.masterItem.isRecurring() ? this.getReferenceRecurrenceId().clone() : DateTimeValue.fromJSDate(new Date())
+	}
+
+	uncheck() {
+		const prev = this.previousRecurrenceId
+		this.masterItem.completedTime = prev
+		if (!prev) {
+			this.masterItem.percent = null
+			this.masterItem.status = null
+		}
+	}
+
+	get previousRecurrenceId () {
+		const startDate = this.masterItem.getReferenceRecurrenceId()
+		const endDate = this.getReferenceRecurrenceId().clone()
+		endDate.addDuration(DurationValue.fromData({seconds: -1}))
+		const occurrences = this.recurrenceManager.getAllOccurrencesBetween(startDate, endDate)
+		if (!occurrences.length) { return null }
+		return occurrences[occurrences.length - 1].getReferenceRecurrenceId().clone()
+	}
+
+	// Assuming that forkItem is only called for recurring objects
+	forkItem(recurrenceId, startDiff = null) {
+		const occurrence = super.forkItem(recurrenceId, startDiff)
+
+		if (occurrence.isComplete && occurrence.getReferenceRecurrenceId().compare(this.completedTime) > 0) {
+			occurrence.percent = null
+			occurrence.status = null
+			occurrence.completedTime = null
+		}
+
+		return occurrence
+	}
+
 }
 
 class EventComponentPlus extends EventComponent {

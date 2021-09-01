@@ -21,7 +21,6 @@
  */
 import { getPrefixedRoute } from '../../utils/router'
 import { getObjectAtRecurrenceId } from '../../utils/calendarObject.js'
-import DateTimeValue from 'calendar-js/src/values/dateTimeValue.js'
 
 /**
  * Returns a function for click action on event. This will open the editor.
@@ -99,7 +98,7 @@ export function isElementClick(jsEvent, className) {
 
 export async function toggleCompleted(event, store) {
 	const { calendarObject, todoComponent } = await getComponent(event, store)
-	todoComponent.percent === 100 ? uncheck(todoComponent) : check(todoComponent)
+	todoComponent.percent === 100 ? todoComponent.uncheck() : todoComponent.check()
 	await store.dispatch('updateCalendarObject', { calendarObject })
 }
 
@@ -127,16 +126,4 @@ async function getComponent(event, store) {
 		calendarObject: calendarObject,
 		todoComponent: calendarComponent,
 	})
-}
-
-function check(todoComponent) {
-	todoComponent.percent = 100
-	todoComponent.status = 'COMPLETED'
-	todoComponent.completedTime = DateTimeValue.fromJSDate(new Date())
-}
-
-function uncheck(todoComponent) {
-	todoComponent.percent = null
-	todoComponent.status = null
-	todoComponent.completedTime = null
 }

@@ -179,9 +179,11 @@ export default {
 			return start
 		},
 		calendarIndex(calendarObject) {
+			// calendar.order is also stored in fcEvent
 			return this.calendarsById[calendarObject.calendarId].order
 		},
 		sortOrder(a, b) {
+			// fullcalendar/rendering/eventOrder.js implements a similar function
 			const [aix, bix] = [this.calendarIndex(a), this.calendarIndex(b)]
 			return b.isScheduled - a.isScheduled || aix - bix
 		},

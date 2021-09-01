@@ -29,6 +29,8 @@
 		:title-placeholder="titlePlaceholder"
 		:subtitle="subTitle"
 		:empty="isLoading || isError"
+		v-shortkey="['esc']"
+		@shortkey.native="cancel"
 		@close="cancel"
 		@update:title="updateTitle">
 		<template v-if="isLoading">

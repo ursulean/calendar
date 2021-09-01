@@ -26,13 +26,6 @@ import {
 	COMPONENT_NAME_VTODO,
 } from './consts.js'
 
-import {
-	convertToToDoPlus,
-	isToDoComponent,
-	convertToEventPlus,
-	isEventComponent,
-} from '../utils/tasks'
-
 /**
  * Creates a complete calendar-object-object based on given props
  *
@@ -90,9 +83,6 @@ const mapCDavObjectToCalendarObject = (dav, calendarId) => {
 	if (!calendarComponent) {
 		throw new Error('Empty calendar object')
 	}
-
-	if (isToDoComponent(calendarComponent)) { convertToToDoPlus(calendarComponent) }
-	if (isEventComponent(calendarComponent)) { convertToEventPlus(calendarComponent) }
 
 	const vObjectIterator = calendarComponent.getVObjectIterator()
 	const firstVObject = vObjectIterator.next().value

@@ -1,211 +1,11 @@
 import CalendarComponent from 'calendar-js/src/components/calendarComponent.js'
-import ToDoComponent from 'calendar-js/src/components/root/toDoComponent.js'
-import EventComponent from 'calendar-js/src/components/root/eventComponent.js'
 import { dateFactory } from 'calendar-js/src/factories/dateFactory.js'
 import { v4 as uuid } from 'uuid'
 import RecurrenceManager from 'calendar-js/src/recurrence/recurrenceManager.js'
 import DateTimeValue from 'calendar-js/src/values/dateTimeValue'
-import DurationValue from 'calendar-js/src/values/durationValue'
-import { getDateFromDateTimeValue } from './date.js'
-import getTimezoneManager from '../services/timezoneDataProviderService'
 
-class ToDoComponentPlus extends ToDoComponent {
-
-	isAllDay() {
-		return this.getFirstPropertyFirstValue('DUE')?.isDate ?? true
-	}
-
-	/**
-	 * Gets the start date of the event
-	 *
-	 * @returns {DateTimeValue}
-	 */
-	get startDate() {
-		return this.getFirstPropertyFirstValue('dtstart')
-	}
-
-	/**
-	 * Sets the start date of the event
-	 *
-	 * @param {DateTimeValue} start The new start-date to set
-	 */
-	set startDate(start) {
-		const oldStartDate = this.startDate
-		if (!start) { this.deleteAllProperties('dtstart') } else { this.updatePropertyWithValue('dtstart', start) }
-
-		if (this.isMasterItem()) {
-			if (!start) {
-				this._recurrenceManager.clearAllRecurrenceRules()
-				this._recurrenceManager.clearAllRecurrenceDates()
-			} else if (oldStartDate) { this._recurrenceManager.updateStartDateOfMasterItem(start, oldStartDate) }
-		}
-	}
-
-	get endDate() {
-		return this.getFirstPropertyFirstValue('due')
-	}
-
-	set endDate(end) {
-		this.deleteAllProperties('duration')
-		if (!end) {
-			this.deleteAllProperties('due')
-		} else { this.updatePropertyWithValue('due', end) }
-	}
-
-	get isScheduled() {
-		const [std, end] = [this.startDate !== null, this.endDate !== null]
-		if (!(std === end)) { console.debug('Inconsistent task state') }
-		return std && end
-	}
-
-	get isComplete() {
-		return this.percent === 100
-	}
-
-	isOverdue(limit) {
-		if (!this.isScheduled || this.isComplete) { return false }
-		const dueDate = getDateFromDateTimeValue(this.endDate)
-		return dueDate < (limit ?? new Date())
-	}
-
-	addDurationToStart(duration) {
-		this.startDate.addDuration(duration)
-	}
-
-	/**
-	 * Adds a duration to the end of the event
-	 *
-	 * @param {DurationValue} duration The duration to add
-	 */
-	addDurationToEnd(duration) {
-		const endDate = this.endDate
-		endDate.addDuration(duration)
-
-		this.endDate = endDate
-	}
-
-	durationAfterEndDefault() {
-		if (!this.endDate) { return null }
-		return this.isAllDay() ? DurationValue.fromData({ days: 1 }) : DurationValue.fromData({ hours: 1 })
-	}
-
-	// In place of advertiseSingleOccurrenceProperty
-	get durationAfterEnd() {
-		let value = this.getFirstPropertyFirstValue('X-DURATION-AFTER-END')
-
-		if (!value) {
-			value = this.durationAfterEndDefault()
-			if (value) { this.updatePropertyWithValue('X-DURATION-AFTER-END', value) }
-		}
-
-		return value
-	}
-
-	set durationAfterEnd(value) {
-		this._modify()
-
-		if (value === null) {
-			this.deleteAllProperties('X-DURATION-AFTER-END')
-			return
-		}
-
-		this.updatePropertyWithValue('X-DURATION-AFTER-END', value)
-	}
-
-	dueDateDurationEnd() {
-		const dueDate = this.endDate?.clone()
-		if (dueDate) {
-			dueDate.addDuration(this.durationAfterEnd)
-		}
-		return dueDate
-	}
-
-	addDurationToEndDuration(duration) {
-		this.durationAfterEnd.addDuration(duration)
-	}
-
-	shiftByDuration(delta, allDay, defaultTimezone, defaultAllDayDuration, defaultTimedDuration) {
-		const currentAllDay = this.isAllDay()
-		super.shiftByDuration(delta, allDay, defaultTimezone, defaultAllDayDuration, defaultTimedDuration)
-
-		if (!currentAllDay && allDay) {
-			const floating = getTimezoneManager().getTimezoneForId('floating')
-			if (this.hasProperty('dtstart')) {
-				this.startDate.replaceTimezone(floating)
-			}
-
-			if (this.hasProperty('due')) {
-				this.endDate.replaceTimezone(floating)
-			}
-		}
-
-		if (currentAllDay !== allDay) {
-			this.durationAfterEnd = this.durationAfterEndDefault()
-		}
-
-	}
-
-	get isTask() {
-		return true
-	}
-
-	check() {
-		this.masterItem.percent = 100
-		this.masterItem.status = 'COMPLETED'
-		this.masterItem.completedTime = this.masterItem.isRecurring() ? this.getReferenceRecurrenceId().clone() : DateTimeValue.fromJSDate(new Date())
-	}
-
-	uncheck() {
-		const prev = this.previousRecurrenceId
-		this.masterItem.completedTime = prev
-		if (!prev) {
-			this.masterItem.percent = null
-			this.masterItem.status = null
-		}
-	}
-
-	get previousRecurrenceId () {
-		const startDate = this.masterItem.getReferenceRecurrenceId()
-		const endDate = this.getReferenceRecurrenceId().clone()
-		endDate.addDuration(DurationValue.fromData({seconds: -1}))
-		const occurrences = this.recurrenceManager.getAllOccurrencesBetween(startDate, endDate)
-		if (!occurrences.length) { return null }
-		return occurrences[occurrences.length - 1].getReferenceRecurrenceId().clone()
-	}
-
-	// Assuming that forkItem is only called for recurring objects
-	forkItem(recurrenceId, startDiff = null) {
-		const occurrence = super.forkItem(recurrenceId, startDiff)
-
-		if (occurrence.isComplete && occurrence.getReferenceRecurrenceId().compare(this.completedTime) > 0) {
-			occurrence.percent = null
-			occurrence.status = null
-			occurrence.completedTime = null
-		}
-
-		return occurrence
-	}
-
-}
-
-class EventComponentPlus extends EventComponent {
-
-	shiftByDuration(delta, allDay, defaultTimezone, defaultAllDayDuration, defaultTimedDuration) {
-		const currentAllDay = this.isAllDay()
-		super.shiftByDuration(delta, allDay, defaultTimezone, defaultAllDayDuration, defaultTimedDuration)
-
-		if (!currentAllDay && allDay) {
-			const floating = getTimezoneManager().getTimezoneForId('floating')
-			this.startDate.replaceTimezone(floating)
-			this.endDate.replaceTimezone(floating)
-		}
-	}
-
-	get isTask() {
-		return false
-	}
-
-}
+import EventComponent from './eventComponent.js'
+import ToDoComponent from './todoComponent.js'
 
 const event2todo = new Map([
 	['DTEND', 'DUE'],
@@ -262,14 +62,14 @@ function convert(calendarComponent, newclass, newname, propMap) {
 	}
 }
 
-function convertToToDoPlus(calendarComponent) {
+function convertToToDo(calendarComponent) {
 	const isEvent = isEventComponent(calendarComponent)
 	let vObject = calendarComponent.getVObjectIterator().next().value
 
 	let durationAfterEnd
 	if (isEvent) { durationAfterEnd = vObject.endDate.subtractDateWithTimezone(vObject.startDate) }
 
-	convert(calendarComponent, ToDoComponentPlus, 'VTODO', event2todo)
+	convert(calendarComponent, ToDoComponent, 'VTODO', event2todo)
 
 	if (durationAfterEnd) {
 		vObject = calendarComponent.getVObjectIterator().next().value
@@ -278,7 +78,7 @@ function convertToToDoPlus(calendarComponent) {
 	}
 }
 
-function convertToEventPlus(calendarComponent) {
+function convertToEvent(calendarComponent) {
 	const isTodo = isToDoComponent(calendarComponent)
 	let vObject = calendarComponent.getVObjectIterator().next().value
 
@@ -288,7 +88,7 @@ function convertToEventPlus(calendarComponent) {
 		vObject.durationAfterEnd = null
 	}
 
-	convert(calendarComponent, EventComponentPlus, 'VEVENT', todo2event)
+	convert(calendarComponent, EventComponent, 'VEVENT', todo2event)
 
 	if (durationAfterEnd) {
 		vObject = calendarComponent.getVObjectIterator().next().value
@@ -296,9 +96,9 @@ function convertToEventPlus(calendarComponent) {
 	}
 }
 
-function createTaskPlus({ startDate, endDate, title }) {
+function createTask({ startDate, endDate, title }) {
 	const calendar = CalendarComponent.fromEmpty()
-	const todoComponent = new ToDoComponentPlus('VTODO')
+	const todoComponent = new ToDoComponent('VTODO')
 	const stamp = DateTimeValue.fromJSDate(dateFactory(), true)
 
 	todoComponent.updatePropertyWithValue('CREATED', stamp.clone())
@@ -328,9 +128,9 @@ function createTaskPlus({ startDate, endDate, title }) {
 }
 
 export {
-	createTaskPlus,
-	convertToToDoPlus,
+	createTask,
+	convertToToDo,
 	isToDoComponent,
-	convertToEventPlus,
+	convertToEvent,
 	isEventComponent,
 }

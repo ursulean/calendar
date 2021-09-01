@@ -97,33 +97,19 @@ export function isElementClick(jsEvent, className) {
 }
 
 export async function toggleCompleted(event, store) {
-	const { calendarObject, todoComponent } = await getComponent(event, store)
-	todoComponent.percent === 100 ? todoComponent.uncheck() : todoComponent.check()
-	await store.dispatch('updateCalendarObject', { calendarObject })
-}
+	const { calendarObject, calendarObjectInstance } = await store.dispatch(
+		'getCalendarObjectInstanceByObjectIdAndRecurrenceId',
+		event.extendedProps
+	)
 
-async function getComponent(event, store) {
-	const objectId = event.extendedProps.objectId
-	let calendarObject
-	try {
-		calendarObject = await store.dispatch('getEventByObjectId', { objectId })
-	} catch (error) {
-		console.debug(error)
-		return
-	}
+	if (!calendarObject.isTodo) { return }
 
-	const recurrenceId = event.extendedProps.recurrenceId
-	const recurrenceIdDate = recurrenceId ? new Date(recurrenceId * 1000) : null
+	const eventComponent = calendarObjectInstance.eventComponent
+	eventComponent.percent === 100 ? eventComponent.uncheck() : eventComponent.check()
 
-	// calendarObject = store.state.calendarObjects.calendarObjects[event.extendedProps.objectId]
-	const calendarComponent = getObjectAtRecurrenceId(calendarObject, recurrenceIdDate)
 
-	if (!calendarComponent) {
-		console.debug('Recurrence-id not found')
-		return
-	}
-	return Promise.resolve({
-		calendarObject: calendarObject,
-		todoComponent: calendarComponent,
+	await store.dispatch('saveCalendarObjectInstance', {
+		thisAndAllFuture: false,
+		calendarId: event.extendedProps.calendarId,
 	})
 }

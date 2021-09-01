@@ -28,7 +28,7 @@ import UnscheduledTask from './UnscheduledColumn/UnscheduledTask.vue'
 import AppNavigationNewItem from '@nextcloud/vue/dist/Components/AppNavigationNewItem'
 import FullCalendar from '@fullcalendar/vue' // eslint-disable-line no-unused-vars
 import { Draggable } from '@fullcalendar/interaction'
-import { createTaskPlus } from '../../utils/tasks'
+import { createTask } from '../../utils/tasks'
 import { mapCalendarJsToCalendarObject } from '../../models/calendarObject'
 import { mapEventComponentToEventObject } from '../../models/event.js'
 import { getUnixTimestampFromDate, getDateFromFirstdayParam, getDayStart } from '../../utils/date.js'
@@ -104,7 +104,7 @@ export default {
 			const calendarId = this.sortedCalendars[0].id
 			const thisAndAllFuture = false
 
-			const calendarObject = mapCalendarJsToCalendarObject(createTaskPlus({ title }), calendarId)
+			const calendarObject = mapCalendarJsToCalendarObject(createTask({ title }), calendarId)
 			const calendarComponent = calendarObject.calendarComponent
 			const eventComponent = calendarComponent.getVObjectIterator().next().value
 		    const calendarObjectInstance = mapEventComponentToEventObject(eventComponent)

@@ -29,7 +29,8 @@
     - [x] Update UnscheduledTasks based on modificationCount
   - [x] Render them with a special tag/color
 
-- [ ] Recurrence for tasks
+- [x] Recurrence for tasks
+  - [ ] Move work to back-end
 - [x] Fix popover anchoring
 
 ### Low priority

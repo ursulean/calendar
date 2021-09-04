@@ -74,7 +74,7 @@ export default {
 			unscheduledObjects(state) {
 				const modCount = state.calendarObjects.modificationCount // eslint-disable-line no-unused-vars
 				return Object.values(state.calendarObjects.calendarObjects).filter(
-					v => v.isTodo && this.isCalendarEnabled(v) && !this.isComplete(v) && (!this.isScheduled(v) || this.isOverdue(v))
+					v => v.isTodo && this.isCalendarEnabled(v) && !this.isRecurring(v) && !this.isComplete(v) && (!this.isScheduled(v) || this.isOverdue(v))
 				).sort(this.sortOrder)
 			},
 		}),
@@ -154,20 +154,24 @@ export default {
 			}
 			this.loadedOverdueTasks = true
 		},
+		vObject(calendarObject) {
+			return calendarObject.calendarComponent.getVObjectIterator().next().value
+		},
 		isOverdue(calendarObject) {
 			if (!calendarObject.isTodo) { return false }
-			const todo = calendarObject.calendarComponent.getVObjectIterator().next().value
-			return todo.isOverdue(this.overdueEnd)
+			return this.vObject(calendarObject).isOverdue(this.overdueEnd)
 		},
 		isComplete(calendarObject) {
 			if (!calendarObject.isTodo) { return false }
-			const todoComponent = calendarObject.calendarComponent.getVObjectIterator().next().value
-			return todoComponent.isComplete
+			return this.vObject(calendarObject).isComplete
 		},
 		isScheduled(calendarObject) {
 			if (!calendarObject.isTodo) { return false }
-			const todo = calendarObject.calendarComponent.getVObjectIterator().next().value
-			return todo.isScheduled
+			return this.vObject(calendarObject).isScheduled
+		},
+		isRecurring(calendarObject) {
+			if (!calendarObject.isTodo) { return false }
+			return this.vObject(calendarObject).isRecurring()
 		},
 		isCalendarEnabled(calendarObject) {
 			return this.calendarsById[calendarObject.calendarId].enabled

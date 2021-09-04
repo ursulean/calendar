@@ -45,6 +45,7 @@ import {
 	IMPORT_STAGE_IMPORTING,
 	IMPORT_STAGE_PROCESSING,
 } from '../models/consts.js'
+import { filterTasks } from '../utils/tasks'
 
 const state = {
 	calendars: [],
@@ -873,7 +874,7 @@ const actions = {
 		const response = await calendar.dav.findByTypeInTimeRange('VEVENT', from, to)
 		let responseTodo = []
 		if (context.rootState.settings.showTasks) {
-			responseTodo = await calendar.dav.findByTypeInTimeRange('VTODO', from, to)
+			responseTodo = await calendar.dav.findByType('VTODO')
 		}
 		context.commit('addTimeRange', {
 			calendarId: calendar.id,
@@ -893,8 +894,10 @@ const actions = {
 		for (const r of response.concat(responseTodo)) {
 			try {
 				const calendarObject = mapCDavObjectToCalendarObject(r, calendar.id)
-				calendarObjects.push(calendarObject)
-				calendarObjectIds.push(calendarObject.id)
+				if (filterTasks(calendarObject, from, to)) {
+					calendarObjects.push(calendarObject)
+					calendarObjectIds.push(calendarObject.id)
+				}
 			} catch (e) {
 				console.error('could not convert calendar object', e)
 			}

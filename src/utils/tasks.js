@@ -127,10 +127,20 @@ function createTask({ startDate, endDate, title }) {
 	return calendar
 }
 
+function filterTasks(calendarObject, from, to) {
+	if (!calendarObject.isTodo || !calendarObject.isScheduled) { return true }
+	const vObject = calendarObject.calendarComponent.getVObjectIterator().next().value
+	return vObject.recurrenceManager.getAllOccurrencesBetween(
+		DateTimeValue.fromJSDate(from),
+		DateTimeValue.fromJSDate(to)
+	).length > 0
+}
+
 export {
 	createTask,
 	convertToToDo,
 	isToDoComponent,
 	convertToEvent,
 	isEventComponent,
+	filterTasks,
 }

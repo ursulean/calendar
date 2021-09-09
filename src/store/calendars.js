@@ -45,7 +45,7 @@ import {
 	IMPORT_STAGE_IMPORTING,
 	IMPORT_STAGE_PROCESSING,
 } from '../models/consts.js'
-import { filterTasks } from '../utils/tasks'
+import { findRecurringByType } from '../utils/tasks'
 
 const state = {
 	calendars: [],
@@ -869,12 +869,12 @@ const actions = {
 	 * @param {Date} data.to the last date to query events from
 	 * @returns {Promise<void>}
 	 */
-	async getEventsFromCalendarInTimeRange(context, { calendar, from, to }) {
+	async getEventsFromCalendarInTimeRange(context, { calendar, from, to, excludeRecurringTasks = false }) {
 		context.commit('markCalendarAsLoading', { calendar })
 		const response = await calendar.dav.findByTypeInTimeRange('VEVENT', from, to)
 		let responseTodo = []
 		if (context.rootState.settings.showTasks) {
-			responseTodo = await calendar.dav.findByType('VTODO')
+			responseTodo = await calendar.dav.findByTypeInTimeRange('VTODO', from, to)
 		}
 		context.commit('addTimeRange', {
 			calendarId: calendar.id,
@@ -894,13 +894,19 @@ const actions = {
 		for (const r of response.concat(responseTodo)) {
 			try {
 				const calendarObject = mapCDavObjectToCalendarObject(r, calendar.id)
-				if (filterTasks(calendarObject, from, to)) {
-					calendarObjects.push(calendarObject)
-					calendarObjectIds.push(calendarObject.id)
-				}
+				calendarObjects.push(calendarObject)
+				calendarObjectIds.push(calendarObject.id)
 			} catch (e) {
 				console.error('could not convert calendar object', e)
 			}
+		}
+
+		// Add recurring tasks to calendar objects, since they are not expanded by default
+		if (context.rootState.settings.showTasks && !excludeRecurringTasks) {
+			const recurringTasks = await findRecurringByType(calendar, 'VTODO', from, to)
+			calendarObjects.splice(calendarObjects.length, 0, ...recurringTasks)
+			calendarObjectIds.splice(calendarObjectIds.length, 0, ...recurringTasks.map(obj => obj.id))
+			console.debug(String(recurringTasks.length) + ' recurring task(s) loaded')
 		}
 
 		context.commit('appendCalendarObjects', { calendarObjects })

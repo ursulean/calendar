@@ -7,6 +7,9 @@ import DateTimeValue from 'calendar-js/src/values/dateTimeValue'
 import EventComponent from './eventComponent.js'
 import ToDoComponent from './todoComponent.js'
 
+import * as NS from 'cdav-library/src/utility/namespaceUtility.js'
+import { mapCDavObjectToCalendarObject } from '../models/calendarObject'
+
 const event2todo = new Map([
 	['DTEND', 'DUE'],
 ])
@@ -140,13 +143,48 @@ function hardForkTask(todoComponent) {
 	return calendar
 }
 
-function filterTasks(calendarObject, from, to) {
-	if (!calendarObject.isTodo || !calendarObject.isScheduled) { return true }
+function hasOccurrenceBetween(calendarObject, from, to) {
 	const vObject = calendarObject.calendarComponent.getVObjectIterator().next().value
-	return vObject.recurrenceManager.getAllOccurrencesBetween(
-		DateTimeValue.fromJSDate(from),
-		DateTimeValue.fromJSDate(to)
-	).length > 0
+	return !vObject.recurrenceManager.getAllOccurrencesBetweenIterator(from, to).next().done
+}
+
+async function findRecurringByType(calendar, type, from, to) {
+	from = DateTimeValue.fromJSDate(from)
+	to = DateTimeValue.fromJSDate(to)
+
+	const response = await calendar.dav.calendarQuery([{
+		name: [NS.IETF_CALDAV, 'comp-filter'],
+		attributes: [
+			['name', 'VCALENDAR'],
+		],
+		children: [{
+			name: [NS.IETF_CALDAV, 'comp-filter'],
+			attributes: [
+				['name', type],
+			],
+			children: [{
+				name: [NS.IETF_CALDAV, 'prop-filter'],
+				attributes: [
+					['name', 'RRULE'],
+				],
+			}],
+		}],
+	}])
+
+	const calendarObjects = []
+
+	for (const r of response) {
+		try {
+			const calendarObject = mapCDavObjectToCalendarObject(r, calendar.id)
+			if (hasOccurrenceBetween(calendarObject, from, to)) {
+				calendarObjects.push(calendarObject)
+			}
+		} catch (e) {
+			console.error('could not convert calendar object', e)
+		}
+	}
+
+	return calendarObjects
 }
 
 export {
@@ -155,6 +193,6 @@ export {
 	isToDoComponent,
 	convertToEvent,
 	isEventComponent,
-	filterTasks,
 	hardForkTask,
+	findRecurringByType,
 }

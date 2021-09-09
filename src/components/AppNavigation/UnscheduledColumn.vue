@@ -134,7 +134,7 @@ export default {
 				try {
 					const timeRangeId = await this.$store.dispatch(
 						'getEventsFromCalendarInTimeRange',
-						{ calendar, from: start, to: end }
+						{ calendar, from: start, to: end, excludeRecurringTasks: true }
 					)
 					return timeRangeId// this.getCalendarObjects(timeRangeId)
 

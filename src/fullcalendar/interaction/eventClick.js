@@ -20,6 +20,9 @@
  *
  */
 import { getPrefixedRoute } from '../../utils/router'
+import { hardForkTask } from '../../utils/tasks'
+import { mapCalendarJsToCalendarObject } from '../../models/calendarObject'
+import { mapEventComponentToEventObject } from '../../models/event.js'
 
 /**
  * Returns a function for click action on event. This will open the editor.
@@ -102,12 +105,35 @@ export async function toggleCompleted(event, store) {
 	)
 
 	if (!calendarObject.isTodo) { return }
+	let eventComponent = calendarObjectInstance.eventComponent
 
-	const eventComponent = calendarObjectInstance.eventComponent
+	if (eventComponent.isRecurring()) {
+
+		// Change recurrence start to next occurrence
+		const next = eventComponent.nextOccurrence()
+		if (next) {
+			eventComponent.masterItem.startDate = next
+			eventComponent.masterItem.endDate = next
+			store.dispatch('updateCalendarObject', { calendarObject })
+		} else {
+			store.dispatch('deleteCalendarObject', { calendarObject })
+		}
+
+		// Add separate completed task
+		const calendarComponent = hardForkTask(eventComponent)
+		eventComponent = calendarComponent.getVObjectIterator().next().value
+
+		store.commit('setCalendarObjectInstanceForNewEvent', {
+			calendarObject: mapCalendarJsToCalendarObject(calendarComponent, calendarObject.calendarId),
+			calendarObjectInstance: mapEventComponentToEventObject(eventComponent),
+		})
+	}
+
 	eventComponent.percent === 100 ? eventComponent.uncheck() : eventComponent.check()
 
 	await store.dispatch('saveCalendarObjectInstance', {
 		thisAndAllFuture: false,
 		calendarId: event.extendedProps.calendarId,
 	})
+	store.commit('resetCalendarObjectInstanceObjectIdAndRecurrenceId')
 }

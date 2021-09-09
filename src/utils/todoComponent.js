@@ -142,6 +142,16 @@ const ToDoMixin = {
 
 		},
 
+		nextOccurrence: function() {
+			if (!this.isRecurring() || !this.endDate) { return null }
+
+			const d = this.endDate.clone()
+			d.addDuration(DurationValue.fromData(this.isAllDay() ? { days: 1 } : { seconds: 1 }))
+
+			const next = this.recurrenceManager.getClosestOccurrence(d).getReferenceRecurrenceId()
+			return next.compare(this.endDate) === 1 ? next : null
+		},
+
 		check: function() {
 			this.percent = 100
 			this.status = 'COMPLETED'

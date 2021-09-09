@@ -97,7 +97,6 @@ function convertToEvent(calendarComponent) {
 }
 
 function createTask({ startDate, endDate, title }) {
-	const calendar = CalendarComponent.fromEmpty()
 	const todoComponent = new ToDoComponent('VTODO')
 	const stamp = DateTimeValue.fromJSDate(dateFactory(), true)
 
@@ -121,9 +120,23 @@ function createTask({ startDate, endDate, title }) {
 		todoComponent.durationAfterEnd = endDate.subtractDateWithTimezone(startDate)
 	}
 
-	calendar.addComponent(todoComponent)
 	todoComponent.recurrenceManager = new RecurrenceManager(todoComponent)
 
+	const calendar = CalendarComponent.fromEmpty()
+	calendar.addComponent(todoComponent)
+	return calendar
+}
+
+function hardForkTask(todoComponent) {
+	todoComponent = todoComponent.clone()
+	todoComponent.updatePropertyWithValue('UID', uuid())
+	todoComponent.undirtify()
+	todoComponent.recurrenceManager = new RecurrenceManager(todoComponent)
+	todoComponent.recurrenceManager.clearAllRecurrenceRules()
+	todoComponent.recurrenceManager.clearAllRecurrenceDates()
+
+	const calendar = CalendarComponent.fromEmpty()
+	calendar.addComponent(todoComponent)
 	return calendar
 }
 
@@ -143,4 +156,5 @@ export {
 	convertToEvent,
 	isEventComponent,
 	filterTasks,
+	hardForkTask,
 }

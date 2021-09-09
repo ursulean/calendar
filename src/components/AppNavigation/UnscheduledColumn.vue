@@ -189,7 +189,7 @@ export default {
 		sortOrder(a, b) {
 			// fullcalendar/rendering/eventOrder.js implements a similar function
 			const [aix, bix] = [this.calendarIndex(a), this.calendarIndex(b)]
-			return b.isScheduled - a.isScheduled || aix - bix
+			return b.isScheduled - a.isScheduled || aix - bix || this.vObject(b).modificationTime.compare(this.vObject(a).modificationTime)
 		},
 	},
 }

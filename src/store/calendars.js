@@ -872,9 +872,17 @@ const actions = {
 	async getEventsFromCalendarInTimeRange(context, { calendar, from, to, excludeRecurringTasks = false }) {
 		context.commit('markCalendarAsLoading', { calendar })
 		const response = await calendar.dav.findByTypeInTimeRange('VEVENT', from, to)
+
 		let responseTodo = []
+		let recurringTasks = []
+
 		if (context.rootState.settings.showTasks) {
 			responseTodo = await calendar.dav.findByTypeInTimeRange('VTODO', from, to)
+
+			if (!excludeRecurringTasks) {
+				recurringTasks = await findRecurringByType(calendar, 'VTODO', from, to)
+				console.debug(calendar.displayName + ':', String(recurringTasks.length) + ' recurring task(s) loaded')
+			}
 		}
 		context.commit('addTimeRange', {
 			calendarId: calendar.id,
@@ -889,8 +897,10 @@ const actions = {
 			fetchedTimeRangeId: insertId,
 		})
 
-		const calendarObjects = []
-		const calendarObjectIds = []
+		// Add recurring tasks to calendar objects, since they are not expanded by default
+		const calendarObjects = recurringTasks
+		const calendarObjectIds = recurringTasks.map(obj => obj.id)
+
 		for (const r of response.concat(responseTodo)) {
 			try {
 				const calendarObject = mapCDavObjectToCalendarObject(r, calendar.id)
@@ -899,14 +909,6 @@ const actions = {
 			} catch (e) {
 				console.error('could not convert calendar object', e)
 			}
-		}
-
-		// Add recurring tasks to calendar objects, since they are not expanded by default
-		if (context.rootState.settings.showTasks && !excludeRecurringTasks) {
-			const recurringTasks = await findRecurringByType(calendar, 'VTODO', from, to)
-			calendarObjects.splice(calendarObjects.length, 0, ...recurringTasks)
-			calendarObjectIds.splice(calendarObjectIds.length, 0, ...recurringTasks.map(obj => obj.id))
-			console.debug(String(recurringTasks.length) + ' recurring task(s) loaded')
 		}
 
 		context.commit('appendCalendarObjects', { calendarObjects })

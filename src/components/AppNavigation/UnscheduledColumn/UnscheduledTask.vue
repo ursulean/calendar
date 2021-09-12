@@ -73,6 +73,7 @@ export default {
 		return {
 			deleteInterval: null,
 			deleteTimeout: null,
+			deleteLabel: null,
 			countdown: 5,
 		}
 	},
@@ -144,11 +145,11 @@ export default {
 	methods: {
 		handleClick(jsEvent) {
 			if (isCheckboxClick(jsEvent)) {
-				this.toggleFrontEndComplete()
+				this.toggleFrontEndComplete(toggleCompleted, this.fcEvent, this.$store)
 			} else if (isElementClick(jsEvent, 'fc-event-time-date')) {
 				this.navigateToDate()
 			} else if (isElementClick(jsEvent, 'fc-event-external-delete', 4)) {
-				this.deleteUnscheduled()
+				this.toggleFrontEndComplete(this.deleteUnscheduled, this.fcEvent, true)
 			}
 		},
 		isCompleteFrontEnd() {
@@ -168,7 +169,7 @@ export default {
 			checkbox.classList.replace('calendar-grid-checkbox-checked', 'calendar-grid-checkbox')
 			fcEl.classList.remove('fc-event-nc-task-completed')
 		},
-		toggleFrontEndComplete() {
+		toggleFrontEndComplete(func, ...args) {
 			if (!this.isCompleteFrontEnd()) {
 
 				this.frontEndComplete()
@@ -183,7 +184,7 @@ export default {
 
 				this.deleteTimeout = setTimeout(async() => {
 					try {
-						await toggleCompleted(this.fcEvent, this.$store)
+						await func(...args)
 					} catch (error) {
 						showError(this.$t('calendar', 'An error occurred, Unable to complete the task'))
 						console.error(error)
@@ -219,12 +220,12 @@ export default {
 
 			this.$router.push({ name, params })
 		},
-		async deleteUnscheduled() {
+		async deleteUnscheduled(fcEvent, thisAndAllFuture) {
 			await this.$store.dispatch(
 				'getCalendarObjectInstanceByObjectIdAndRecurrenceId',
-				this.fcEvent.extendedProps
+				fcEvent.extendedProps
 			)
-			this.$store.dispatch('deleteCalendarObjectInstance', { thisAndAllFuture: true })
+			this.$store.dispatch('deleteCalendarObjectInstance', { thisAndAllFuture })
 		},
 	},
 }

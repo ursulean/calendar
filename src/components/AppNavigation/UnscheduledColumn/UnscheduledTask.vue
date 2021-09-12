@@ -21,10 +21,13 @@
 
 						<span
 							v-if="deleteTimeout !== null"
-							class="fc-event-time-countdown"
-							style="position: absolute; right: 5%">
+							class="fc-event-time-countdown">
 
 							Removing in {{ countdown }}
+						</span>
+
+						<span class="fc-event-external-delete" style="opacity: 0.75">
+							<Close :size="12"/>
 						</span>
 					</div>
 
@@ -47,15 +50,18 @@ import { vObjectSourceFunction } from '../../../fullcalendar/eventSources/eventS
 import { isCheckboxClick, isElementClick, toggleCompleted } from '../../../fullcalendar/interaction/eventClick'
 import getTimezoneManager from '../../../services/timezoneDataProviderService.js'
 import { generateTextColorForHex, uidToHexColor } from '../../../utils/color.js'
+import Close from 'vue-material-design-icons/Close'
 import {
 	getYYYYMMDDFromDate,
 } from '../../../utils/date.js'
 import { mapGetters, mapState } from 'vuex'
 import { showError } from '@nextcloud/dialogs'
-// import FullCalendar from '@fullcalendar/core'
-// import { StandardEvent } from '@fullcalendar/common'
+
 export default {
 	name: 'UnscheduledTask',
+	components: {
+		Close,
+	},
 	props: {
 		calendarObject: {
 			type: Object,
@@ -115,6 +121,11 @@ export default {
 		},
 		dateStyle() {
 			return {
+				paddingLeft: "1%",
+				paddingRight: "5%",
+				display: "flex",
+				justifyContent: "space-between",
+				alignItems: "center",
 				backgroundColor: this.isScheduled ? '#ff000080' : '',
 				borderRadius: '3px',
 			}
@@ -135,6 +146,8 @@ export default {
 				this.toggleFrontEndComplete()
 			} else if (isElementClick(jsEvent, 'fc-event-time-date')) {
 				this.navigateToDate()
+			} else if (isElementClick(jsEvent, 'fc-event-external-delete')) {
+				this.deleteUnscheduled()
 			}
 		},
 		isCompleteFrontEnd() {
@@ -204,6 +217,9 @@ export default {
 			}
 
 			this.$router.push({ name, params })
+		},
+		deleteUnscheduled() {
+			alert("FOO")
 		},
 	},
 }

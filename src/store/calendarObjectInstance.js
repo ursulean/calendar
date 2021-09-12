@@ -324,6 +324,7 @@ const mutations = {
 		const eventComponent = calendarObjectInstance.eventComponent
 		eventComponent.startDate = startDate
 		eventComponent.endDate = endDate
+		eventComponent.durationAfterEnd = null
 	},
 	/**
 	 * Changes the time of a timed event to the default values

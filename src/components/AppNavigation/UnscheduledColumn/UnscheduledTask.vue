@@ -1,6 +1,6 @@
 <template>
 	<div style="margin-left: 18%; margin-right:7%;">
-		<a
+		<div
 			ref="unscheduledEvent"
 			class="fc-timegrid-event fc-v-event fc-event fc-event-start fc-event-end fc-event-external"
 			:class="fcEvent.classNames"
@@ -26,8 +26,9 @@
 							Removing in {{ countdown }}
 						</span>
 
-						<span class="fc-event-external-delete" style="opacity: 0.75">
-							<Close :size="12"/>
+						<span class="fc-event-external-delete">
+							<Close 
+								:size="12" />
 						</span>
 					</div>
 
@@ -40,7 +41,7 @@
 
 				</div>
 			</div>
-		</a>
+		</div>
 	</div>
 </template>
 
@@ -146,7 +147,7 @@ export default {
 				this.toggleFrontEndComplete()
 			} else if (isElementClick(jsEvent, 'fc-event-time-date')) {
 				this.navigateToDate()
-			} else if (isElementClick(jsEvent, 'fc-event-external-delete')) {
+			} else if (isElementClick(jsEvent, 'fc-event-external-delete', 4)) {
 				this.deleteUnscheduled()
 			}
 		},
@@ -218,9 +219,26 @@ export default {
 
 			this.$router.push({ name, params })
 		},
-		deleteUnscheduled() {
-			alert("FOO")
+		async deleteUnscheduled() {
+			await this.$store.dispatch(
+				'getCalendarObjectInstanceByObjectIdAndRecurrenceId',
+				this.fcEvent.extendedProps
+			)
+			this.$store.dispatch('deleteCalendarObjectInstance', { thisAndAllFuture: true })
 		},
 	},
 }
 </script>
+
+<style lang="scss">
+
+.fc-event-external-delete {
+	padding: 1%;
+	border-radius: 50%;
+}
+
+.fc-event-external-delete:hover {
+	background-color: rgba(255, 255, 255, 0.25);
+}
+
+</style>

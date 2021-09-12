@@ -86,7 +86,7 @@ export function isCheckboxClick(jsEvent) {
 	return isElementClick(jsEvent, 'fc-event-title-checkbox')
 }
 
-export function isElementClick(jsEvent, className) {
+export function isElementClick(jsEvent, className, maxIndex=1) {
 	if (!jsEvent || !className) {
 		return false
 	}
@@ -95,7 +95,10 @@ export function isElementClick(jsEvent, className) {
 	if (!path) {
 		return false
 	}
-	return path[0].classList.contains(className)
+	for (let i=0; i<maxIndex; i++) {
+		if(path[i].classList.contains(className)) { return true }
+	}
+	return false
 }
 
 export async function toggleCompleted(event, store) {

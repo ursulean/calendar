@@ -69,6 +69,12 @@
 						{{ $t('calendar', 'Delete') }}
 					</ActionButton>
 					<ActionButton
+						v-if="canCreateRecurrenceException"
+						icon="icon-delete"
+						@click="deleteAndLeave(true)">
+						{{ $t('calendar', 'Delete all') }}
+					</ActionButton>
+					<ActionButton
 						v-if="isTask"
 						icon="icon-history"
 						@click="unschedule">

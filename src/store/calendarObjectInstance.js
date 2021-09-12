@@ -294,12 +294,37 @@ const mutations = {
 	 *
 	 * @param {Object} state The Vuex state
 	 * @param {Object} data The destructuring object
-	 * @param {Object} data.calendarObjectInstance The calendarObjectInstance object
 	 */
 	toggleTask(state) {
 		state.isTaskDefault = !state.isTaskDefault
 	},
-
+	/**
+	 * Removes dates from task
+	 *
+	 * @param {Object} state The Vuex state
+	 * @param {Object} data The destructuring object
+	 * @param {Object} data.calendarObjectInstance The calendarObject object
+	 * @param {Object} data.calendarObjectInstance The calendarObjectInstance object
+	 */
+	unschedule(state, { calendarObjectInstance }) {
+		const eventComponent = calendarObjectInstance.eventComponent
+		eventComponent.endDate = null
+		eventComponent.startDate = null
+		eventComponent.durationAfterEnd = null
+	},
+	/**
+	 * Adds dates to task
+	 *
+	 * @param {Object} state The Vuex state
+	 * @param {Object} data The destructuring object
+	 * @param {Object} data.calendarObjectInstance The calendarObject object
+	 * @param {Object} data.calendarObjectInstance The calendarObjectInstance object
+	 */
+	 schedule(state, { calendarObjectInstance, startDate, endDate }) {
+		const eventComponent = calendarObjectInstance.eventComponent
+		eventComponent.startDate = startDate
+		eventComponent.endDate = endDate
+	},
 	/**
 	 * Changes the time of a timed event to the default values
 	 *
@@ -1956,11 +1981,14 @@ const actions = {
 
 		commit('toggleTask')
 	},
-	async unschedule({ state, commit, dispatch, getters }, { calendarObject, calendarObjectInstance }) {
-		const eventComponent = calendarObject.calendarComponent.getVObjectIterator().next().value
-		eventComponent.endDate = null
-		eventComponent.startDate = null
-		eventComponent.durationAfterEnd = null
+	async unschedule({ commit, dispatch }, { calendarObject, calendarObjectInstance }) {
+		commit('unschedule', { calendarObjectInstance })
+		await dispatch('updateCalendarObject', {
+			calendarObject,
+		})
+	},
+	async schedule({ commit, dispatch }, { calendarObject, calendarObjectInstance, startDate, endDate }) {
+		commit('schedule', { calendarObjectInstance, startDate, endDate })
 		await dispatch('updateCalendarObject', {
 			calendarObject,
 		})

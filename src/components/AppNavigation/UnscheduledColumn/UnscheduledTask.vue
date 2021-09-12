@@ -83,6 +83,7 @@ export default {
 			return this.calendarObject.calendarComponent.getVObjectIterator().next().value
 		},
 		fcEvent() {
+			this.isScheduled
 			const timezoneObject = getTimezoneManager().getTimezoneForId(this.timezoneId)
 			return vObjectSourceFunction(this.calendarObject, this.vObject, this.calendar, timezoneObject)
 		},
@@ -101,7 +102,7 @@ export default {
 			}
 		},
 		isScheduled() {
-			return this.vObject.isScheduled
+			return this.calendarObject.isScheduled
 		},
 		isAllDay() {
 			return this.vObject.isAllDay()

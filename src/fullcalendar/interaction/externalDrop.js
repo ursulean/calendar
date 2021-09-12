@@ -25,25 +25,25 @@ export default function(store) {
 		const objectId = draggedEl.getAttribute('data-object-id')
 
 		try {
-			const { calendarObject } = await store.dispatch(
+			const { calendarObject, calendarObjectInstance } = await store.dispatch(
 				'getCalendarObjectInstanceByObjectIdAndRecurrenceId', {
 					objectId,
 					recurrenceId: null,
 				}
 			)
 
-			const calendarComponent = calendarObject.calendarComponent
-			const eventComponent = calendarComponent.getVObjectIterator().next().value
-
-			eventComponent.startDate = startDate
-			eventComponent.endDate = endDate
-
-			await store.dispatch('updateCalendarObject', {
+			await store.dispatch('schedule', {
 				calendarObject,
+				calendarObjectInstance,
+				startDate,
+				endDate
 			})
 
+			store.commit('resetCalendarObjectInstanceObjectIdAndRecurrenceId')
+			
 		} catch (error) {
 			console.debug(error)
+			
 		} finally {
 			revert()
 		}

@@ -216,6 +216,9 @@ const actions = {
 			calendarObject.dav.data = calendarObject.calendarComponent.toICS()
 			await calendarObject.dav.update()
 
+			const eventComponent = calendarObject.calendarComponent.getVObjectIterator().next().value
+			calendarObject.isScheduled = eventComponent.isScheduled
+
 			context.commit('addCalendarObjectIdToAllTimeRangesOfCalendar', {
 				calendarId: calendarObject.calendarId,
 				calendarObjectId: calendarObject.id,

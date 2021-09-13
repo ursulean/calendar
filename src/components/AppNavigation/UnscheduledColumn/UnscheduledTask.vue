@@ -28,7 +28,6 @@
 							v-show="externalEventHover"
 							class="fc-event-external-delete-frame">
 							<Close
-								:size="12"
 								class="fc-event-external-delete" />
 						</div>
 					</div>
@@ -118,7 +117,7 @@ export default {
 		dateText() {
 			if (!this.isScheduled) { return 'Unscheduled' }
 			let dateStr = this.fcEvent.start.toLocaleDateString()
-			if (!this.isAllDay) { dateStr += ' ' + this.fcEvent.start.toLocaleTimeString([], { hour: 'numeric' }) }
+			if (!this.isAllDay) { dateStr += ' ' + this.fcEvent.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
 			return dateStr
 		},
 		dateStyle() {
@@ -248,16 +247,26 @@ export default {
 	cursor: grab;
 }
 
-.fc-event-external-delete-frame {
-	padding: 1%;
+.fc-event-external-delete {
+	display: inline-flex;
+	align-self: center;
+	position: relative;
+	height: 1em;
+	width: 1em;
 	border-radius: 50%;
 }
 
-.fc-event-external-delete-frame:hover, .fc-event-title-checkbox:hover {
+.fc-event-external-delete:hover, .fc-event-title-checkbox:hover {
 	background-color: rgba(255, 255, 255, 0.25);
 }
 
-.fc-event-external-delete-frame *, .fc-event-title-checkbox {
+.fc-event-external-delete > .material-design-icon__svg {
+	height: 1em;
+	width: 1em;
+	fill: currentColor;
+}
+
+.fc-event-external-delete-frame *, .fc-event-title-checkbox, .fc-event-title-checkbox * {
 	cursor: pointer;
 }
 

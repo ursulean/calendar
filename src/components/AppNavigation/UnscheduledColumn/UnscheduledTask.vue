@@ -248,11 +248,14 @@ export default {
 }
 
 .fc-event-external-delete {
-	display: inline-flex;
+	display: flex;
 	align-self: center;
-	position: relative;
-	height: 1em;
-	width: 1em;
+	justify-self: center;
+	align-items: center;
+	justify-content: center;
+	height: 1.5em;
+	width: 1.5em;
+	padding: 0.125em;
 	border-radius: 50%;
 }
 
@@ -261,8 +264,6 @@ export default {
 }
 
 .fc-event-external-delete > .material-design-icon__svg {
-	height: 1em;
-	width: 1em;
 	fill: currentColor;
 }
 

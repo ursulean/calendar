@@ -23,13 +23,12 @@
 							v-if="deleteTimeout !== null"
 							class="fc-event-time-countdown">
 
-							Removing in {{ countdown }}
+							{{ deleteAction }} in {{ countdown }}
 						</span>
 
-						<span class="fc-event-external-delete">
-							<Close 
-								:size="12" />
-						</span>
+						<Close 
+							:size="12"
+							class="fc-event-external-delete" />
 					</div>
 
 					<div class="fc-event-title-container">
@@ -135,6 +134,10 @@ export default {
 		title() {
 			return this.fcEvent.title
 		},
+		deleteAction() {
+			const label = this.deleteLabel
+			return label[0].toUpperCase() + label.slice(1, -1) + 'ing'
+		}
 	},
 	mounted() {
 		this.$nextTick(() => {
@@ -145,34 +148,39 @@ export default {
 	methods: {
 		handleClick(jsEvent) {
 			if (isCheckboxClick(jsEvent)) {
-				this.toggleFrontEndComplete(toggleCompleted, this.fcEvent, this.$store)
+				this.toggleFrontEndComplete({ label: 'complete' }, toggleCompleted, this.fcEvent, this.$store)
 			} else if (isElementClick(jsEvent, 'fc-event-time-date')) {
 				this.navigateToDate()
 			} else if (isElementClick(jsEvent, 'fc-event-external-delete', 4)) {
-				this.toggleFrontEndComplete(this.deleteUnscheduled, this.fcEvent, true)
+				this.toggleFrontEndComplete({ label: 'delete', checkCheckbox: false }, this.deleteUnscheduled, this.fcEvent, true)
 			}
 		},
 		isCompleteFrontEnd() {
 			return this.$refs.unscheduledEvent.classList.contains('fc-event-nc-task-completed')
 		},
-		frontEndComplete() {
+		frontEndComplete(checkCheckbox) {
 			if (this.isCompleteFrontEnd()) { return }
 			const fcEl = this.$refs.unscheduledEvent
-			const checkbox = fcEl.querySelector('.fc-event-title-checkbox')
-			checkbox.classList.replace('calendar-grid-checkbox', 'calendar-grid-checkbox-checked')
+			if (checkCheckbox) {
+				const checkbox = fcEl.querySelector('.fc-event-title-checkbox')
+				checkbox.classList.replace('calendar-grid-checkbox', 'calendar-grid-checkbox-checked')
+			}
 			fcEl.classList.add('fc-event-nc-task-completed')
 		},
 		frontEndUncomplete() {
 			if (!this.isCompleteFrontEnd()) { return }
 			const fcEl = this.$refs.unscheduledEvent
 			const checkbox = fcEl.querySelector('.fc-event-title-checkbox')
-			checkbox.classList.replace('calendar-grid-checkbox-checked', 'calendar-grid-checkbox')
+			if (checkbox.classList.contains('calendar-grid-checkbox-checked')) {
+				checkbox.classList.replace('calendar-grid-checkbox-checked', 'calendar-grid-checkbox')
+			}
 			fcEl.classList.remove('fc-event-nc-task-completed')
 		},
-		toggleFrontEndComplete(func, ...args) {
+		toggleFrontEndComplete({ label, checkCheckbox=true }, func, ...args) {
 			if (!this.isCompleteFrontEnd()) {
 
-				this.frontEndComplete()
+				this.frontEndComplete(checkCheckbox)
+				this.deleteLabel = label
 
 				this.deleteInterval = setInterval(() => {
 					this.countdown--
@@ -186,20 +194,22 @@ export default {
 					try {
 						await func(...args)
 					} catch (error) {
-						showError(this.$t('calendar', 'An error occurred, Unable to complete the task'))
+						showError(this.$t('calendar', 'An error occurred, Unable to ' + label + ' the task'))
 						console.error(error)
 					} finally {
 						clearInterval(this.deleteInterval)
 						this.deleteTimeout = null
 						this.deleteInterval = null
+						this.deleteLabel = null
 						this.countdown = 5
 					}
 				}, 5000)
-			} else {
+			} else if (this.deleteLabel === label) {
 				clearTimeout(this.deleteTimeout)
 				clearInterval(this.deleteInterval)
 				this.deleteTimeout = null
 				this.deleteInterval = null
+				this.deleteLabel = null
 				this.countdown = 5
 				this.frontEndUncomplete()
 			}
@@ -233,13 +243,21 @@ export default {
 
 <style lang="scss">
 
+.fc-event-external * {
+	cursor: grab;
+}
+
 .fc-event-external-delete {
 	padding: 1%;
 	border-radius: 50%;
 }
 
-.fc-event-external-delete:hover {
+.fc-event-external-delete:hover, .fc-event-title-checkbox:hover {
 	background-color: rgba(255, 255, 255, 0.25);
+}
+
+.fc-event-external-delete *, .fc-event-title-checkbox {
+	cursor: pointer;
 }
 
 </style>

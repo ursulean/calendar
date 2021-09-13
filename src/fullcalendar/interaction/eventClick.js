@@ -86,7 +86,7 @@ export function isCheckboxClick(jsEvent) {
 	return isElementClick(jsEvent, 'fc-event-title-checkbox')
 }
 
-export function isElementClick(jsEvent, className, maxIndex=1) {
+export function isElementClick(jsEvent, className, maxIndex = 1) {
 	if (!jsEvent || !className) {
 		return false
 	}
@@ -95,8 +95,8 @@ export function isElementClick(jsEvent, className, maxIndex=1) {
 	if (!path) {
 		return false
 	}
-	for (let i=0; i<maxIndex; i++) {
-		if(path[i].classList.contains(className)) { return true }
+	for (let i = 0; i < maxIndex; i++) {
+		if (path[i].classList.contains(className)) { return true }
 	}
 	return false
 }

@@ -6,15 +6,11 @@
 			:class="fcEvent.classNames"
 			:style="styleObject"
 			@click="handleClick">
-
 			<div
 				class="fc-event-main"
 				:style="innerStyleObject">
-
 				<div class="fc-event-main-frame">
-
 					<div class="fc-event-time" :style="dateStyle">
-
 						<span class="fc-event-time-date">
 							{{ dateText }}
 						</span>
@@ -26,18 +22,16 @@
 							{{ deleteAction }} in {{ countdown }}
 						</span>
 
-						<Close 
+						<Close
 							:size="12"
 							class="fc-event-external-delete" />
 					</div>
 
 					<div class="fc-event-title-container">
-
 						<div class="fc-event-title fc-sticky">
 							{{ title }}
 						</div>
 					</div>
-
 				</div>
 			</div>
 		</div>
@@ -90,7 +84,7 @@ export default {
 			return this.calendarObject.calendarComponent.getVObjectIterator().next().value
 		},
 		fcEvent() {
-			this.isScheduled
+			const isScheduled = this.isScheduled // eslint-disable-line no-unused-vars
 			const timezoneObject = getTimezoneManager().getTimezoneForId(this.timezoneId)
 			return vObjectSourceFunction(this.calendarObject, this.vObject, this.calendar, timezoneObject)
 		},
@@ -122,11 +116,11 @@ export default {
 		},
 		dateStyle() {
 			return {
-				paddingLeft: "1%",
-				paddingRight: "5%",
-				display: "flex",
-				justifyContent: "space-between",
-				alignItems: "center",
+				paddingLeft: '1%',
+				paddingRight: '5%',
+				display: 'flex',
+				justifyContent: 'space-between',
+				alignItems: 'center',
 				backgroundColor: this.isScheduled ? '#ff000080' : '',
 				borderRadius: '3px',
 			}
@@ -137,7 +131,7 @@ export default {
 		deleteAction() {
 			const label = this.deleteLabel
 			return label[0].toUpperCase() + label.slice(1, -1) + 'ing'
-		}
+		},
 	},
 	mounted() {
 		this.$nextTick(() => {
@@ -176,7 +170,7 @@ export default {
 			}
 			fcEl.classList.remove('fc-event-nc-task-completed')
 		},
-		toggleFrontEndComplete({ label, checkCheckbox=true }, func, ...args) {
+		toggleFrontEndComplete({ label, checkCheckbox = true }, func, ...args) {
 			if (!this.isCompleteFrontEnd()) {
 
 				this.frontEndComplete(checkCheckbox)

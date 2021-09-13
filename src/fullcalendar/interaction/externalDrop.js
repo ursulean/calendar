@@ -36,14 +36,14 @@ export default function(store) {
 				calendarObject,
 				calendarObjectInstance,
 				startDate,
-				endDate
+				endDate,
 			})
 
 			store.commit('resetCalendarObjectInstanceObjectIdAndRecurrenceId')
-			
+
 		} catch (error) {
 			console.debug(error)
-			
+
 		} finally {
 			revert()
 		}

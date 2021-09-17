@@ -42,7 +42,7 @@ export default function(store, router, route, window) {
 			break
 
 		case 'VTODO':
-			isCheckboxClick(jsEvent) ? toggleCompletedInstant(event, store) : handleEventClick(event, store, router, route, window)
+			isCheckboxClick(jsEvent) ? toggleCompletedInstant(event, jsEvent, store) : handleEventClick(event, store, router, route, window)
 			break
 		}
 	}
@@ -101,9 +101,11 @@ export function isElementClick(jsEvent, className, maxIndex = 1) {
 	return false
 }
 
-function fcElement(event) {
-	const { objectId, recurrenceId } = event.extendedProps
-	return document.querySelector(`.fc-event[data-object-id="${objectId}"][data-recurrence-id="${recurrenceId}"]:not(.fc-event-external)`)
+function fcElement(jsEvent) {
+	const path = jsEvent.path || (jsEvent.composedPath && jsEvent.composedPath())
+	for (const el of path) {
+		if (el.classList.contains('fc-event')) { return el }
+	}
 }
 
 export function setFrontEndComplete(fcEl, value, includeCheckbox=true) {
@@ -121,8 +123,8 @@ export function setFrontEndComplete(fcEl, value, includeCheckbox=true) {
 	}
 }
 
-async function toggleCompletedInstant(event, store) {
-	const fcEl = fcElement(event)
+async function toggleCompletedInstant(event, jsEvent, store) {
+	const fcEl = fcElement(jsEvent)
 	const completedClass = 'fc-event-nc-task-completed'
 
 	const isComplete = event.classNames.includes(completedClass)

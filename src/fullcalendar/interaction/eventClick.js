@@ -108,7 +108,7 @@ function fcElement(jsEvent) {
 	}
 }
 
-export function setFrontEndComplete(fcEl, value, includeCheckbox=true) {
+export function setFrontEndComplete(fcEl, value, includeCheckbox = true) {
 	const checkbox = fcEl.querySelector('.fc-event-title-checkbox')
 	if (value) {
 		if (includeCheckbox) {

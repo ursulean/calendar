@@ -13,7 +13,7 @@
 					<div class="fc-event-time" :style="dateStyle">
 						<span
 							class="fc-event-time-date"
-							:style="{cursor: this.isScheduled ? 'pointer' : 'inherit'}">
+							:style="{cursor: isScheduled ? 'pointer' : 'inherit'}">
 
 							{{ dateText }}
 						</span>

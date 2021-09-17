@@ -207,7 +207,7 @@ export default {
 			placement: 'auto',
 			hasLocation: false,
 			hasDescription: false,
-			boundaryElement: document.querySelector('#app-content > .fc'),
+			boundaryElement: document.querySelector('.app-content > .fc'),
 			lastHighlightedElement: null,
 		}
 	},

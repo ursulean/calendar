@@ -11,7 +11,10 @@
 				:style="innerStyleObject">
 				<div class="fc-event-main-frame">
 					<div class="fc-event-time" :style="dateStyle">
-						<span class="fc-event-time-date">
+						<span
+							class="fc-event-time-date"
+							:style="{cursor: this.isScheduled ? 'pointer' : 'inherit'}">
+
 							{{ dateText }}
 						</span>
 
@@ -43,7 +46,7 @@
 <script>
 import eventDidMount from '../../../fullcalendar/rendering/eventDidMount'
 import { vObjectSourceFunction } from '../../../fullcalendar/eventSources/eventSourceFunction'
-import { isCheckboxClick, isElementClick, toggleCompleted } from '../../../fullcalendar/interaction/eventClick'
+import { isCheckboxClick, isElementClick, toggleCompleted, setFrontEndComplete } from '../../../fullcalendar/interaction/eventClick'
 import getTimezoneManager from '../../../services/timezoneDataProviderService.js'
 import { generateTextColorForHex, uidToHexColor } from '../../../utils/color.js'
 import Close from 'vue-material-design-icons/Close'
@@ -148,34 +151,15 @@ export default {
 			} else if (isElementClick(jsEvent, 'fc-event-time-date')) {
 				this.navigateToDate()
 			} else if (isElementClick(jsEvent, 'fc-event-external-delete', 4)) {
-				this.toggleFrontEndComplete({ label: 'delete', checkCheckbox: false }, this.deleteUnscheduled, this.fcEvent, true)
+				this.toggleFrontEndComplete({ label: 'delete', includeCheckbox: false }, this.deleteUnscheduled, this.fcEvent, true)
 			}
 		},
-		isCompleteFrontEnd() {
-			return this.$refs.unscheduledEvent.classList.contains('fc-event-nc-task-completed')
-		},
-		frontEndComplete(checkCheckbox) {
-			if (this.isCompleteFrontEnd()) { return }
+		toggleFrontEndComplete({ label, includeCheckbox = true }, func, ...args) {
 			const fcEl = this.$refs.unscheduledEvent
-			if (checkCheckbox) {
-				const checkbox = fcEl.querySelector('.fc-event-title-checkbox')
-				checkbox.classList.replace('calendar-grid-checkbox', 'calendar-grid-checkbox-checked')
-			}
-			fcEl.classList.add('fc-event-nc-task-completed')
-		},
-		frontEndUncomplete() {
-			if (!this.isCompleteFrontEnd()) { return }
-			const fcEl = this.$refs.unscheduledEvent
-			const checkbox = fcEl.querySelector('.fc-event-title-checkbox')
-			if (checkbox.classList.contains('calendar-grid-checkbox-checked')) {
-				checkbox.classList.replace('calendar-grid-checkbox-checked', 'calendar-grid-checkbox')
-			}
-			fcEl.classList.remove('fc-event-nc-task-completed')
-		},
-		toggleFrontEndComplete({ label, checkCheckbox = true }, func, ...args) {
-			if (!this.isCompleteFrontEnd()) {
 
-				this.frontEndComplete(checkCheckbox)
+			if (!fcEl.classList.contains('fc-event-nc-task-completed')) {
+
+				setFrontEndComplete(fcEl, true, includeCheckbox)
 				this.deleteLabel = label
 
 				this.deleteInterval = setInterval(() => {
@@ -207,7 +191,7 @@ export default {
 				this.deleteInterval = null
 				this.deleteLabel = null
 				this.countdown = 5
-				this.frontEndUncomplete()
+				setFrontEndComplete(fcEl, false, includeCheckbox)
 			}
 		},
 		navigateToDate() {

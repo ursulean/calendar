@@ -42,7 +42,7 @@ export default function(store, router, route, window) {
 			break
 
 		case 'VTODO':
-			isCheckboxClick(jsEvent) ? toggleCompleted(event, store) : handleEventClick(event, store, router, route, window)
+			isCheckboxClick(jsEvent) ? toggleCompletedInstant(event, store) : handleEventClick(event, store, router, route, window)
 			break
 		}
 	}
@@ -99,6 +99,37 @@ export function isElementClick(jsEvent, className, maxIndex = 1) {
 		if (path[i].classList.contains(className)) { return true }
 	}
 	return false
+}
+
+function fcElement(event) {
+	const { objectId, recurrenceId } = event.extendedProps
+	return document.querySelector(`.fc-event[data-object-id="${objectId}"][data-recurrence-id="${recurrenceId}"]:not(.fc-event-external)`)
+}
+
+export function setFrontEndComplete(fcEl, value, includeCheckbox=true) {
+	const checkbox = fcEl.querySelector('.fc-event-title-checkbox')
+	if (value) {
+		if (includeCheckbox) {
+			checkbox.classList.replace('calendar-grid-checkbox', 'calendar-grid-checkbox-checked')
+		}
+		fcEl.classList.add('fc-event-nc-task-completed')
+	} else {
+		if (includeCheckbox) {
+			checkbox.classList.replace('calendar-grid-checkbox-checked', 'calendar-grid-checkbox')
+		}
+		fcEl.classList.remove('fc-event-nc-task-completed')
+	}
+}
+
+async function toggleCompletedInstant(event, store) {
+	const fcEl = fcElement(event)
+	const completedClass = 'fc-event-nc-task-completed'
+
+	const isComplete = event.classNames.includes(completedClass)
+	if (isComplete !== fcEl.classList.contains(completedClass)) { return }
+
+	setFrontEndComplete(fcEl, !isComplete)
+	await toggleCompleted(event, store)
 }
 
 export async function toggleCompleted(event, store) {

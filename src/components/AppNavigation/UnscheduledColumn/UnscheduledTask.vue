@@ -5,9 +5,7 @@
 			class="fc-timegrid-event fc-v-event fc-event fc-event-start fc-event-end fc-event-external"
 			:class="fcEvent.classNames"
 			:style="styleObject"
-			@click="handleClick"
-			@mouseover="externalEventHover=true"
-			@mouseleave="externalEventHover=false">
+			@click="handleClick">
 			<div
 				class="fc-event-main"
 				:style="innerStyleObject">
@@ -25,7 +23,6 @@
 						</span>
 
 						<div
-							v-show="externalEventHover"
 							class="fc-event-external-delete-frame">
 							<Close
 								class="fc-event-external-delete" />
@@ -69,7 +66,6 @@ export default {
 	},
 	data() {
 		return {
-			externalEventHover: false,
 			deleteInterval: null,
 			deleteTimeout: null,
 			deleteLabel: null,
@@ -257,10 +253,6 @@ export default {
 	width: 1.5em;
 	padding: 0.125em;
 	border-radius: 50%;
-}
-
-.fc-event-external-delete:hover, .fc-event-title-checkbox:hover {
-	background-color: rgba(255, 255, 255, 0.25);
 }
 
 .fc-event-external-delete > .material-design-icon__svg {

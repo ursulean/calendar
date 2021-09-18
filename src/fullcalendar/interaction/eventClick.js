@@ -123,6 +123,15 @@ export function setFrontEndComplete(fcEl, value, includeCheckbox = true) {
 	}
 }
 
+function insertPendingSymbol(fcEl) {
+	const pending = document.createElement('div')
+	pending.style.float = 'right'
+	pending.style.paddingRight = '2%'
+	pending.innerHTML = '&#9203;'
+	const titleContainer = fcEl.querySelector('.fc-event-time')
+	if (titleContainer) { titleContainer.appendChild(pending) }
+}
+
 async function toggleCompletedInstant(event, jsEvent, store) {
 	const fcEl = fcElement(jsEvent)
 	const completedClass = 'fc-event-nc-task-completed'
@@ -131,6 +140,7 @@ async function toggleCompletedInstant(event, jsEvent, store) {
 	if (isComplete !== fcEl.classList.contains(completedClass)) { return }
 
 	setFrontEndComplete(fcEl, !isComplete)
+	insertPendingSymbol(fcEl)
 	await toggleCompleted(event, store)
 }
 

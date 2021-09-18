@@ -122,7 +122,7 @@ export function vObjectSourceFunction(calendarObject, object, calendar, timezone
 			title = t('calendar', 'Untitled task')
 		}
 
-		if (object.percent !== null) {
+		if (object.percent !== null && object.percent !== 100) {
 			title += ` (${object.percent}%)`
 		}
 	}

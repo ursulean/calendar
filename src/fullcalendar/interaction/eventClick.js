@@ -128,8 +128,8 @@ function insertPendingSymbol(fcEl) {
 	pending.style.float = 'right'
 	pending.style.paddingRight = '2%'
 	pending.innerHTML = '&#9203;'
-	const titleContainer = fcEl.querySelector('.fc-event-time')
-	if (titleContainer) { titleContainer.appendChild(pending) }
+	const container = fcEl.querySelector('.fc-event-time') ?? fcEl.querySelector('.fc-event-main-frame')
+	if (container) { container.appendChild(pending) }
 }
 
 async function toggleCompletedInstant(event, jsEvent, store) {

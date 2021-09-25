@@ -306,7 +306,7 @@ const actions = {
 		await setConfig('showWeekNr', value)
 		commit('toggleWeekNumberEnabled')
 	},
-	async toggleFullDayEnabled({state, commit}) {
+	async toggleFullDayEnabled({ state, commit }) {
 		const newState = !state.showFullDay
 		const value = newState ? 'yes' : 'no'
 		await setConfig('showFullDay', value)

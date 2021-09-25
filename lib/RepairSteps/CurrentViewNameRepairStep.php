@@ -73,7 +73,7 @@ class CurrentViewNameRepairStep implements IRepairStep {
 			if ($savedView === null) {
 				return;
 			}
-			if (\in_array($savedView, ['timeGridDay', 'timeGridWeek', 'dayGridMonth'], true)) {
+			if (\in_array($savedView, ['timeGridDay', 'timeGridWeek', 'dayGridMonth', 'dayGridWeek'], true)) {
 				return;
 			}
 
@@ -84,6 +84,10 @@ class CurrentViewNameRepairStep implements IRepairStep {
 
 				case 'agendaWeek':
 					$this->config->setUserValue($userId, 'calendar', 'currentView', 'timeGridWeek');
+					break;
+
+				case 'week':
+					$this->config->setUserValue($userId, 'calendar', 'currentView', 'dayGridWeek');
 					break;
 
 				case 'month':

@@ -35,6 +35,7 @@ export default (value, view, locale) => {
 	case 'timeGridDay':
 		return moment(value).locale(locale).format('ll')
 
+	case 'dayGridWeek':
 	case 'timeGridWeek':
 		return t('calendar', 'Week {number} of {year}', {
 			number: moment(value).locale(locale).week(),

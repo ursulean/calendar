@@ -60,6 +60,7 @@ export default {
 				switch (state.route.params.view) {
 				case 'timeGridDay':
 					break
+				case 'dayGridWeek':
 				case 'timeGridWeek':
 					end.setDate(end.getDate() - end.getDay())
 					break

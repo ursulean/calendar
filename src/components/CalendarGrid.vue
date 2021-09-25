@@ -102,8 +102,8 @@ export default {
 			showTasks: state => state.settings.showTasks,
 			timezone: state => state.settings.timezone,
 			modificationCount: state => state.calendarObjects.modificationCount,
-			slotMinTime: state => state.settings.showFullDay ? "00:00:00" : "08:00:00",
-			slotMaxTime: state => state.settings.showFullDay ? "24:00:00" : "20:00:00",
+			slotMinTime: state => state.settings.showFullDay ? '00:00:00' : '08:00:00',
+			slotMaxTime: state => state.settings.showFullDay ? '24:00:00' : '20:00:00',
 		}),
 		options() {
 			return {

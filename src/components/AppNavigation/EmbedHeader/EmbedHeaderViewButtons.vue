@@ -34,6 +34,9 @@
 		<button :class="{primary: isMonthListViewSelected}" class="button" @click="view('listMonth')">
 			{{ $t('calendar', 'List') }}
 		</button>
+		<button :class="{primary: isWeekViewSelected}" class="button" @click="view('dayGridWeek')">
+			{{ $t('calendar', 'Week (b)') }}
+		</button>
 	</div>
 </template>
 
@@ -52,6 +55,9 @@ export default {
 		},
 		isMonthListViewSelected() {
 			return this.selectedView === 'listMonth'
+		},
+		isWeekViewSelected() {
+			return this.selectedView === 'dayGridWeek'
 		},
 		selectedView() {
 			return this.$route.params.view

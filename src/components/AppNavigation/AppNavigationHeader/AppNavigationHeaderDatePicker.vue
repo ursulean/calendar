@@ -97,6 +97,7 @@ export default {
 				return this.$t('calendar', 'Previous day')
 
 			case 'timeGridWeek':
+			case 'dayGridWeek':
 				return this.$t('calendar', 'Previous week')
 
 			case 'dayGridMonth':

@@ -151,6 +151,9 @@ class ViewController extends Controller {
 			case 'month':
 				return 'dayGridMonth';
 
+			case 'week':
+				return 'dayGridWeek';
+
 			default:
 				return $view;
 		}

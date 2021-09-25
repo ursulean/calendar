@@ -42,7 +42,7 @@ export default function(store, router, route, window) {
 			break
 
 		case 'VTODO':
-			isCheckboxClick(jsEvent) ? toggleCompletedInstant(event, jsEvent, store) : handleEventClick(event, store, router, route, window)
+			isCheckboxClick(jsEvent) ? toggleCompletedInstant(event, jsEvent, store, router) : handleEventClick(event, store, router, route, window)
 			break
 		}
 	}
@@ -83,7 +83,7 @@ function handleEventClick(event, store, router, route, window) {
 }
 
 export function isCheckboxClick(jsEvent) {
-	return isElementClick(jsEvent, 'fc-event-title-checkbox')
+	return isElementClick(jsEvent, 'fc-event-title-checkbox') || isElementClick(jsEvent, 'fc-daygrid-event-checkbox')
 }
 
 export function isElementClick(jsEvent, className, maxIndex = 1) {
@@ -109,7 +109,7 @@ function fcElement(jsEvent) {
 }
 
 export function setFrontEndComplete(fcEl, value, includeCheckbox = true) {
-	const checkbox = fcEl.querySelector('.fc-event-title-checkbox')
+	const checkbox = fcEl.querySelector('.fc-event-title-checkbox, .fc-daygrid-event-checkbox')
 	if (value) {
 		if (includeCheckbox) {
 			checkbox.classList.replace('calendar-grid-checkbox', 'calendar-grid-checkbox-checked')
@@ -123,16 +123,16 @@ export function setFrontEndComplete(fcEl, value, includeCheckbox = true) {
 	}
 }
 
-function insertPendingSymbol(fcEl) {
+function insertPendingSymbol(fcEl, currentView) {
 	const pending = document.createElement('div')
 	pending.style.float = 'right'
 	pending.style.paddingRight = '2%'
 	pending.innerHTML = '&#9203;'
-	const container = fcEl.querySelector('.fc-event-time') ?? fcEl.querySelector('.fc-event-main-frame')
+	const container = currentView === 'dayGridWeek' ? fcEl.querySelector('.fc-event-main-frame') ?? fcEl : fcEl.querySelector('.fc-event-time') ?? fcEl.querySelector('.fc-event-main-frame')
 	if (container) { container.appendChild(pending) }
 }
 
-async function toggleCompletedInstant(event, jsEvent, store) {
+async function toggleCompletedInstant(event, jsEvent, store, router) {
 	const fcEl = fcElement(jsEvent)
 	const completedClass = 'fc-event-nc-task-completed'
 
@@ -140,7 +140,7 @@ async function toggleCompletedInstant(event, jsEvent, store) {
 	if (isComplete !== fcEl.classList.contains(completedClass)) { return }
 
 	setFrontEndComplete(fcEl, !isComplete)
-	insertPendingSymbol(fcEl)
+	insertPendingSymbol(fcEl, router.currentRoute.params.view)
 	await toggleCompleted(event, store)
 }
 

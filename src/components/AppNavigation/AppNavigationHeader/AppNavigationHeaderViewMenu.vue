@@ -56,6 +56,10 @@ export default {
 				icon: 'icon-view-week',
 				label: this.$t('calendar', 'Week'),
 			}, {
+				id: 'dayGridWeek',
+				icon: 'icon-view-week',
+				label: this.$t('calendar', 'Week (b)'),
+			}, {
 				id: 'dayGridMonth',
 				icon: 'icon-view-module',
 				label: this.$t('calendar', 'Month'),

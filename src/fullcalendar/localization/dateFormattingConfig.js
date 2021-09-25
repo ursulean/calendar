@@ -42,6 +42,10 @@ const getDateFormattingConfig = () => {
 				dayHeaderFormat: 'ddd l',
 				titleFormat: 'll',
 			},
+			dayGridWeek: {
+				dayHeaderFormat: 'ddd l',
+				titleFormat: 'll',
+			},
 		},
 	}
 }

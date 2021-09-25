@@ -208,6 +208,7 @@ export default {
 			tasksEnabled: loadState('calendar', 'tasks_enabled'),
 			timezone: loadState('calendar', 'timezone'),
 			showTasks: loadState('calendar', 'show_tasks'),
+			showFullDay: loadState('calendar', 'show_full_day'),
 		})
 		this.$store.dispatch('initializeCalendarJsConfig')
 

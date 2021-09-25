@@ -43,6 +43,7 @@ const state = {
 	timezone: 'automatic',
 	// user-defined Nextcloud settings
 	momentLocale: 'en',
+	showFullDay: false,
 }
 
 const mutations = {
@@ -91,7 +92,9 @@ const mutations = {
 	toggleWeekNumberEnabled(state) {
 		state.showWeekNumbers = !state.showWeekNumbers
 	},
-
+	toggleFullDayEnabled(state) {
+		state.showFullDay = !state.showFullDay
+	},
 	/**
 	 * Updates the user's preferred slotDuration
 	 *
@@ -143,7 +146,7 @@ const mutations = {
 	 * @param {Boolean} data.tasksEnabled Whether ot not the tasks app is enabled
 	 * @param {String} data.timezone The timezone to view the calendar in. Either an Olsen timezone or "automatic"
 	 */
-	loadSettingsFromServer(state, { appVersion, eventLimit, firstRun, showWeekNumbers, showTasks, showWeekends, skipPopover, slotDuration, defaultReminder, talkEnabled, tasksEnabled, timezone }) {
+	loadSettingsFromServer(state, { appVersion, eventLimit, firstRun, showWeekNumbers, showTasks, showWeekends, skipPopover, slotDuration, defaultReminder, talkEnabled, tasksEnabled, timezone, showFullDay }) {
 		logInfo(`
 Initial settings:
 	- AppVersion: ${appVersion}
@@ -172,6 +175,7 @@ Initial settings:
 		state.talkEnabled = talkEnabled
 		state.tasksEnabled = tasksEnabled
 		state.timezone = timezone
+		state.showFullDay = showFullDay
 	},
 
 	/**
@@ -302,7 +306,12 @@ const actions = {
 		await setConfig('showWeekNr', value)
 		commit('toggleWeekNumberEnabled')
 	},
-
+	async toggleFullDayEnabled({state, commit}) {
+		const newState = !state.showFullDay
+		const value = newState ? 'yes' : 'no'
+		await setConfig('showFullDay', value)
+		commit('toggleFullDayEnabled')
+	},
 	/**
 	 * Updates the view to be used as initial view when opening
 	 * the calendar app again

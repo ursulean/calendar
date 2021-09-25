@@ -128,6 +128,7 @@ class PublicViewController extends Controller {
 		$defaultSlotDuration = $this->config->getAppValue($this->appName, 'slotDuration', '00:30:00');
 		$defaultDefaultReminder = $this->config->getAppValue($this->appName, 'defaultReminder', 'none');
 		$defaultShowTasks = $this->config->getAppValue($this->appName, 'showTasks', 'yes');
+		$defaultShowFullDay = $this->config->getAppValue($this->appName, 'showFullDay', 'no');
 
 		$appVersion = $this->config->getAppValue($this->appName, 'installed_version', null);
 
@@ -144,6 +145,7 @@ class PublicViewController extends Controller {
 		$this->initialStateService->provideInitialState($this->appName, 'slot_duration', $defaultSlotDuration);
 		$this->initialStateService->provideInitialState($this->appName, 'default_reminder', $defaultDefaultReminder);
 		$this->initialStateService->provideInitialState($this->appName, 'show_tasks', $defaultShowTasks === 'yes');
+		$this->initialStateService->provideInitialState($this->appName, 'show_full_day', $defaultShowFullDay === 'yes');
 		$this->initialStateService->provideInitialState($this->appName, 'tasks_enabled', false);
 
 		return new TemplateResponse($this->appName, 'main', [

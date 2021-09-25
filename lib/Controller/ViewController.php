@@ -96,6 +96,7 @@ class ViewController extends Controller {
 		$defaultSlotDuration = $this->config->getAppValue($this->appName, 'slotDuration', '00:30:00');
 		$defaultDefaultReminder = $this->config->getAppValue($this->appName, 'defaultReminder', 'none');
 		$defaultShowTasks = $this->config->getAppValue($this->appName, 'showTasks', 'yes');
+		$defaultShowFullDay = $this->config->getAppValue($this->appName, 'showFullDay', 'no');
 
 		$appVersion = $this->config->getAppValue($this->appName, 'installed_version', null);
 		$eventLimit = $this->config->getUserValue($this->userId, $this->appName, 'eventLimit', $defaultEventLimit) === 'yes';
@@ -108,6 +109,7 @@ class ViewController extends Controller {
 		$slotDuration = $this->config->getUserValue($this->userId, $this->appName, 'slotDuration', $defaultSlotDuration);
 		$defaultReminder = $this->config->getUserValue($this->userId, $this->appName, 'defaultReminder', $defaultDefaultReminder);
 		$showTasks = $this->config->getUserValue($this->userId, $this->appName, 'showTasks', $defaultShowTasks) === 'yes';
+		$showFullDay = $this->config->getUserValue($this->userId, $this->appName, 'showFullDay', $defaultShowFullDay) === 'yes';
 
 		$talkEnabled = $this->appManager->isEnabledForUser('spreed');
 		$talkApiVersion = version_compare($this->appManager->getAppVersion('spreed'), '12.0.0', '>=') ? 'v4' : 'v1';
@@ -126,6 +128,7 @@ class ViewController extends Controller {
 		$this->initialStateService->provideInitialState($this->appName, 'slot_duration', $slotDuration);
 		$this->initialStateService->provideInitialState($this->appName, 'default_reminder', $defaultReminder);
 		$this->initialStateService->provideInitialState($this->appName, 'show_tasks', $showTasks);
+		$this->initialStateService->provideInitialState($this->appName, 'show_full_day', $showFullDay);
 		$this->initialStateService->provideInitialState($this->appName, 'tasks_enabled', $tasksEnabled);
 
 		return new TemplateResponse($this->appName, 'main');

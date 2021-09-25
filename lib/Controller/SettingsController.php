@@ -91,6 +91,8 @@ class SettingsController extends Controller {
 				return $this->setDefaultReminder($value);
 			case 'showTasks':
 				return $this->setShowTasks($value);
+			case 'showFullDay':
+				return $this->setShowFullDay($value);
 			default:
 				return new JSONResponse([], Http::STATUS_BAD_REQUEST);
 		}
@@ -163,6 +165,24 @@ class SettingsController extends Controller {
 				$this->userId,
 				$this->appName,
 				'showTasks',
+				$value
+			);
+		} catch (\Exception $e) {
+			return new JSONResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+
+		return new JSONResponse();
+	}
+	private function setShowFullDay(string $value):JSONResponse {
+		if (!\in_array($value, ['yes', 'no'])) {
+			return new JSONResponse([], Http::STATUS_UNPROCESSABLE_ENTITY);
+		}
+
+		try {
+			$this->config->setUserValue(
+				$this->userId,
+				$this->appName,
+				'showFullDay',
 				$value
 			);
 		} catch (\Exception $e) {

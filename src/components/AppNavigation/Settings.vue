@@ -65,6 +65,13 @@
 				@update:checked="toggleWeekNumberEnabled">
 				{{ $t('calendar', 'Show week numbers') }}
 			</ActionCheckbox>
+			<ActionCheckbox
+				class="settings-fieldset-interior-item"
+				:checked="showFullDay"
+				:disabled="savingFullDay"
+				@update:checked="toggleFullDayEnabled">
+				{{ $t('calendar', 'Show full day') }}
+			</ActionCheckbox>
 			<li class="settings-fieldset-interior-item settings-fieldset-interior-item--slotDuration">
 				<label for="slotDuration">{{ $t('calendar', 'Time increments') }}</label>
 				<Multiselect
@@ -168,6 +175,7 @@ export default {
 			savingWeekend: false,
 			savingWeekNumber: false,
 			displayKeyboardShortcuts: false,
+			savingFullDay: false,
 		}
 	},
 	computed: {
@@ -184,6 +192,7 @@ export default {
 			defaultReminder: state => state.settings.defaultReminder,
 			timezone: state => state.settings.timezone,
 			locale: (state) => state.settings.momentLocale,
+			showFullDay: state => state.settings.showFullDay,
 		}),
 		isBirthdayCalendarDisabled() {
 			return this.savingBirthdayCalendar || this.loadingCalendars
@@ -318,6 +327,17 @@ export default {
 				console.error(error)
 				showError(this.$t('calendar', 'New setting was not saved successfully.'))
 				this.savingWeekNumber = false
+			}
+		},
+		async toggleFullDayEnabled() {
+			this.savingFullDay = true
+			try {
+				await this.$store.dispatch('toggleFullDayEnabled')
+				this.savingFullDay = false
+			} catch (error) {
+				console.error(error)
+				showError(this.$t('calendar', 'New setting was not saved successfully.'))
+				this.savingFullDay = false
 			}
 		},
 		/**
